@@ -50,6 +50,9 @@ window.cambiarSeccion = function cambiarSeccion(sectionName) {
         cargarTiposProductos();
         cargarProductosAdmin();
         cargarPuntosVenta();
+    } else if (sectionName === 'reportes' || sectionName === 'reportes-ventas' || sectionName === 'reportes-transacciones') {
+        // Cargar puntos de venta cuando se entra a reportes
+        cargarPuntosVentaReportes();
     }
     
     // NO cambiar hash en la URL
@@ -532,6 +535,274 @@ function mostrarProductosAdmin() {
 }
 
 // ============================================
+// FUNCIONES AUXILIARES PARA REPORTES
+// ============================================
+function formatearMoneda(monto) {
+    return new Intl.NumberFormat('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+        minimumFractionDigits: 2
+    }).format(monto || 0);
+}
+
+function formatearNumero(num) {
+    return new Intl.NumberFormat('es-MX').format(num || 0);
+}
+
+// ============================================
+// CARGAR PUNTOS DE VENTA PARA REPORTES
+// ============================================
+async function cargarPuntosVentaReportes() {
+    try {
+        const { response, data, error } = await hacerPeticion('/api/puntos-venta', { method: 'GET' });
+        
+        if (error || !data.success) {
+            console.error('[Admin Base] Error cargando puntos de venta para reportes:', error || data.error);
+            return;
+        }
+        
+        // Llenar select de ventas
+        const selectVentas = document.getElementById('puntoVentaVentas');
+        if (selectVentas) {
+            while (selectVentas.children.length > 1) {
+                selectVentas.removeChild(selectVentas.lastChild);
+            }
+            data.data.forEach(pv => {
+                const option = document.createElement('option');
+                option.value = pv.id;
+                option.textContent = pv.nombre;
+                selectVentas.appendChild(option);
+            });
+        }
+        
+        // Llenar select de transacciones
+        const selectTransacciones = document.getElementById('puntoVentaTransacciones');
+        if (selectTransacciones) {
+            while (selectTransacciones.children.length > 1) {
+                selectTransacciones.removeChild(selectTransacciones.lastChild);
+            }
+            data.data.forEach(pv => {
+                const option = document.createElement('option');
+                option.value = pv.id;
+                option.textContent = pv.nombre;
+                selectTransacciones.appendChild(option);
+            });
+        }
+        
+        console.log('[Admin Base] Puntos de venta cargados para reportes:', data.data.length);
+    } catch (error) {
+        console.error('[Admin Base] Error cargando puntos de venta:', error);
+    }
+}
+
+// ============================================
+// REPORTE DE VENTAS
+// ============================================
+async function cargarReporteVentas() {
+    console.log('[Admin Base] Cargando reporte de ventas...');
+    
+    const fechaInicio = document.getElementById('fechaInicioVentas')?.value;
+    const fechaFin = document.getElementById('fechaFinVentas')?.value;
+    const puntoVentaId = document.getElementById('puntoVentaVentas')?.value;
+    
+    try {
+        const params = new URLSearchParams();
+        if (fechaInicio) params.append('fecha_inicio', fechaInicio);
+        if (fechaFin) params.append('fecha_fin', fechaFin);
+        if (puntoVentaId) params.append('punto_venta_id', puntoVentaId);
+        
+        const { response, data, error } = await hacerPeticion(`/api/reportes/ventas?${params.toString()}`, {
+            method: 'GET'
+        });
+        
+        if (error || !data.success) {
+            if (typeof showAlert === 'function') {
+                showAlert('error', data?.error || 'Error al cargar el reporte de ventas');
+            } else {
+                alert(data?.error || 'Error al cargar el reporte de ventas');
+            }
+            return;
+        }
+        
+        mostrarReporteVentas(data.data);
+    } catch (error) {
+        console.error('[Admin Base] Error cargando reporte de ventas:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'Error al cargar el reporte de ventas');
+        } else {
+            alert('Error al cargar el reporte de ventas');
+        }
+    }
+}
+
+function mostrarReporteVentas(datos) {
+    const ventas = datos.ventas || [];
+    const resumen = datos.resumen || {};
+    
+    // Mostrar resumen
+    const totalVentasEl = document.getElementById('totalVentas');
+    const montoTotalEl = document.getElementById('montoTotalVentas');
+    const promedioEl = document.getElementById('promedioVenta');
+    const resumenEl = document.getElementById('resumenVentas');
+    
+    if (totalVentasEl) totalVentasEl.textContent = formatearNumero(resumen.total_ventas || 0);
+    if (montoTotalEl) montoTotalEl.textContent = formatearMoneda(resumen.total_monto || 0);
+    if (promedioEl) promedioEl.textContent = formatearMoneda(resumen.promedio_venta || 0);
+    if (resumenEl) resumenEl.style.display = 'block';
+    
+    // Mostrar tabla
+    const tbody = document.getElementById('tbodyVentas');
+    const tablaContainer = document.getElementById('tablaVentasContainer');
+    const sinDatos = document.getElementById('sinDatosVentas');
+    const contador = document.getElementById('contadorVentas');
+    const btnExportar = document.getElementById('btnExportarVentas');
+    
+    if (!tbody) {
+        console.error('[Admin Base] No se encontró tbody de ventas');
+        return;
+    }
+    
+    tbody.innerHTML = '';
+    
+    if (ventas.length === 0) {
+        if (tablaContainer) tablaContainer.style.display = 'none';
+        if (sinDatos) sinDatos.style.display = 'block';
+        return;
+    }
+    
+    if (tablaContainer) tablaContainer.style.display = 'block';
+    if (sinDatos) sinDatos.style.display = 'none';
+    if (contador) contador.textContent = `${ventas.length} registro(s)`;
+    if (btnExportar) btnExportar.style.display = 'inline-block';
+    
+    ventas.forEach(venta => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${venta.fecha_hora || 'N/A'}</td>
+            <td>${venta.punto_venta || 'N/A'}</td>
+            <td>${venta.producto || 'N/A'}</td>
+            <td>${formatearNumero(venta.cantidad || 0)}</td>
+            <td>${venta.precio_unitario ? formatearMoneda(venta.precio_unitario) : 'N/A'}</td>
+            <td><strong>${formatearMoneda(venta.total || 0)}</strong></td>
+            <td>****${venta.tarjeta_ultimos_4 || 'N/A'}</td>
+            <td>${venta.asistente || 'N/A'}</td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    console.log('[Admin Base] Reporte de ventas mostrado:', ventas.length, 'registros');
+}
+
+// ============================================
+// REPORTE DE TRANSACCIONES
+// ============================================
+async function cargarReporteTransacciones() {
+    console.log('[Admin Base] Cargando reporte de transacciones...');
+    
+    const fechaInicio = document.getElementById('fechaInicioTransacciones')?.value;
+    const fechaFin = document.getElementById('fechaFinTransacciones')?.value;
+    const tipo = document.getElementById('tipoTransaccion')?.value;
+    const puntoVentaId = document.getElementById('puntoVentaTransacciones')?.value;
+    
+    try {
+        const params = new URLSearchParams();
+        if (fechaInicio) params.append('fecha_inicio', fechaInicio);
+        if (fechaFin) params.append('fecha_fin', fechaFin);
+        if (tipo) params.append('tipo', tipo);
+        if (puntoVentaId) params.append('punto_venta_id', puntoVentaId);
+        
+        const { response, data, error } = await hacerPeticion(`/api/reportes/transacciones?${params.toString()}`, {
+            method: 'GET'
+        });
+        
+        if (error || !data.success) {
+            if (typeof showAlert === 'function') {
+                showAlert('error', data?.error || 'Error al cargar el reporte de transacciones');
+            } else {
+                alert(data?.error || 'Error al cargar el reporte de transacciones');
+            }
+            return;
+        }
+        
+        mostrarReporteTransacciones(data.data);
+    } catch (error) {
+        console.error('[Admin Base] Error cargando reporte de transacciones:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'Error al cargar el reporte de transacciones');
+        } else {
+            alert('Error al cargar el reporte de transacciones');
+        }
+    }
+}
+
+function mostrarReporteTransacciones(datos) {
+    const transacciones = datos.transacciones || [];
+    const resumen = datos.resumen || {};
+    
+    // Mostrar resumen
+    const totalTransEl = document.getElementById('totalTransaccionesReporte');
+    const totalRecargasEl = document.getElementById('totalRecargas');
+    const totalPagosEl = document.getElementById('totalPagos');
+    const diferenciaEl = document.getElementById('diferenciaTransacciones');
+    const resumenEl = document.getElementById('resumenTransacciones');
+    
+    if (totalTransEl) totalTransEl.textContent = formatearNumero(resumen.total_transacciones || 0);
+    if (totalRecargasEl) totalRecargasEl.textContent = formatearNumero(resumen.total_recargas || 0);
+    if (totalPagosEl) totalPagosEl.textContent = formatearNumero(resumen.total_pagos || 0);
+    if (diferenciaEl) diferenciaEl.textContent = formatearMoneda(resumen.diferencia || 0);
+    if (resumenEl) resumenEl.style.display = 'block';
+    
+    // Mostrar tabla
+    const tbody = document.getElementById('tbodyTransacciones');
+    const tablaContainer = document.getElementById('tablaTransaccionesContainer');
+    const sinDatos = document.getElementById('sinDatosTransacciones');
+    const contador = document.getElementById('contadorTransacciones');
+    const btnExportar = document.getElementById('btnExportarTransacciones');
+    
+    if (!tbody) {
+        console.error('[Admin Base] No se encontró tbody de transacciones');
+        return;
+    }
+    
+    tbody.innerHTML = '';
+    
+    if (transacciones.length === 0) {
+        if (tablaContainer) tablaContainer.style.display = 'none';
+        if (sinDatos) sinDatos.style.display = 'block';
+        return;
+    }
+    
+    if (tablaContainer) tablaContainer.style.display = 'block';
+    if (sinDatos) sinDatos.style.display = 'none';
+    if (contador) contador.textContent = `${transacciones.length} registro(s)`;
+    if (btnExportar) btnExportar.style.display = 'inline-block';
+    
+    transacciones.forEach(trans => {
+        const row = document.createElement('tr');
+        const tipoBadge = trans.tipo === 'recarga' 
+            ? '<span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 4px; font-size: 11px;">➕ Recarga</span>'
+            : '<span style="background: #f8d7da; color: #721c24; padding: 3px 8px; border-radius: 4px; font-size: 11px;">➖ Pago</span>';
+        
+        const estadoBadge = trans.estado === 'exitosa'
+            ? '<span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 4px; font-size: 11px;">✓ Exitosa</span>'
+            : '<span style="background: #f8d7da; color: #721c24; padding: 3px 8px; border-radius: 4px; font-size: 11px;">✗ ' + (trans.estado || 'Error') + '</span>';
+        
+        row.innerHTML = `
+            <td>${trans.fecha_hora || 'N/A'}</td>
+            <td>${tipoBadge}</td>
+            <td><strong>${formatearMoneda(trans.monto || 0)}</strong></td>
+            <td>****${trans.tarjeta_ultimos_4 || 'N/A'}</td>
+            <td>${trans.asistente || 'N/A'}</td>
+            <td>${trans.punto_venta || 'N/A'}</td>
+            <td>${estadoBadge}</td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    console.log('[Admin Base] Reporte de transacciones mostrado:', transacciones.length, 'registros');
+}
+
+// ============================================
 // INICIALIZACIÓN
 // ============================================
 let listenerGlobalAgregado = false;
@@ -839,28 +1110,82 @@ function inicializarAdminBase() {
                 console.log('[Admin Base] Filtro de disponibilidad inicializado');
             }
             
-            // 9. Prevenir que formularios de reportes cambien de sección
-    const formFiltrosVentas = document.getElementById('formFiltrosVentas');
-    if (formFiltrosVentas) {
-        formFiltrosVentas.addEventListener('submit', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            console.log('[Admin Base] Formulario de filtros de ventas - submit prevenido para mantener sección');
-            // Aquí se puede agregar la lógica de consulta sin cambiar de sección
-        });
-    }
-    
-    const formFiltrosTransacciones = document.getElementById('formFiltrosTransacciones');
-    if (formFiltrosTransacciones) {
-        formFiltrosTransacciones.addEventListener('submit', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            console.log('[Admin Base] Formulario de filtros de transacciones - submit prevenido para mantener sección');
-            // Aquí se puede agregar la lógica de consulta sin cambiar de sección
-        });
-    }
+            // 9. Inicializar reportes
+            // Cargar puntos de venta para reportes
+            cargarPuntosVentaReportes();
+            
+            // Formulario de filtros de ventas
+            const formFiltrosVentas = document.getElementById('formFiltrosVentas');
+            if (formFiltrosVentas) {
+                const newForm = formFiltrosVentas.cloneNode(true);
+                formFiltrosVentas.parentNode.replaceChild(newForm, formFiltrosVentas);
+                
+                newForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    await cargarReporteVentas();
+                });
+                console.log('[Admin Base] Formulario de filtros de ventas inicializado');
+            }
+            
+            // Botón limpiar filtros ventas
+            const btnLimpiarVentas = document.getElementById('btnLimpiarFiltrosVentas');
+            if (btnLimpiarVentas) {
+                btnLimpiarVentas.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    document.getElementById('fechaInicioVentas').value = '';
+                    document.getElementById('fechaFinVentas').value = '';
+                    document.getElementById('puntoVentaVentas').value = '';
+                    const resumenEl = document.getElementById('resumenVentas');
+                    const tablaEl = document.getElementById('tablaVentasContainer');
+                    const sinDatosEl = document.getElementById('sinDatosVentas');
+                    const btnExportarEl = document.getElementById('btnExportarVentas');
+                    if (resumenEl) resumenEl.style.display = 'none';
+                    if (tablaEl) tablaEl.style.display = 'none';
+                    if (sinDatosEl) sinDatosEl.style.display = 'block';
+                    if (btnExportarEl) btnExportarEl.style.display = 'none';
+                });
+                console.log('[Admin Base] Botón limpiar filtros de ventas inicializado');
+            }
+            
+            // Formulario de filtros de transacciones
+            const formFiltrosTransacciones = document.getElementById('formFiltrosTransacciones');
+            if (formFiltrosTransacciones) {
+                const newForm = formFiltrosTransacciones.cloneNode(true);
+                formFiltrosTransacciones.parentNode.replaceChild(newForm, formFiltrosTransacciones);
+                
+                newForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    await cargarReporteTransacciones();
+                });
+                console.log('[Admin Base] Formulario de filtros de transacciones inicializado');
+            }
+            
+            // Botón limpiar filtros transacciones
+            const btnLimpiarTransacciones = document.getElementById('btnLimpiarFiltrosTransacciones');
+            if (btnLimpiarTransacciones) {
+                btnLimpiarTransacciones.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    document.getElementById('fechaInicioTransacciones').value = '';
+                    document.getElementById('fechaFinTransacciones').value = '';
+                    document.getElementById('tipoTransaccion').value = '';
+                    document.getElementById('puntoVentaTransacciones').value = '';
+                    const resumenEl = document.getElementById('resumenTransacciones');
+                    const tablaEl = document.getElementById('tablaTransaccionesContainer');
+                    const sinDatosEl = document.getElementById('sinDatosTransacciones');
+                    const btnExportarEl = document.getElementById('btnExportarTransacciones');
+                    if (resumenEl) resumenEl.style.display = 'none';
+                    if (tablaEl) tablaEl.style.display = 'none';
+                    if (sinDatosEl) sinDatosEl.style.display = 'block';
+                    if (btnExportarEl) btnExportarEl.style.display = 'none';
+                });
+                console.log('[Admin Base] Botón limpiar filtros de transacciones inicializado');
+            }
     
     // Prevenir que otros formularios cambien de sección accidentalmente
     document.querySelectorAll('form').forEach(form => {
