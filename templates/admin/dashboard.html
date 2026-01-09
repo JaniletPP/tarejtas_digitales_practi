@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Saltillo, Coahuila</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-icon">🏔️</div>
+                    <div class="logo-text">
+                        <h2>Sistema de Tarjetas</h2>
+                        <p>Sierra de Arteaga</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <!-- Menú Dashboard -->
+                <div class="nav-menu-item">
+                    <a href="#dashboard" class="nav-link" data-section="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </div>
+
+                <!-- Menú desplegable: Gestión -->
+                <div class="nav-menu-item dropdown">
+                    <a href="#gestion" class="nav-link dropdown-toggle" data-toggle="gestion">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Gestión</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </a>
+                    <div class="dropdown-menu" id="dropdown-gestion">
+                        <a href="#asistentes" class="dropdown-item" data-section="asistentes">
+                            <span class="dropdown-icon">👥</span>
+                            Asistentes
+                        </a>
+                        <a href="#tarjetas" class="dropdown-item" data-section="tarjetas">
+                            <span class="dropdown-icon">💳</span>
+                            Tarjetas
+                        </a>
+                        <a href="#productos" class="dropdown-item" data-section="productos">
+                            <span class="dropdown-icon">🛍️</span>
+                            Productos
+                        </a>
+                    </div>
+                </div>
+
+
+                <!-- Menú desplegable: Reportes -->
+                <div class="nav-menu-item dropdown">
+                    <a href="#reportes" class="nav-link dropdown-toggle" data-toggle="reportes">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Reportes</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </a>
+                    <div class="dropdown-menu" id="dropdown-reportes">
+                        <a href="#reportes-ventas" class="dropdown-item" data-section="reportes">
+                            <span class="dropdown-icon">💰</span>
+                            Ventas
+                        </a>
+                        <a href="#reportes-transacciones" class="dropdown-item" data-section="reportes-transacciones">
+                            <span class="dropdown-icon">📜</span>
+                            Transacciones
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Menú Perfil -->
+                <div class="nav-menu-item">
+                    <a href="#perfil" class="nav-link" data-section="perfil">
+                        <span class="nav-icon">👤</span>
+                        <span class="nav-text">Mi Perfil</span>
+                    </a>
+                </div>
+
+                <!-- Menú Configuración -->
+                <div class="nav-menu-item">
+                    <a href="#configuracion" class="nav-link" data-section="configuracion">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-text">Configuración</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <strong>{{ session.usuario }}</strong>
+                        <small>Administrador</small>
+                    </div>
+                </div>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout-sidebar">
+                    🚪 Salir
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Dashboard General</h1>
+                    <p class="header-subtitle">Sistema de Tarjetas Inteligentes - Saltillo, Coahuila</p>
+                </div>
+                <div class="header-right">
+                    <div class="location-badge">
+                        <span>📍</span>
+                        <span>Saltillo, Coahuila</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="section-dashboard" class="admin-section active">
+                <div class="stats-grid">
+                    <div class="stat-card stat-primary">
+                        <div class="stat-icon-wrapper">
+                            <div class="stat-icon">👥</div>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Asistentes Registrados</div>
+                            <div class="stat-value" id="totalAsistentes">-</div>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-icon-wrapper">
+                            <div class="stat-icon">💳</div>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Tarjetas Activas</div>
+                            <div class="stat-value" id="totalTarjetas">-</div>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-warning">
+                        <div class="stat-icon-wrapper">
+                            <div class="stat-icon">💰</div>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Saldo Total en Sistema</div>
+                            <div class="stat-value" id="totalSaldo">-</div>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-info">
+                        <div class="stat-icon-wrapper">
+                            <div class="stat-icon">📊</div>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Transacciones Hoy</div>
+                            <div class="stat-value" id="totalTransacciones">-</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Asistentes Section -->
+            <section id="section-asistentes" class="admin-section hidden">
+                <div class="section-header">
+                    <h2>👥 Gestión de Asistentes</h2>
+                    <button class="btn btn-primary" id="btnNuevoAsistente">➕ Nuevo Asistente</button>
+                </div>
+                
+                <!-- Filtros y acciones -->
+                <div class="content-card">
+                    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <button class="btn btn-secondary" id="btnCargarAsistentes">🔄 Cargar Lista</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lista de asistentes -->
+                <div class="content-card">
+                    <div id="listaAsistentesAdmin" class="resultado"></div>
+                </div>
+            </section>
+
+            <!-- Tarjetas Section -->
+            <section id="section-tarjetas" class="admin-section hidden">
+                <h2>💳 Gestión de Tarjetas</h2>
+                <div class="grid">
+                    <div class="content-card">
+                        <h3>Asignar Tarjeta</h3>
+                        <form id="formAsignarTarjetaAdmin">
+                            <!-- Selector de Asistente -->
+                            <div class="form-group">
+                                <label>Asistente *</label>
+                                <div class="asistente-selector-container">
+                                    <input 
+                                        type="text" 
+                                        id="buscarAsistenteAdmin" 
+                                        class="asistente-search-input"
+                                        placeholder="Buscar por nombre, teléfono o email..."
+                                        autocomplete="off"
+                                    >
+                                    <div id="asistenteDropdown" class="asistente-dropdown"></div>
+                                    <input type="hidden" id="asistente_id_admin" required>
+                                    <div id="asistenteSeleccionado" class="asistente-seleccionado" style="display: none;">
+                                        <div class="asistente-info">
+                                            <span class="asistente-nombre" id="asistenteNombreMostrar"></span>
+                                            <span class="asistente-contacto" id="asistenteContactoMostrar"></span>
+                                        </div>
+                                        <button type="button" class="btn-clear-asistente" id="btnClearAsistente">×</button>
+                                    </div>
+                                </div>
+                                <small class="form-help">Escribe para buscar asistentes sin tarjeta asignada. Se mostrará nombre completo y contacto.</small>
+                            </div>
+
+                            <!-- Número de Tarjeta -->
+                            <div class="form-group">
+                                <label>Número de Tarjeta *</label>
+                                <div class="tarjeta-input-container">
+                                    <input 
+                                        type="text" 
+                                        id="numero_tarjeta_admin" 
+                                        placeholder="TARJ-XXXXXX"
+                                        required
+                                        pattern="TARJ-[0-9]{6}"
+                                        maxlength="11"
+                                    >
+                                </div>
+                                <div id="tarjetaEstado" class="tarjeta-estado" style="display: none;"></div>
+                                <small class="form-help">Ingresa el número de tarjeta en formato TARJ-XXXXXX.</small>
+                            </div>
+
+                            <!-- Vista Previa -->
+                            <div id="vistaPreviaAsignacion" class="vista-previa-asignacion" style="display: none;">
+                                <h4>📋 Vista Previa de Asignación</h4>
+                                <div class="preview-content">
+                                    <div class="preview-item">
+                                        <span class="preview-label">Asistente:</span>
+                                        <span class="preview-value" id="previewAsistente">-</span>
+                                    </div>
+                                    <div class="preview-item">
+                                        <span class="preview-label">Contacto:</span>
+                                        <span class="preview-value" id="previewContacto">-</span>
+                                    </div>
+                                    <div class="preview-item">
+                                        <span class="preview-label">Estado del Asistente:</span>
+                                        <span class="preview-value success" id="previewEstadoAsistente">✅ Sin tarjeta asignada</span>
+                                    </div>
+                                    <div class="preview-item">
+                                        <span class="preview-label">Número de Tarjeta:</span>
+                                        <span class="preview-value" id="previewTarjeta">-</span>
+                                    </div>
+                                    <div class="preview-item">
+                                        <span class="preview-label">Estado de la Tarjeta:</span>
+                                        <span class="preview-value" id="previewEstado">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones de Acción -->
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="btnLimpiarFormulario">Limpiar</button>
+                                <button type="submit" class="btn btn-primary" id="btnAsignarTarjeta">
+                                    <span class="btn-text">Asignar Tarjeta</span>
+                                    <span class="btn-loader" style="display: none;">⏳</span>
+                                </button>
+                            </div>
+                        </form>
+                        <div id="resultadoAsignarAdmin" class="resultado"></div>
+                    </div>
+                    <div class="content-card">
+                        <h3>Consultar Tarjeta</h3>
+                        <form id="formConsultarTarjetaAdmin">
+                            <div class="form-group">
+                                <label>Número de Tarjeta *</label>
+                                <input type="text" id="numero_tarjeta_consulta_admin" placeholder="TARJ-XXXXXX" required>
+                            </div>
+                            <button type="submit" class="btn btn-info">Consultar</button>
+                        </form>
+                        <div id="resultadoConsultaAdmin" class="resultado"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Productos Section -->
+            <section id="section-productos" class="admin-section hidden">
+                <div class="section-header">
+                    <h2>🛍️ Gestión de Productos</h2>
+                    <button class="btn btn-primary" id="btnNuevoProductoAdmin">➕ Nuevo Producto</button>
+                </div>
+
+                <!-- Filtros y búsqueda -->
+                <div class="content-card">
+                    <div class="productos-filtros">
+                        <div class="filtro-group">
+                            <label>Filtrar por tipo:</label>
+                            <select id="filtroTipoProductosAdmin" class="filtro-select-admin">
+                                <option value="">Todos los tipos</option>
+                            </select>
+                        </div>
+                        <div class="filtro-group">
+                            <label>Buscar:</label>
+                            <input type="text" id="buscarProductoAdmin" class="filtro-select-admin" placeholder="Buscar por nombre...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Productos organizados por tipo -->
+                <div id="productosPorTipoAdmin" class="productos-por-tipo">
+                    <!-- Los productos se cargan dinámicamente organizados por tipo -->
+                </div>
+            </section>
+
+            <!-- Reportes Section -->
+            <section id="section-reportes" class="admin-section hidden">
+                <div class="section-header">
+                    <h2>📈 Reportes de Ventas</h2>
+                    <button class="btn btn-primary" id="btnExportarVentas" style="display: none;">📥 Exportar CSV</button>
+                </div>
+                
+                <!-- Filtros -->
+                <div class="content-card">
+                    <h3>Filtros</h3>
+                    <form id="formFiltrosVentas" class="filtros-reporte">
+                        <div class="filtros-grid">
+                            <div class="form-group">
+                                <label>Fecha Inicio</label>
+                                <input type="date" id="fechaInicioVentas" class="filtro-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha Fin</label>
+                                <input type="date" id="fechaFinVentas" class="filtro-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Punto de Venta</label>
+                                <select id="puntoVentaVentas" class="filtro-input">
+                                    <option value="">Todos los puntos de venta</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-actions-inline">
+                                <button type="submit" class="btn btn-primary">🔍 Aplicar Filtros</button>
+                                <button type="button" class="btn btn-secondary" id="btnLimpiarFiltrosVentas">🔄 Limpiar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Resumen -->
+                <div id="resumenVentas" class="resumen-reporte" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="stat-card stat-primary">
+                            <div class="stat-icon-wrapper">
+                                <div class="stat-icon">💰</div>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Total Ventas</div>
+                                <div class="stat-value" id="totalVentas">-</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-success">
+                            <div class="stat-icon-wrapper">
+                                <div class="stat-icon">💵</div>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Monto Total</div>
+                                <div class="stat-value" id="montoTotalVentas">-</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-info">
+                            <div class="stat-icon-wrapper">
+                                <div class="stat-icon">📊</div>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Promedio por Venta</div>
+                                <div class="stat-value" id="promedioVenta">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Ventas -->
+                <div class="content-card">
+                    <div id="tablaVentasContainer" style="display: none;">
+                        <div class="table-header">
+                            <h3>Detalle de Ventas</h3>
+                            <div class="table-actions">
+                                <span id="contadorVentas" class="contador-registros"></span>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="tablaVentas" class="reporte-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha/Hora</th>
+                                        <th>Punto de Venta</th>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unit.</th>
+                                        <th>Total</th>
+                                        <th>Tarjeta</th>
+                                        <th>Asistente</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyVentas">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="sinDatosVentas" class="sin-datos">
+                        <p>👆 Selecciona filtros y haz clic en "Aplicar Filtros" para ver el reporte</p>
+                    </div>
+                </div>
+
+                <!-- Resumen por Punto de Venta y Productos Más Vendidos -->
+                <div class="grid" id="resumenDetalladoVentas" style="display: none;">
+                    <div class="content-card">
+                        <h3>Ventas por Punto de Venta</h3>
+                        <div class="table-wrapper">
+                            <table class="reporte-table resumen-table">
+                                <thead>
+                                    <tr>
+                                        <th>Punto de Venta</th>
+                                        <th>Total Ventas</th>
+                                        <th>Monto Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyVentasPorPV">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <h3>Productos Más Vendidos</h3>
+                        <div class="table-wrapper">
+                            <table class="reporte-table resumen-table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyProductosMasVendidos">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transacciones Section -->
+            <section id="section-reportes-transacciones" class="admin-section hidden">
+                <div class="section-header">
+                    <h2>📜 Reportes de Transacciones</h2>
+                    <button class="btn btn-primary" id="btnExportarTransacciones" style="display: none;">📥 Exportar CSV</button>
+                </div>
+                
+                <!-- Filtros -->
+                <div class="content-card">
+                    <h3>Filtros</h3>
+                    <form id="formFiltrosTransacciones" class="filtros-reporte">
+                        <div class="filtros-grid">
+                            <div class="form-group">
+                                <label>Fecha Inicio</label>
+                                <input type="date" id="fechaInicioTransacciones" class="filtro-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha Fin</label>
+                                <input type="date" id="fechaFinTransacciones" class="filtro-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo</label>
+                                <select id="tipoTransaccion" class="filtro-input">
+                                    <option value="">Todos los tipos</option>
+                                    <option value="recarga">Recarga</option>
+                                    <option value="pago">Pago</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Punto de Venta</label>
+                                <select id="puntoVentaTransacciones" class="filtro-input">
+                                    <option value="">Todos los puntos de venta</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-actions-inline">
+                                <button type="submit" class="btn btn-primary">🔍 Aplicar Filtros</button>
+                                <button type="button" class="btn btn-secondary" id="btnLimpiarFiltrosTransacciones">🔄 Limpiar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Resumen -->
+                <div id="resumenTransacciones" class="resumen-reporte" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="stat-card stat-primary">
+                            <div class="stat-icon-wrapper">
+                                <div class="stat-icon">📊</div>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Total Transacciones</div>
+                                <div class="stat-value" id="totalTransaccionesReporte">-</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-success">
+                            <div class="stat-icon-wrapper">
+                                <div class="stat-icon">➕</div>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Total Recargas</div>
+                                <div class="stat-value" id="totalRecargas">-</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-warning">
+                            <div class="stat-icon-wrapper">
+                                <div class="stat-icon">➖</div>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Total Pagos</div>
+                                <div class="stat-value" id="totalPagos">-</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-info">
+                            <div class="stat-icon-wrapper">
+                                <div class="stat-icon">💰</div>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Diferencia</div>
+                                <div class="stat-value" id="diferenciaTransacciones">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Transacciones -->
+                <div class="content-card">
+                    <div id="tablaTransaccionesContainer" style="display: none;">
+                        <div class="table-header">
+                            <h3>Detalle de Transacciones</h3>
+                            <div class="table-actions">
+                                <span id="contadorTransacciones" class="contador-registros"></span>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="tablaTransacciones" class="reporte-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha/Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Monto</th>
+                                        <th>Tarjeta</th>
+                                        <th>Asistente</th>
+                                        <th>Punto de Venta</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyTransacciones">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="sinDatosTransacciones" class="sin-datos">
+                        <p>👆 Selecciona filtros y haz clic en "Aplicar Filtros" para ver el reporte</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Configuración Section -->
+            <!-- Perfil Section -->
+            <section id="section-perfil" class="admin-section hidden">
+                <h2>👤 Mi Perfil</h2>
+                <div class="grid">
+                    <div class="content-card">
+                        <h3>Información Personal</h3>
+                        <form id="formEditarPerfil">
+                            <!-- Foto de Perfil -->
+                            <div class="form-group">
+                                <label>Foto de Perfil</label>
+                                <div class="foto-perfil-container">
+                                    <div class="foto-perfil-preview" id="fotoPerfilPreview">
+                                        <img id="fotoPerfilImg" src="" alt="Foto de perfil" style="display: none;">
+                                        <div class="foto-perfil-placeholder" id="fotoPerfilPlaceholder">
+                                            <span class="foto-icon">👤</span>
+                                            <span class="foto-text">Sin foto</span>
+                                        </div>
+                                    </div>
+                                    <div class="foto-perfil-actions">
+                                        <label for="inputFotoPerfil" class="btn btn-secondary btn-sm">
+                                            📷 Cambiar Foto
+                                        </label>
+                                        <input type="file" id="inputFotoPerfil" accept="image/*" style="display: none;">
+                                        <button type="button" class="btn btn-secondary btn-sm" id="btnEliminarFoto" style="display: none;">
+                                            🗑️ Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                                <small class="form-help">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB</small>
+                            </div>
+
+                            <!-- Nombre Completo -->
+                            <div class="form-group">
+                                <label for="perfilNombreCompleto">Nombre Completo *</label>
+                                <input 
+                                    type="text" 
+                                    id="perfilNombreCompleto" 
+                                    name="nombre_completo"
+                                    placeholder="Ingresa tu nombre completo"
+                                    required
+                                >
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="perfilEmail">Email</label>
+                                <input 
+                                    type="email" 
+                                    id="perfilEmail" 
+                                    name="email"
+                                    placeholder="tu@email.com"
+                                >
+                            </div>
+
+                            <!-- Teléfono -->
+                            <div class="form-group">
+                                <label for="perfilTelefono">Teléfono</label>
+                                <input 
+                                    type="tel" 
+                                    id="perfilTelefono" 
+                                    name="telefono"
+                                    placeholder="1234567890"
+                                >
+                            </div>
+
+                            <!-- Información de Usuario (solo lectura) -->
+                            <div class="form-group">
+                                <label>Usuario</label>
+                                <input 
+                                    type="text" 
+                                    id="perfilUsuario" 
+                                    value="{{ session.usuario }}"
+                                    readonly
+                                    class="input-readonly"
+                                >
+                                <small class="form-help">El nombre de usuario no se puede cambiar</small>
+                            </div>
+
+                            <!-- Rol (solo lectura) -->
+                            <div class="form-group">
+                                <label>Rol</label>
+                                <input 
+                                    type="text" 
+                                    id="perfilRol" 
+                                    value="Administrador"
+                                    readonly
+                                    class="input-readonly"
+                                >
+                            </div>
+
+                            <!-- Botones de Acción -->
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="btnCancelarPerfil">Cancelar</button>
+                                <button type="submit" class="btn btn-primary" id="btnGuardarPerfil">
+                                    <span class="btn-text">💾 Guardar Cambios</span>
+                                    <span class="btn-loader" style="display: none;">⏳</span>
+                                </button>
+                            </div>
+                        </form>
+                        <div id="resultadoPerfil" class="resultado"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-configuracion" class="admin-section hidden">
+                <h2>🔧 Configuración</h2>
+                <div class="content-card">
+                    <p>Opciones de configuración próximamente...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Agregar/Editar Asistente -->
+    <div id="modalAsistenteAdmin" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalAsistenteTitulo">➕ Registrar Nuevo Asistente</h2>
+                <button class="modal-close" id="cerrarModalAsistenteAdmin">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formAsistenteAdmin" novalidate>
+                    <div class="form-group">
+                        <label for="asistenteNombreAdmin">Nombre Completo *</label>
+                        <input 
+                            type="text" 
+                            id="asistenteNombreAdmin" 
+                            required 
+                            placeholder="Ej. Juan Pérez García"
+                            maxlength="100"
+                        >
+                        <small class="form-error" id="errorNombreAsistenteAdmin"></small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group form-col">
+                            <label for="asistenteEmailAdmin">Email</label>
+                            <input 
+                                type="email" 
+                                id="asistenteEmailAdmin" 
+                                placeholder="ejemplo@correo.com"
+                                maxlength="100"
+                            >
+                            <small class="form-help">Opcional</small>
+                        </div>
+                        <div class="form-group form-col">
+                            <label for="asistenteTelefonoAdmin">Teléfono</label>
+                            <input 
+                                type="text" 
+                                id="asistenteTelefonoAdmin" 
+                                placeholder="Ej. 8441234567"
+                                maxlength="20"
+                            >
+                            <small class="form-help">Opcional</small>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="btnCancelarAsistenteAdmin">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardarAsistenteAdmin">
+                            <span class="btn-text">Registrar Asistente</span>
+                            <span class="btn-loader" style="display: none;">⏳</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar/Editar Producto -->
+    <div id="modalProductoAdmin" class="modal">
+        <div class="modal-content modal-producto">
+            <div class="modal-header">
+                <h2 id="modalProductoTitulo">➕ Agregar Nuevo Producto</h2>
+                <button class="modal-close" id="cerrarModalProductoAdmin">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formProductoAdmin" novalidate>
+                    <input type="hidden" id="productoIdAdmin" value="">
+                    
+                    <!-- Nombre del Producto -->
+                    <div class="form-group">
+                        <label for="productoNombreAdmin">Nombre del Producto *</label>
+                        <input 
+                            type="text" 
+                            id="productoNombreAdmin" 
+                            required 
+                            placeholder="Ej. Hamburguesa Clásica"
+                            maxlength="100"
+                        >
+                        <small class="form-error" id="errorNombreAdmin"></small>
+                    </div>
+                    
+                    <!-- Categoría y Punto de Venta en fila -->
+                    <div class="form-row">
+                        <div class="form-group form-col">
+                            <label for="productoTipoAdmin">Categoría *</label>
+                            <select id="productoTipoAdmin" required>
+                                <option value="">Seleccione una categoría</option>
+                                <option value="restaurante">🍽️ Restaurante</option>
+                                <option value="cafeteria">☕ Cafetería</option>
+                                <option value="souvenirs">🎁 Souvenirs</option>
+                                <option value="estacionamiento">🅿️ Estacionamiento</option>
+                                <option value="bebida">🥤 Bebida</option>
+                                <option value="comida">🍕 Comida</option>
+                                <option value="postre">🍰 Postre</option>
+                                <option value="snack">🍿 Snack</option>
+                                <option value="ropa">👕 Ropa</option>
+                                <option value="otro">📦 Otros</option>
+                            </select>
+                            <small class="form-error" id="errorTipoAdmin"></small>
+                        </div>
+                        <div class="form-group form-col">
+                            <label for="productoPuntoVentaAdmin">Punto de Venta</label>
+                            <select id="productoPuntoVentaAdmin">
+                                <option value="">Seleccione un punto de venta</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Precio y Estado en fila -->
+                    <div class="form-row">
+                        <div class="form-group form-col">
+                            <label for="productoPrecioAdmin">Precio (MXN) *</label>
+                            <div class="input-with-icon">
+                                <span class="input-icon">$</span>
+                                <input 
+                                    type="number" 
+                                    id="productoPrecioAdmin" 
+                                    step="0.01" 
+                                    min="0.01" 
+                                    required 
+                                    placeholder="0.00"
+                                >
+                            </div>
+                            <small class="form-error" id="errorPrecioAdmin"></small>
+                        </div>
+                        <div class="form-group form-col">
+                            <label>Estado</label>
+                            <div class="switch-container">
+                                <label class="switch">
+                                    <input type="checkbox" id="productoActivoAdmin" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="switch-label" id="switchLabelAdmin">Activo</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Descripción -->
+                    <div class="form-group">
+                        <label for="productoDescripcionAdmin">Descripción (opcional)</label>
+                        <textarea 
+                            id="productoDescripcionAdmin" 
+                            rows="3" 
+                            placeholder="Ej. Porción individual, incluye bebida, ingredientes especiales..."
+                            maxlength="500"
+                        ></textarea>
+                        <small class="char-count"><span id="charCountAdmin">0</span>/500 caracteres</small>
+                    </div>
+                    
+                    <!-- Imagen del Producto -->
+                    <div class="form-group">
+                        <label for="productoImagenUrlAdmin">Imagen del Producto (opcional)</label>
+                        <div class="imagen-upload-container">
+                            <input 
+                                type="url" 
+                                id="productoImagenUrlAdmin" 
+                                placeholder="https://ejemplo.com/imagen.jpg"
+                                pattern="https?://.*"
+                            >
+                            <button type="button" class="btn btn-secondary btn-small" id="btnPreviewImagenAdmin">
+                                Ver Preview
+                            </button>
+                        </div>
+                        <div class="imagen-preview-container" id="productoImagenPreviewContainerAdmin">
+                            <div class="imagen-preview-placeholder" id="productoImagenPreviewAdmin">
+                                <span class="preview-icon">🖼️</span>
+                                <span class="preview-text">Sin imagen</span>
+                            </div>
+                        </div>
+                        <small class="form-help">Ingresa la URL de una imagen. Se recomienda usar imágenes 1:1 o 4:3 para evitar distorsión.</small>
+                    </div>
+                    
+                    <!-- Opción para agregar otro -->
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="productoAgregarOtroAdmin">
+                            <span>Agregar otro producto después de guardar</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Acciones -->
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="btnCancelarProductoAdmin">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardarProductoAdmin">
+                            <span class="btn-text">Agregar Producto</span>
+                            <span class="btn-loader" style="display: none;">⏳</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <!-- SOLO ADMIN BASE - SIN FUNCIONALIDAD COMPLEJA -->
+    <script src="{{ url_for('static', filename='js/admin-base.js') }}"></script>
+    <script>
+        // Script mínimo - solo verificación
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[HTML] DOM cargado, admin-base.js debería estar inicializado');
+        });
+    </script>
+</body>
+</html>

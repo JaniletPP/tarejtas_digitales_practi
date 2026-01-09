@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Tarjetas Inteligentes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                    <h1>🏃 Sistema de Tarjetas Inteligentes</h1>
+                    <p class="subtitle">Evento Deportivo Sierra de Arteaga</p>
+                </div>
+                <div style="text-align: right; color: white;">
+                    <p style="margin-bottom: 5px;">Usuario: <strong>{{ session.usuario }}</strong></p>
+                    <p style="margin-bottom: 10px;">Rol: <strong>{{ session.rol }}</strong></p>
+                    <a href="{{ url_for('auth.logout') }}" style="color: white; text-decoration: underline;">Cerrar Sesión</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Sección 1: Registrar Asistente -->
+            <section class="card">
+                <h2>📝 Registrar Asistente</h2>
+                <form id="formRegistrarAsistente">
+                    <div class="form-group">
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" id="telefono" name="telefono">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                </form>
+                <div id="resultadoRegistrar" class="resultado"></div>
+            </section>
+
+            <!-- Sección 2: Asignar Tarjeta -->
+            <section class="card">
+                <h2>💳 Asignar Tarjeta</h2>
+                <form id="formAsignarTarjeta">
+                    <div class="form-group">
+                        <label for="asistente_id">ID del Asistente *</label>
+                        <input type="number" id="asistente_id" name="asistente_id" required>
+                        <small>Ingresa el ID del asistente registrado</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Asignar Tarjeta</button>
+                </form>
+                <div id="resultadoAsignar" class="resultado"></div>
+            </section>
+
+            <!-- Sección 3: Recargar Saldo -->
+            <section class="card">
+                <h2>💰 Recargar Saldo</h2>
+                <form id="formRecargarSaldo">
+                    <div class="form-group">
+                        <label for="numero_tarjeta_recarga">Número de Tarjeta *</label>
+                        <input type="text" id="numero_tarjeta_recarga" name="numero_tarjeta" placeholder="TARJ-XXXXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="monto_recarga">Monto *</label>
+                        <input type="number" id="monto_recarga" name="monto" step="0.01" min="0.01" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Recargar</button>
+                </form>
+                <div id="resultadoRecargar" class="resultado"></div>
+            </section>
+
+            <!-- Sección 4: Consultar Saldo -->
+            <section class="card">
+                <h2>🔍 Consultar Saldo</h2>
+                <form id="formConsultarSaldo">
+                    <div class="form-group">
+                        <label for="numero_tarjeta_consulta">Número de Tarjeta *</label>
+                        <input type="text" id="numero_tarjeta_consulta" name="numero_tarjeta" placeholder="TARJ-XXXXXX" required>
+                    </div>
+                    <button type="submit" class="btn btn-info">Consultar</button>
+                </form>
+                <div id="resultadoConsulta" class="resultado"></div>
+            </section>
+
+            <!-- Sección 5: Ver Código QR -->
+            <section class="card">
+                <h2>📱 Código QR de Tarjeta</h2>
+                <form id="formVerQR">
+                    <div class="form-group">
+                        <label for="numero_tarjeta_qr">Número de Tarjeta *</label>
+                        <input type="text" id="numero_tarjeta_qr" name="numero_tarjeta" placeholder="TARJ-XXXXXX" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Generar QR</button>
+                </form>
+                <div id="resultadoQR" class="resultado"></div>
+            </section>
+
+            <!-- Sección 6: Historial de Transacciones -->
+            <section class="card">
+                <h2>📋 Historial de Transacciones</h2>
+                <form id="formHistorial">
+                    <div class="form-group">
+                        <label for="numero_tarjeta_historial">Número de Tarjeta *</label>
+                        <input type="text" id="numero_tarjeta_historial" name="numero_tarjeta" placeholder="TARJ-XXXXXX" required>
+                    </div>
+                    <button type="submit" class="btn btn-info">Ver Historial</button>
+                </form>
+                <div id="resultadoHistorial" class="resultado"></div>
+            </section>
+        </div>
+
+        <!-- Sección de Lista de Asistentes -->
+        <section class="card full-width">
+            <h2>👥 Asistentes Registrados</h2>
+            <button type="button" id="btnListarAsistentes" class="btn btn-secondary">Cargar Lista</button>
+            <div id="listaAsistentes" class="resultado"></div>
+        </section>
+    </div>
+
+    <!-- Contenedor de notificaciones toast -->
+    <div id="toast-container"></div>
+
+    <!-- Modal para Historial de Transacciones -->
+    <div id="modalHistorial" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Historial de Transacciones</h2>
+                <button class="modal-close" id="cerrarModalHistorial">&times;</button>
+            </div>
+            <div class="modal-body" id="modalHistorialBody">
+                <!-- Contenido del historial se carga aquí -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

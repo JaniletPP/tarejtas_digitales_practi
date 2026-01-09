@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recargas - Sistema de Tarjetas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recargas.css') }}">
+</head>
+<body>
+    <div class="recargas-container">
+        <header class="recargas-header">
+            <div class="recargas-header-content">
+                <h1>💰 Estación de Recargas</h1>
+                <div class="recargas-user-info">
+                    <span>{{ session.usuario }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="btn-logout">Salir</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="recargas-main">
+            <div class="recargas-grid">
+                <!-- Recargar Saldo -->
+                <div class="recargas-card">
+                    <h2>💵 Recargar Saldo</h2>
+                    <form id="formRecargarRecargas">
+                        <div class="form-group">
+                            <label>Número de Tarjeta *</label>
+                            <div class="input-tarjeta-container">
+                                <input 
+                                    type="text" 
+                                    id="numero_tarjeta_recarga_estacion" 
+                                    class="input-large"
+                                    placeholder="TARJ-XXXXXX o escanear QR"
+                                    autofocus
+                                    required
+                                >
+                                <button 
+                                    type="button" 
+                                    id="btnScanQRRecarga" 
+                                    class="btn btn-scan-qr"
+                                    title="Escanear código QR"
+                                >
+                                    📷
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Monto a Recargar *</label>
+                            <input 
+                                type="number" 
+                                id="monto_recarga_estacion" 
+                                step="0.01" 
+                                min="0.01" 
+                                required
+                            >
+                        </div>
+                        <button type="submit" class="btn btn-success btn-large">Recargar Saldo</button>
+                    </form>
+                    <div id="resultadoRecargaEstacion" class="resultado"></div>
+                </div>
+
+                <!-- Consultar Saldo -->
+                <div class="recargas-card">
+                    <h2>🔍 Consultar Saldo</h2>
+                    <form id="formConsultarRecargas">
+                        <div class="form-group">
+                            <label>Número de Tarjeta *</label>
+                            <div class="input-tarjeta-container">
+                                <input 
+                                    type="text" 
+                                    id="numero_tarjeta_consulta_estacion" 
+                                    class="input-large"
+                                    placeholder="TARJ-XXXXXX o escanear QR"
+                                    required
+                                >
+                                <button 
+                                    type="button" 
+                                    id="btnScanQRConsulta" 
+                                    class="btn btn-scan-qr"
+                                    title="Escanear código QR"
+                                >
+                                    📷
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-info btn-large">Consultar</button>
+                    </form>
+                    <div id="resultadoConsultaEstacion" class="resultado"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para Escanear QR -->
+    <div id="modalScanQR" class="modal-qr">
+        <div class="modal-qr-content">
+            <div class="modal-qr-header">
+                <h2>📷 Escanear Código QR</h2>
+                <button class="modal-qr-close" id="cerrarModalScanQR">&times;</button>
+            </div>
+            <div class="modal-qr-body">
+                <div id="qr-reader" style="width: 100%;"></div>
+                <div id="qr-reader-status" class="qr-status"></div>
+                <div class="qr-instructions">
+                    <p>📱 Apunta la cámara hacia el código QR de la tarjeta</p>
+                    <p class="qr-hint">Asegúrate de tener buena iluminación</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/recargas.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Tarjeta - Sistema de Tarjetas Inteligentes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cliente.css') }}">
+</head>
+<body>
+    <div class="cliente-container">
+        <header class="cliente-header">
+            <h1>💳 Mi Tarjeta Inteligente</h1>
+            <p class="cliente-subtitle">Evento Deportivo Sierra de Arteaga</p>
+        </header>
+
+        <main class="cliente-main">
+            <!-- Sección de búsqueda -->
+            <div class="cliente-card">
+                <h2>🔍 Consultar Mi Tarjeta</h2>
+                <p class="cliente-instructions">
+                    Escanea tu código QR o ingresa el número de tu tarjeta
+                </p>
+                <form id="formClienteTarjeta">
+                    <div class="form-group">
+                        <input 
+                            type="text" 
+                            id="numero_tarjeta_cliente" 
+                            class="cliente-input"
+                            placeholder="TARJ-XXXXXX o escanea QR"
+                            autofocus
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-large">
+                        Consultar
+                    </button>
+                </form>
+            </div>
+
+            <!-- Información de la tarjeta -->
+            <div id="infoTarjetaCliente" class="cliente-card" style="display: none;">
+                <div class="tarjeta-header">
+                    <h2 id="tarjetaNumero">-</h2>
+                    <button class="btn-icon" id="btnCerrarInfo" title="Cerrar">×</button>
+                </div>
+                
+                <div class="tarjeta-info">
+                    <div class="info-item">
+                        <span class="info-label">Asistente:</span>
+                        <span class="info-value" id="tarjetaAsistente">-</span>
+                    </div>
+                    <div class="info-item saldo-item">
+                        <span class="info-label">Saldo Disponible:</span>
+                        <span class="info-value saldo-value" id="tarjetaSaldo">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="tarjeta-acciones">
+                    <button class="btn btn-secondary" id="btnVerQR">
+                        📱 Ver Mi QR
+                    </button>
+                    <button class="btn btn-info" id="btnVerHistorial">
+                        📜 Ver Historial
+                    </button>
+                </div>
+            </div>
+
+            <!-- Código QR -->
+            <div id="qrCliente" class="cliente-card" style="display: none;">
+                <div class="qr-header">
+                    <h3>Mi Código QR</h3>
+                    <button class="btn-icon" id="btnCerrarQR" title="Cerrar">×</button>
+                </div>
+                <div class="qr-content">
+                    <img id="qrImageCliente" src="" alt="Código QR" class="qr-image">
+                    <p class="qr-instructions">
+                        Presenta este código QR en los puntos de venta para realizar pagos
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para Historial -->
+    <div id="modalHistorialCliente" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📜 Mi Historial de Transacciones</h2>
+                <button class="modal-close" id="cerrarModalHistorialCliente">&times;</button>
+            </div>
+            <div class="modal-body" id="modalHistorialClienteBody">
+                <!-- Contenido del historial se carga aquí -->
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/cliente.js') }}"></script>
+</body>
+</html>

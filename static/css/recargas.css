@@ -1,0 +1,260 @@
+/* ============================================
+   ESTILOS PARA ESTACIÓN DE RECARGAS
+   Diseño unificado - Saltillo, Coahuila
+   ============================================ */
+
+:root {
+    --primary-blue: #1A3A5F;
+    --accent-blue: #2E5984;
+    --light-blue: #4A90A4;
+    --pino: #4A7C2A;
+    --white: #FFFFFF;
+    --gray-light: #F5F0E8;
+    --border: #DEE2E6;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recargas-container {
+    min-height: 100vh;
+    background: var(--gray-light);
+}
+
+.recargas-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+    color: white;
+    padding: 15px 20px;
+    box-shadow: var(--shadow);
+}
+
+.recargas-header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.recargas-header h1 {
+    margin: 0;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.recargas-user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.recargas-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.recargas-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.recargas-card {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.recargas-card h2 {
+    color: var(--accent-blue);
+    margin-bottom: 20px;
+    font-size: 1.3em;
+    font-weight: 600;
+    border-bottom: 2px solid var(--light-blue);
+    padding-bottom: 10px;
+}
+
+.input-large {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    text-align: center;
+    letter-spacing: 1px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-large:focus {
+    outline: none;
+    border-color: var(--light-blue);
+    box-shadow: 0 0 0 3px rgba(74, 144, 164, 0.1);
+}
+
+.btn-large {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Tablet y Desktop */
+@media (min-width: 768px) {
+    .recargas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .recargas-header h1 {
+        font-size: 2em;
+    }
+}
+
+/* Contenedor de input con botón de escaneo */
+.input-tarjeta-container {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.input-tarjeta-container .input-large {
+    flex: 1;
+}
+
+.btn-scan-qr {
+    padding: 15px 20px;
+    font-size: 1.2em;
+    background: var(--accent-blue);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    flex-shrink: 0;
+}
+
+.btn-scan-qr:hover {
+    background: var(--light-blue);
+}
+
+/* Modal para Escanear QR */
+.modal-qr {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-qr-content {
+    background-color: white;
+    border-radius: 12px;
+    padding: 0;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-qr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    background: linear-gradient(135deg, var(--accent-blue) 0%, var(--light-blue) 100%);
+    color: white;
+}
+
+.modal-qr-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.modal-qr-close {
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.modal-qr-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.modal-qr-body {
+    padding: 20px;
+}
+
+#qr-reader {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.qr-status {
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+}
+
+.qr-instructions {
+    text-align: center;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.qr-instructions p {
+    margin: 5px 0;
+    color: #495057;
+}
+
+.qr-hint {
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .modal-qr-content {
+        width: 95%;
+        max-height: 85vh;
+    }
+    
+    .modal-qr-header h2 {
+        font-size: 1.2em;
+    }
+    
+    #qr-reader {
+        margin-bottom: 10px;
+    }
+    
+    .input-tarjeta-container {
+        flex-direction: column;
+    }
+    
+    .btn-scan-qr {
+        width: 100%;
+    }
+}

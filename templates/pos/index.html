@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de Venta - Sistema de Tarjetas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pos.css') }}">
+</head>
+<body>
+    <div class="pos-container">
+        <header class="pos-header">
+            <div class="pos-header-content">
+                <h1>🛒 Punto de Venta</h1>
+                <div class="pos-user-info">
+                    <span>{{ session.usuario }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="btn-logout">Salir</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="pos-main">
+            <div class="pos-grid">
+                <!-- Panel izquierdo: Escaneo y productos -->
+                <div class="pos-left">
+                    <div class="pos-card">
+                        <h2>📱 Escanear Tarjeta</h2>
+                        <form id="formScanPOS">
+                            <div class="form-group">
+                                <label for="numero_tarjeta_pos" class="input-label">
+                                    Número de Tarjeta
+                                </label>
+                                <div class="input-tarjeta-container">
+                                    <input 
+                                        type="text" 
+                                        id="numero_tarjeta_pos" 
+                                        class="pos-input-large"
+                                        placeholder="TARJ-XXXXXX"
+                                        autofocus
+                                        required
+                                    >
+                                    <button 
+                                        type="button" 
+                                        id="btnScanQR" 
+                                        class="btn btn-scan-qr"
+                                        title="Escanear código QR"
+                                        aria-label="Escanear código QR"
+                                    >
+                                        📷
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-buscar">🔍 Buscar Tarjeta</button>
+                        </form>
+                        <div id="infoTarjetaPOS" class="pos-info-card"></div>
+                    </div>
+
+                    <div class="pos-card">
+                        <h2>🛍️ Seleccionar Producto</h2>
+                        <div id="mensajeSinTarjeta" class="mensaje-sin-tarjeta" style="display: none;">
+                            <div class="mensaje-icono">⚠️</div>
+                            <div class="mensaje-texto">
+                                <strong>Primero debe escanear o ingresar una tarjeta válida</strong>
+                                <p>Los productos estarán disponibles después de validar la tarjeta</p>
+                            </div>
+                        </div>
+                        <div id="productosContainer" style="display: none;">
+                            <div class="filtros-productos">
+                                <label for="filtroTipo">Filtrar por tipo:</label>
+                                <select id="filtroTipo" class="filtro-select">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                            <div class="productos-grid" id="productosGrid">
+                                <!-- Productos se cargan dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel derecho: Carrito y total -->
+                <div class="pos-right">
+                    <div class="pos-card">
+                        <h2>🛒 Carrito de Compras</h2>
+                        <div id="carritoPOS" class="carrito-container">
+                            <p class="carrito-vacio">No hay productos en el carrito</p>
+                        </div>
+                        <div class="carrito-total">
+                            <div class="total-line">
+                                <span>Subtotal:</span>
+                                <span id="subtotalPOS">$0.00</span>
+                            </div>
+                            <div class="total-line total-final">
+                                <span>Total:</span>
+                                <span id="totalPOS">$0.00</span>
+                            </div>
+                            <button id="btnProcesarPago" class="btn btn-success btn-large" disabled>
+                                Procesar Pago
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Confirmación de Pago -->
+    <div id="modalConfirmarPago" class="modal">
+        <div class="modal-content modal-confirmacion">
+            <div class="modal-header">
+                <h2>✅ Confirmar Pago</h2>
+                <button class="modal-close" id="cerrarModalConfirmar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirmacion-resumen">
+                    <div class="confirmacion-item">
+                        <span class="confirmacion-label">Tarjeta:</span>
+                        <span class="confirmacion-value" id="confirmTarjeta">-</span>
+                    </div>
+                    <div class="confirmacion-item">
+                        <span class="confirmacion-label">Asistente:</span>
+                        <span class="confirmacion-value" id="confirmAsistente">-</span>
+                    </div>
+                    <div class="confirmacion-item">
+                        <span class="confirmacion-label">Saldo Actual:</span>
+                        <span class="confirmacion-value" id="confirmSaldoActual">-</span>
+                    </div>
+                    <div class="confirmacion-divider"></div>
+                    <div class="confirmacion-productos" id="confirmProductos">
+                        <!-- Productos se cargan dinámicamente -->
+                    </div>
+                    <div class="confirmacion-divider"></div>
+                    <div class="confirmacion-item confirmacion-total">
+                        <span class="confirmacion-label">Total a Pagar:</span>
+                        <span class="confirmacion-value" id="confirmTotal">-</span>
+                    </div>
+                    <div class="confirmacion-item">
+                        <span class="confirmacion-label">Saldo Después:</span>
+                        <span class="confirmacion-value" id="confirmSaldoDespues">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="btnCancelarPago">Cancelar</button>
+                <button type="button" class="btn btn-success btn-large" id="btnConfirmarPago">
+                    <span class="btn-text">Confirmar Pago</span>
+                    <span class="btn-loader" style="display: none;">⏳</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Escanear QR -->
+    <div id="modalScanQR" class="modal-qr">
+        <div class="modal-qr-content">
+            <div class="modal-qr-header">
+                <h2>📷 Escanear Código QR</h2>
+                <button class="modal-qr-close" id="cerrarModalScanQR">&times;</button>
+            </div>
+            <div class="modal-qr-body">
+                <div id="qr-reader" style="width: 100%;"></div>
+                <div id="qr-reader-status" class="qr-status"></div>
+                <div class="qr-instructions">
+                    <p>📱 Apunta la cámara hacia el código QR de la tarjeta</p>
+                    <p class="qr-hint">Asegúrate de tener buena iluminación</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pos.js') }}"></script>
+</body>
+</html>

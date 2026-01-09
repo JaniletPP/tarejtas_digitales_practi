@@ -1,0 +1,405 @@
+/* ============================================
+   ESTILOS PARA VISTA DEL CLIENTE
+   Diseño unificado - Saltillo, Coahuila
+   ============================================ */
+
+:root {
+    --primary-blue: #1A3A5F;
+    --accent-blue: #2E5984;
+    --pino: #4A7C2A;
+    --pino-claro: #6B9F3D;
+    --white: #FFFFFF;
+    --gray-light: #F5F0E8;
+    --border: #DEE2E6;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cliente-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--pino) 100%);
+    padding: 20px;
+}
+
+.cliente-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+    padding-top: 20px;
+}
+
+.cliente-header h1 {
+    font-size: 2em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    font-weight: 600;
+}
+
+.cliente-subtitle {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+.cliente-main {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cliente-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border: 1px solid var(--border);
+}
+
+.cliente-card h2 {
+    color: var(--accent-blue);
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.cliente-instructions {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-size: 0.95em;
+}
+
+.cliente-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    text-align: center;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.cliente-input:focus {
+    outline: none;
+    border-color: var(--pino);
+    box-shadow: 0 0 0 3px rgba(74, 124, 42, 0.1);
+}
+
+.btn-large {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    margin-top: 10px;
+}
+
+/* Información de tarjeta */
+.tarjeta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--pino);
+}
+
+.tarjeta-header h2 {
+    margin: 0;
+    color: var(--accent-blue);
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background: var(--gray-light);
+    color: var(--accent-blue);
+}
+
+.tarjeta-info {
+    margin-bottom: 25px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item.saldo-item {
+    background: var(--gray-light);
+    padding: 20px;
+    border-radius: 6px;
+    margin-top: 10px;
+    border: 2px solid var(--pino-claro);
+}
+
+.info-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.info-value {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.saldo-value {
+    font-size: 2em;
+    color: var(--pino);
+    font-weight: bold;
+}
+
+.tarjeta-acciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Código QR */
+.qr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border);
+}
+
+.qr-header h3 {
+    margin: 0;
+    color: var(--accent-blue);
+    font-weight: 600;
+}
+
+.qr-content {
+    text-align: center;
+}
+
+.qr-image {
+    max-width: 100%;
+    width: 300px;
+    height: auto;
+    border: 3px solid var(--pino);
+    border-radius: 10px;
+    padding: 15px;
+    background: white;
+    margin-bottom: 15px;
+    aspect-ratio: 1;
+    object-fit: contain;
+}
+
+.qr-instructions {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin-top: 15px;
+}
+
+/* Modal para historial (reutiliza estilos del modal existente) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideDown 0.3s;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 2px solid var(--pino);
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--pino) 100%);
+    color: white;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: white;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 25px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-info {
+    background: var(--gray-light);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.modal-info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-info-item strong {
+    color: var(--accent-blue);
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.modal-info-item span {
+    font-size: 1.1em;
+    color: var(--text-primary);
+}
+
+.modal-table-container {
+    overflow-x: auto;
+}
+
+.modal table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0;
+}
+
+.modal table th {
+    background: var(--accent-blue);
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.modal table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal table tr:hover {
+    background: var(--gray-light);
+}
+
+.modal table tr:last-child td {
+    border-bottom: none;
+}
+
+.tipo-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.85em;
+}
+
+.tipo-badge.recarga {
+    background: #d4edda;
+    color: #155724;
+}
+
+.tipo-badge.pago {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .cliente-header h1 {
+        font-size: 2.5em;
+    }
+    
+    .cliente-card {
+        padding: 30px;
+    }
+    
+    .tarjeta-acciones {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
