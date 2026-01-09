@@ -53,6 +53,9 @@ window.cambiarSeccion = function cambiarSeccion(sectionName) {
     } else if (sectionName === 'reportes' || sectionName === 'reportes-ventas' || sectionName === 'reportes-transacciones') {
         // Cargar puntos de venta cuando se entra a reportes
         cargarPuntosVentaReportes();
+    } else if (sectionName === 'tarjetas') {
+        // Cargar asistentes sin tarjeta cuando se entra a la sección de tarjetas
+        inicializarModuloTarjetas();
     }
     
     // NO cambiar hash en la URL
@@ -800,6 +803,563 @@ function mostrarReporteTransacciones(datos) {
     });
     
     console.log('[Admin Base] Reporte de transacciones mostrado:', transacciones.length, 'registros');
+}
+
+// ============================================
+// MÓDULO DE TARJETAS - ASIGNACIÓN Y ESCANEO QR
+// ============================================
+let listaAsistentesTarjetas = [];
+let asistenteSeleccionadoTarjetas = null;
+let tarjetaEstadoTarjetas = null;
+let html5QrCodeTarjetas = null;
+let qrScannerActiveTarjetas = false;
+
+// Inicializar módulo de tarjetas
+async function inicializarModuloTarjetas() {
+    console.log('[Admin Base] Inicializando módulo de tarjetas...');
+    
+    // Cargar asistentes sin tarjeta
+    await cargarAsistentesSinTarjeta();
+    
+    // Inicializar búsqueda de asistentes
+    const buscarAsistente = document.getElementById('buscarAsistenteAdmin');
+    if (buscarAsistente) {
+        buscarAsistente.addEventListener('input', function(e) {
+            const termino = e.target.value.trim();
+            if (termino.length >= 2) {
+                const resultados = buscarAsistentesTarjetas(termino);
+                mostrarDropdownAsistentesTarjetas(resultados);
+            } else {
+                const dropdown = document.getElementById('asistenteDropdown');
+                if (dropdown) dropdown.classList.remove('show');
+            }
+        });
+    }
+    
+    // Inicializar verificación de tarjeta al escribir
+    const numeroTarjetaInput = document.getElementById('numero_tarjeta_admin');
+    if (numeroTarjetaInput) {
+        numeroTarjetaInput.addEventListener('input', function(e) {
+            const numero = e.target.value.trim().toUpperCase();
+            if (numero.length >= 4) {
+                verificarTarjetaAdmin(numero);
+            } else {
+                const estadoDiv = document.getElementById('tarjetaEstado');
+                if (estadoDiv) estadoDiv.style.display = 'none';
+            }
+        });
+    }
+    
+    // Inicializar botón de escanear QR
+    const btnScanQR = document.getElementById('btnScanQRTarjeta');
+    if (btnScanQR) {
+        btnScanQR.addEventListener('click', iniciarEscaneoQRTarjeta);
+    }
+    
+    // Inicializar botón de cerrar modal QR
+    const btnCerrarQR = document.getElementById('cerrarModalScanQRTarjeta');
+    if (btnCerrarQR) {
+        btnCerrarQR.addEventListener('click', detenerEscaneoQRTarjeta);
+    }
+    
+    // Cerrar modal QR al hacer clic fuera
+    const modalQR = document.getElementById('modalScanQRTarjeta');
+    if (modalQR) {
+        modalQR.addEventListener('click', function(e) {
+            if (e.target.id === 'modalScanQRTarjeta') {
+                detenerEscaneoQRTarjeta();
+            }
+        });
+    }
+    
+    // Inicializar formulario de asignación
+    const formAsignar = document.getElementById('formAsignarTarjetaAdmin');
+    if (formAsignar) {
+        formAsignar.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            await asignarTarjetaAdmin();
+        });
+    }
+    
+    // Inicializar botón limpiar
+    const btnLimpiar = document.getElementById('btnLimpiarFormulario');
+    if (btnLimpiar) {
+        btnLimpiar.addEventListener('click', limpiarFormularioTarjetas);
+    }
+    
+    // Inicializar botón clear asistente
+    const btnClearAsistente = document.getElementById('btnClearAsistente');
+    if (btnClearAsistente) {
+        btnClearAsistente.addEventListener('click', limpiarAsistenteSeleccionado);
+    }
+    
+    // Cerrar dropdown al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.asistente-selector-container')) {
+            const dropdown = document.getElementById('asistenteDropdown');
+            if (dropdown) dropdown.classList.remove('show');
+        }
+    });
+    
+    console.log('[Admin Base] Módulo de tarjetas inicializado');
+}
+
+// Cargar asistentes sin tarjeta
+async function cargarAsistentesSinTarjeta() {
+    try {
+        const { response, data, error } = await hacerPeticion('/api/asistentes/sin-tarjeta', { method: 'GET' });
+        if (error || !data.success) {
+            console.error('[Admin Base] Error cargando asistentes sin tarjeta:', error || data.error);
+            return;
+        }
+        listaAsistentesTarjetas = data.data || [];
+        console.log('[Admin Base] Asistentes sin tarjeta cargados:', listaAsistentesTarjetas.length);
+    } catch (error) {
+        console.error('[Admin Base] Error cargando asistentes:', error);
+    }
+}
+
+// Búsqueda de asistentes
+function buscarAsistentesTarjetas(termino) {
+    if (!termino || termino.length < 2) {
+        return [];
+    }
+    
+    const busqueda = termino.toLowerCase();
+    return listaAsistentesTarjetas.filter(asistente => {
+        const nombre = (asistente.nombre || '').toLowerCase();
+        const email = (asistente.email || '').toLowerCase();
+        const telefono = (asistente.telefono || '').toLowerCase();
+        const id = String(asistente.id || '');
+        
+        return nombre.includes(busqueda) || 
+               email.includes(busqueda) || 
+               telefono.includes(busqueda) ||
+               id.includes(busqueda);
+    }).slice(0, 10);
+}
+
+// Mostrar dropdown de asistentes
+function mostrarDropdownAsistentesTarjetas(resultados) {
+    const dropdown = document.getElementById('asistenteDropdown');
+    if (!dropdown) return;
+    
+    if (resultados.length === 0) {
+        dropdown.innerHTML = '<div class="asistente-dropdown-empty">No se encontraron asistentes sin tarjeta</div>';
+        dropdown.classList.add('show');
+        return;
+    }
+    
+    dropdown.innerHTML = resultados.map(asistente => {
+        const contacto = asistente.email || asistente.telefono || 'Sin contacto';
+        const contactoLabel = asistente.email ? '📧 ' : asistente.telefono ? '📱 ' : '';
+        return `
+            <div class="asistente-dropdown-item" data-id="${asistente.id}">
+                <div class="asistente-dropdown-info">
+                    <span class="asistente-dropdown-nombre">${asistente.nombre}</span>
+                    <span class="asistente-dropdown-contacto">${contactoLabel}${contacto}</span>
+                </div>
+                <span class="asistente-dropdown-badge">Sin tarjeta</span>
+            </div>
+        `;
+    }).join('');
+    
+    dropdown.classList.add('show');
+    
+    // Agregar event listeners
+    dropdown.querySelectorAll('.asistente-dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const id = parseInt(item.getAttribute('data-id'));
+            seleccionarAsistenteTarjetas(id);
+        });
+    });
+}
+
+// Seleccionar asistente
+function seleccionarAsistenteTarjetas(asistenteId) {
+    const asistente = listaAsistentesTarjetas.find(a => a.id === asistenteId);
+    if (!asistente) return;
+    
+    asistenteSeleccionadoTarjetas = asistente;
+    
+    const dropdown = document.getElementById('asistenteDropdown');
+    const buscarInput = document.getElementById('buscarAsistenteAdmin');
+    const asistenteIdInput = document.getElementById('asistente_id_admin');
+    const asistenteNombreMostrar = document.getElementById('asistenteNombreMostrar');
+    const asistenteContactoMostrar = document.getElementById('asistenteContactoMostrar');
+    const asistenteSeleccionado = document.getElementById('asistenteSeleccionado');
+    
+    if (dropdown) dropdown.classList.remove('show');
+    if (buscarInput) buscarInput.style.display = 'none';
+    if (asistenteIdInput) asistenteIdInput.value = asistente.id;
+    if (asistenteNombreMostrar) asistenteNombreMostrar.textContent = asistente.nombre;
+    
+    const contacto = asistente.email || asistente.telefono || 'Sin contacto';
+    const contactoLabel = asistente.email ? '📧 ' : asistente.telefono ? '📱 ' : '';
+    if (asistenteContactoMostrar) asistenteContactoMostrar.textContent = contactoLabel + contacto;
+    if (asistenteSeleccionado) asistenteSeleccionado.style.display = 'flex';
+    
+    actualizarVistaPreviaTarjetas();
+}
+
+// Limpiar asistente seleccionado
+function limpiarAsistenteSeleccionado() {
+    asistenteSeleccionadoTarjetas = null;
+    
+    const buscarInput = document.getElementById('buscarAsistenteAdmin');
+    const asistenteIdInput = document.getElementById('asistente_id_admin');
+    const asistenteSeleccionado = document.getElementById('asistenteSeleccionado');
+    
+    if (buscarInput) {
+        buscarInput.value = '';
+        buscarInput.style.display = 'block';
+    }
+    if (asistenteIdInput) asistenteIdInput.value = '';
+    if (asistenteSeleccionado) asistenteSeleccionado.style.display = 'none';
+    
+    actualizarVistaPreviaTarjetas();
+}
+
+// Verificar tarjeta
+async function verificarTarjetaAdmin(numeroTarjeta) {
+    if (!numeroTarjeta || numeroTarjeta.length < 4) return;
+    
+    const numero = numeroTarjeta.trim().toUpperCase();
+    
+    if (!numero.match(/^TARJ-\d{6}$/)) {
+        const estadoDiv = document.getElementById('tarjetaEstado');
+        if (estadoDiv) {
+            estadoDiv.className = 'tarjeta-estado error';
+            estadoDiv.textContent = 'Formato inválido. Debe ser TARJ-XXXXXX';
+            estadoDiv.style.display = 'block';
+        }
+        tarjetaEstadoTarjetas = { existe: false, activa: false, asignada: false };
+        actualizarVistaPreviaTarjetas();
+        return;
+    }
+    
+    try {
+        const { response, data, error } = await hacerPeticion(`/api/tarjetas/verificar/${numero}`, {
+            method: 'GET'
+        });
+        
+        if (error) {
+            const estadoDiv = document.getElementById('tarjetaEstado');
+            if (estadoDiv) {
+                estadoDiv.className = 'tarjeta-estado error';
+                estadoDiv.textContent = 'Error al verificar tarjeta';
+                estadoDiv.style.display = 'block';
+            }
+            tarjetaEstadoTarjetas = null;
+            return;
+        }
+        
+        if (data.success) {
+            tarjetaEstadoTarjetas = data.data;
+            const estadoDiv = document.getElementById('tarjetaEstado');
+            
+            if (!estadoDiv) return;
+            
+            if (!tarjetaEstadoTarjetas.existe) {
+                estadoDiv.className = 'tarjeta-estado success';
+                estadoDiv.textContent = '✅ Tarjeta disponible. Puede ser asignada.';
+            } else if (tarjetaEstadoTarjetas.asignada && tarjetaEstadoTarjetas.activa) {
+                estadoDiv.className = 'tarjeta-estado warning';
+                estadoDiv.textContent = `⚠️ Tarjeta ya asignada a: ${tarjetaEstadoTarjetas.asistente_nombre || 'Otro asistente'}`;
+            } else if (!tarjetaEstadoTarjetas.activa) {
+                estadoDiv.className = 'tarjeta-estado info';
+                estadoDiv.textContent = 'ℹ️ Tarjeta inactiva. Se reactivará al asignar.';
+            } else {
+                estadoDiv.className = 'tarjeta-estado success';
+                estadoDiv.textContent = '✅ Tarjeta disponible';
+            }
+            
+            estadoDiv.style.display = 'block';
+            actualizarVistaPreviaTarjetas();
+        }
+    } catch (error) {
+        console.error('[Admin Base] Error verificando tarjeta:', error);
+        const estadoDiv = document.getElementById('tarjetaEstado');
+        if (estadoDiv) {
+            estadoDiv.className = 'tarjeta-estado error';
+            estadoDiv.textContent = 'Error al verificar tarjeta';
+            estadoDiv.style.display = 'block';
+        }
+    }
+}
+
+// Actualizar vista previa
+function actualizarVistaPreviaTarjetas() {
+    const vistaPrevia = document.getElementById('vistaPreviaAsignacion');
+    if (!vistaPrevia) return;
+    
+    if (!asistenteSeleccionadoTarjetas) {
+        vistaPrevia.style.display = 'none';
+        return;
+    }
+    
+    const numeroTarjeta = document.getElementById('numero_tarjeta_admin')?.value.trim().toUpperCase() || '';
+    
+    if (!numeroTarjeta) {
+        vistaPrevia.style.display = 'none';
+        return;
+    }
+    
+    vistaPrevia.style.display = 'block';
+    
+    const previewAsistente = document.getElementById('previewAsistente');
+    const previewContacto = document.getElementById('previewContacto');
+    const previewEstadoAsistente = document.getElementById('previewEstadoAsistente');
+    const previewTarjeta = document.getElementById('previewTarjeta');
+    const previewEstado = document.getElementById('previewEstado');
+    
+    if (previewAsistente) previewAsistente.textContent = asistenteSeleccionadoTarjetas.nombre;
+    
+    const contacto = asistenteSeleccionadoTarjetas.email || asistenteSeleccionadoTarjetas.telefono || 'Sin contacto';
+    const contactoLabel = asistenteSeleccionadoTarjetas.email ? '📧 ' : asistenteSeleccionadoTarjetas.telefono ? '📱 ' : '';
+    if (previewContacto) previewContacto.textContent = contactoLabel + contacto;
+    
+    if (previewEstadoAsistente) {
+        previewEstadoAsistente.textContent = '✅ Sin tarjeta asignada';
+        previewEstadoAsistente.className = 'preview-value success';
+    }
+    
+    if (previewTarjeta) previewTarjeta.textContent = numeroTarjeta;
+    
+    if (previewEstado && tarjetaEstadoTarjetas) {
+        if (!tarjetaEstadoTarjetas.existe) {
+            previewEstado.textContent = '✅ Disponible';
+            previewEstado.className = 'preview-value success';
+        } else if (tarjetaEstadoTarjetas.asignada && tarjetaEstadoTarjetas.activa) {
+            previewEstado.textContent = `⚠️ Asignada a: ${tarjetaEstadoTarjetas.asistente_nombre || 'Otro'}`;
+            previewEstado.className = 'preview-value warning';
+        } else if (!tarjetaEstadoTarjetas.activa) {
+            previewEstado.textContent = 'ℹ️ Inactiva (se reactivará)';
+            previewEstado.className = 'preview-value info';
+        } else {
+            previewEstado.textContent = '✅ Disponible';
+            previewEstado.className = 'preview-value success';
+        }
+    }
+}
+
+// Asignar tarjeta
+async function asignarTarjetaAdmin() {
+    const asistenteId = document.getElementById('asistente_id_admin')?.value;
+    const numeroTarjeta = document.getElementById('numero_tarjeta_admin')?.value.trim().toUpperCase();
+    
+    if (!asistenteId) {
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'Por favor selecciona un asistente');
+        } else {
+            alert('Por favor selecciona un asistente');
+        }
+        return;
+    }
+    
+    if (!numeroTarjeta || !numeroTarjeta.match(/^TARJ-\d{6}$/)) {
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'Por favor ingresa un número de tarjeta válido (TARJ-XXXXXX)');
+        } else {
+            alert('Por favor ingresa un número de tarjeta válido (TARJ-XXXXXX)');
+        }
+        return;
+    }
+    
+    // Verificar si la tarjeta ya está asignada a otro asistente
+    if (tarjetaEstadoTarjetas && tarjetaEstadoTarjetas.existe && tarjetaEstadoTarjetas.asignada && tarjetaEstadoTarjetas.activa) {
+        if (tarjetaEstadoTarjetas.asistente_id !== parseInt(asistenteId)) {
+            if (typeof showAlert === 'function') {
+                showAlert('error', `Esta tarjeta ya está asignada a: ${tarjetaEstadoTarjetas.asistente_nombre}`);
+            } else {
+                alert(`Esta tarjeta ya está asignada a: ${tarjetaEstadoTarjetas.asistente_nombre}`);
+            }
+            return;
+        }
+    }
+    
+    const btnAsignar = document.getElementById('btnAsignarTarjeta');
+    const btnText = btnAsignar?.querySelector('.btn-text');
+    const btnLoader = btnAsignar?.querySelector('.btn-loader');
+    
+    if (btnAsignar) {
+        btnAsignar.disabled = true;
+        if (btnText) btnText.style.display = 'none';
+        if (btnLoader) btnLoader.style.display = 'inline-block';
+    }
+    
+    try {
+        const { response, data, error } = await hacerPeticion('/api/tarjetas/asignar', {
+            method: 'POST',
+            body: JSON.stringify({
+                asistente_id: parseInt(asistenteId),
+                numero_tarjeta: numeroTarjeta
+            })
+        });
+        
+        if (error) {
+            if (typeof showAlert === 'function') {
+                showAlert('error', `Error: ${error}`);
+            } else {
+                alert(`Error: ${error}`);
+            }
+            return;
+        }
+        
+        if (response.ok && data.success) {
+            if (typeof showAlert === 'function') {
+                showAlert('success', `Tarjeta ${numeroTarjeta} asignada correctamente a ${asistenteSeleccionadoTarjetas?.nombre || 'el asistente'}`, 'Asignación Exitosa');
+            } else {
+                alert(`Tarjeta ${numeroTarjeta} asignada correctamente`);
+            }
+            
+            limpiarFormularioTarjetas();
+            await cargarAsistentesSinTarjeta();
+        } else {
+            const errorMsg = data?.error || 'Error al asignar la tarjeta';
+            if (typeof showAlert === 'function') {
+                showAlert('error', errorMsg);
+            } else {
+                alert(errorMsg);
+            }
+        }
+    } catch (error) {
+        console.error('[Admin Base] Error asignando tarjeta:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('error', `Error inesperado: ${error.message}`);
+        } else {
+            alert(`Error: ${error.message}`);
+        }
+    } finally {
+        if (btnAsignar) {
+            btnAsignar.disabled = false;
+            if (btnText) btnText.style.display = 'inline';
+            if (btnLoader) btnLoader.style.display = 'none';
+        }
+    }
+}
+
+// Limpiar formulario
+function limpiarFormularioTarjetas() {
+    limpiarAsistenteSeleccionado();
+    
+    const numeroTarjetaInput = document.getElementById('numero_tarjeta_admin');
+    const estadoDiv = document.getElementById('tarjetaEstado');
+    const vistaPrevia = document.getElementById('vistaPreviaAsignacion');
+    const resultadoDiv = document.getElementById('resultadoAsignarAdmin');
+    
+    if (numeroTarjetaInput) numeroTarjetaInput.value = '';
+    if (estadoDiv) estadoDiv.style.display = 'none';
+    if (vistaPrevia) vistaPrevia.style.display = 'none';
+    if (resultadoDiv) resultadoDiv.innerHTML = '';
+    
+    tarjetaEstadoTarjetas = null;
+}
+
+// Escanear QR de tarjeta
+async function iniciarEscaneoQRTarjeta() {
+    // Verificar que Html5Qrcode esté disponible
+    if (typeof Html5Qrcode === 'undefined') {
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'La librería de escaneo QR no está disponible');
+        } else {
+            alert('La librería de escaneo QR no está disponible');
+        }
+        return;
+    }
+    
+    const modal = document.getElementById('modalScanQRTarjeta');
+    const qrReader = document.getElementById('qr-reader-tarjeta');
+    const qrStatus = document.getElementById('qr-reader-status-tarjeta');
+    
+    if (!modal || !qrReader) {
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'No se encontró el modal de escaneo QR');
+        } else {
+            alert('No se encontró el modal de escaneo QR');
+        }
+        return;
+    }
+    
+    // Mostrar modal
+    modal.style.display = 'flex';
+    if (qrStatus) qrStatus.innerHTML = '<p>⏳ Iniciando cámara...</p>';
+    
+    try {
+        // Inicializar el escáner
+        html5QrCodeTarjetas = new Html5Qrcode("qr-reader-tarjeta");
+        
+        // Iniciar escaneo
+        await html5QrCodeTarjetas.start(
+            { facingMode: "environment" },
+            {
+                fps: 10,
+                qrbox: { width: 250, height: 250 }
+            },
+            (decodedText, decodedResult) => {
+                // QR escaneado exitosamente
+                detenerEscaneoQRTarjeta();
+                
+                // Validar formato
+                const numeroTarjeta = decodedText.trim().toUpperCase();
+                if (numeroTarjeta.match(/^TARJ-\d{6}$/)) {
+                    // Asignar al input
+                    const input = document.getElementById('numero_tarjeta_admin');
+                    if (input) {
+                        input.value = numeroTarjeta;
+                        // Disparar evento input para verificar tarjeta
+                        input.dispatchEvent(new Event('input'));
+                        
+                        if (typeof showAlert === 'function') {
+                            showAlert('success', `Tarjeta escaneada: ${numeroTarjeta}`, 'Escaneo Exitoso');
+                        } else {
+                            alert(`Tarjeta escaneada: ${numeroTarjeta}`);
+                        }
+                    }
+                } else {
+                    if (typeof showAlert === 'function') {
+                        showAlert('error', `Formato inválido: ${numeroTarjeta}. Debe ser TARJ-XXXXXX`);
+                    } else {
+                        alert(`Formato inválido: ${numeroTarjeta}. Debe ser TARJ-XXXXXX`);
+                    }
+                }
+            },
+            (errorMessage) => {
+                // Error al escanear (se ignora, es normal mientras busca)
+            }
+        );
+        
+        qrScannerActiveTarjetas = true;
+        if (qrStatus) qrStatus.innerHTML = '<p style="color: #28a745;">✅ Cámara activa - Escanea el código QR</p>';
+        
+    } catch (error) {
+        console.error('[Admin Base] Error iniciando escáner QR:', error);
+        if (qrStatus) qrStatus.innerHTML = `<p style="color: #dc3545;">❌ Error: ${error.message}</p>`;
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'No se pudo acceder a la cámara. Verifica los permisos.');
+        } else {
+            alert('No se pudo acceder a la cámara. Verifica los permisos.');
+        }
+    }
+}
+
+// Detener escaneo QR
+function detenerEscaneoQRTarjeta() {
+    if (html5QrCodeTarjetas && qrScannerActiveTarjetas) {
+        html5QrCodeTarjetas.stop().then(() => {
+            html5QrCodeTarjetas.clear();
+            qrScannerActiveTarjetas = false;
+        }).catch((err) => {
+            console.error('[Admin Base] Error deteniendo escáner:', err);
+        });
+    }
+    
+    const modal = document.getElementById('modalScanQRTarjeta');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 // ============================================

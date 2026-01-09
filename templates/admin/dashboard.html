@@ -218,7 +218,7 @@
                             <!-- Número de Tarjeta -->
                             <div class="form-group">
                                 <label>Número de Tarjeta *</label>
-                                <div class="tarjeta-input-container">
+                                <div class="tarjeta-input-container" style="display: flex; gap: 10px; align-items: center;">
                                     <input 
                                         type="text" 
                                         id="numero_tarjeta_admin" 
@@ -226,10 +226,14 @@
                                         required
                                         pattern="TARJ-[0-9]{6}"
                                         maxlength="11"
+                                        style="flex: 1;"
                                     >
+                                    <button type="button" class="btn btn-secondary" id="btnScanQRTarjeta" style="white-space: nowrap;">
+                                        📷 Escanear QR
+                                    </button>
                                 </div>
                                 <div id="tarjetaEstado" class="tarjeta-estado" style="display: none;"></div>
-                                <small class="form-help">Ingresa el número de tarjeta en formato TARJ-XXXXXX.</small>
+                                <small class="form-help">Ingresa el número de tarjeta en formato TARJ-XXXXXX o escanea el código QR.</small>
                             </div>
 
                             <!-- Vista Previa -->
@@ -880,7 +884,28 @@
     </div>
 
     <div id="toast-container"></div>
+    
+    <!-- Modal para Escanear QR (solo para módulo de Tarjetas) -->
+    <div id="modalScanQRTarjeta" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>📷 Escanear Código QR de Tarjeta</h2>
+                <button class="modal-close" id="cerrarModalScanQRTarjeta">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="qr-reader-tarjeta" style="width: 100%; min-height: 300px;"></div>
+                <div id="qr-reader-status-tarjeta" style="text-align: center; margin-top: 10px; color: #666;">
+                    <p>⏳ Iniciando cámara...</p>
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                    <small>💡 <strong>Consejo:</strong> Asegúrate de tener buena iluminación y mantener el código QR dentro del marco.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Scripts necesarios -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin-base.js') }}"></script>
     <script>
