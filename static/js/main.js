@@ -455,14 +455,18 @@ if (cerrarModalHistorial) {
 const modalHistorial = document.getElementById('modalHistorial');
 if (modalHistorial) {
     modalHistorial.addEventListener('click', (e) => {
-    if (e.target.id === 'modalHistorial') {
-        document.getElementById('modalHistorial').classList.remove('show');
-    }
-});
+        if (e.target.id === 'modalHistorial') {
+            document.getElementById('modalHistorial').classList.remove('show');
+        }
+    });
+}
 
 // Cerrar modal con tecla ESC
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        document.getElementById('modalHistorial').classList.remove('show');
+        const modal = document.getElementById('modalHistorial');
+        if (modal) {
+            modal.classList.remove('show');
+        }
     }
 });

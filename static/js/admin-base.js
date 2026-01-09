@@ -420,7 +420,30 @@ function inicializarAdminBase() {
                 console.log('[Admin Base] Botón Nuevo Producto inicializado');
             }
     
-    // 5. Inicializar botones de cerrar modales
+    // 5. Inicializar formularios de modales
+    const formAsistenteAdmin = document.getElementById('formAsistenteAdmin');
+    if (formAsistenteAdmin) {
+        const newForm = formAsistenteAdmin.cloneNode(true);
+        formAsistenteAdmin.parentNode.replaceChild(newForm, formAsistenteAdmin);
+        
+        newForm.addEventListener('submit', registrarAsistente, true);
+        console.log('[Admin Base] Formulario de asistente inicializado');
+    } else {
+        console.error('[Admin Base] No se encontró el formulario de asistente');
+    }
+
+    const formProductoAdmin = document.getElementById('formProductoAdmin');
+    if (formProductoAdmin) {
+        const newForm = formProductoAdmin.cloneNode(true);
+        formProductoAdmin.parentNode.replaceChild(newForm, formProductoAdmin);
+        
+        newForm.addEventListener('submit', registrarProducto, true);
+        console.log('[Admin Base] Formulario de producto inicializado');
+    } else {
+        console.error('[Admin Base] No se encontró el formulario de producto');
+    }
+    
+    // 6. Inicializar botones de cerrar modales
     const cerrarModalAsistente = document.getElementById('cerrarModalAsistenteAdmin');
     if (cerrarModalAsistente) {
         cerrarModalAsistente.addEventListener('click', function(e) {
@@ -460,7 +483,7 @@ function inicializarAdminBase() {
         console.log('[Admin Base] Botón Cancelar Producto inicializado');
     }
     
-            // 7. Cerrar modales al hacer clic fuera
+    // 7. Cerrar modales al hacer clic fuera
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
