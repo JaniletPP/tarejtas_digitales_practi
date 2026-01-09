@@ -444,6 +444,9 @@ function mostrarProductosAdmin() {
         return;
     }
     
+    // Obtener estado del filtro de disponibles
+    const mostrarNoDisponibles = document.getElementById('mostrarNoDisponibles')?.checked !== false;
+    
     // Filtrar productos
     let productosFiltrados = productosAdmin;
     
@@ -460,8 +463,13 @@ function mostrarProductosAdmin() {
         );
     }
     
+    // Filtro por disponibilidad
+    if (!mostrarNoDisponibles) {
+        productosFiltrados = productosFiltrados.filter(p => p.disponible);
+    }
+    
     if (productosFiltrados.length === 0) {
-        container.innerHTML = '<p class="info-message">No se encontraron productos con los filtros seleccionados.</p>';
+        container.innerHTML = '<div class="info-message"><p>No se encontraron productos con los filtros seleccionados.</p></div>';
         return;
     }
     
@@ -474,33 +482,50 @@ function mostrarProductosAdmin() {
         productosPorTipo[producto.tipo].push(producto);
     });
     
-    // Generar HTML
+    // Generar HTML con diseño mejorado
     let html = '';
-    Object.keys(productosPorTipo).forEach(tipo => {
-        html += `<div class="tipo-producto-section">
-            <h3>${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</h3>
-            <div class="productos-grid">`;
+    Object.keys(productosPorTipo).sort().forEach(tipo => {
+        const tipoCapitalizado = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+        html += `
+            <div class="tipo-producto-section">
+                <div class="tipo-producto-header">
+                    <h3>${tipoCapitalizado}</h3>
+                    <span class="tipo-producto-count">${productosPorTipo[tipo].length} producto(s)</span>
+                </div>
+                <div class="productos-grid-admin">
+        `;
         
         productosPorTipo[tipo].forEach(producto => {
-            const estado = producto.disponible ? '✅ Disponible' : '❌ No disponible';
+            const disponible = producto.disponible;
             const precio = parseFloat(producto.precio).toFixed(2);
+            const claseDisponible = disponible ? 'disponible' : 'no-disponible';
             
             html += `
-                <div class="producto-card">
-                    <div class="producto-header">
-                        <h4>${producto.nombre}</h4>
-                        <span class="producto-estado">${estado}</span>
+                <div class="producto-card-admin ${claseDisponible}">
+                    <div class="producto-card-header">
+                        <h4 class="producto-nombre">${producto.nombre}</h4>
+                        <span class="producto-badge ${disponible ? 'badge-success' : 'badge-danger'}">
+                            ${disponible ? '✓ Disponible' : '✗ No disponible'}
+                        </span>
                     </div>
-                    <div class="producto-info">
-                        <p><strong>Precio:</strong> $${precio}</p>
-                        <p><strong>ID:</strong> ${producto.id}</p>
-                        ${producto.punto_venta_id ? `<p><strong>Punto de Venta ID:</strong> ${producto.punto_venta_id}</p>` : ''}
+                    <div class="producto-card-body">
+                        <div class="producto-precio">
+                            <span class="precio-label">Precio:</span>
+                            <span class="precio-valor">$${precio}</span>
+                        </div>
+                        <div class="producto-meta">
+                            <span class="meta-item">ID: ${producto.id}</span>
+                            ${producto.punto_venta_id ? `<span class="meta-item">PV: ${producto.punto_venta_id}</span>` : ''}
+                        </div>
                     </div>
                 </div>
             `;
         });
         
-        html += `</div></div>`;
+        html += `
+                </div>
+            </div>
+        `;
     });
     
     container.innerHTML = html;
@@ -802,6 +827,16 @@ function inicializarAdminBase() {
                     mostrarProductosAdmin();
                 });
                 console.log('[Admin Base] Búsqueda de productos inicializada');
+            }
+            
+            const mostrarNoDisponibles = document.getElementById('mostrarNoDisponibles');
+            if (mostrarNoDisponibles) {
+                mostrarNoDisponibles.addEventListener('change', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    mostrarProductosAdmin();
+                });
+                console.log('[Admin Base] Filtro de disponibilidad inicializado');
             }
             
             // 9. Prevenir que formularios de reportes cambien de sección

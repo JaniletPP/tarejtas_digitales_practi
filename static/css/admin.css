@@ -1334,24 +1334,159 @@ input:checked + .slider:before {
 .productos-por-tipo {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 30px;
+    margin-top: 20px;
 }
 
-.tipo-producto-card {
-    margin-bottom: 0;
+.tipo-producto-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .tipo-producto-header {
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--accent-blue);
 }
 
 .tipo-producto-header h3 {
     margin: 0;
     color: var(--accent-blue);
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
+    text-transform: capitalize;
+}
+
+.tipo-producto-count {
+    color: var(--text-secondary);
+    font-size: 14px;
+    background: var(--gray-light);
+    padding: 4px 12px;
+    border-radius: 12px;
+}
+
+.productos-grid-admin {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.producto-card-admin {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.producto-card-admin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-color: var(--accent-blue);
+}
+
+.producto-card-admin.disponible {
+    border-left: 4px solid #28a745;
+}
+
+.producto-card-admin.no-disponible {
+    border-left: 4px solid #dc3545;
+    opacity: 0.7;
+}
+
+.producto-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.producto-nombre {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+    line-height: 1.3;
+}
+
+.producto-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.producto-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.producto-precio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.precio-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.precio-valor {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent-blue);
+}
+
+.producto-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    font-size: 11px;
+    color: var(--text-secondary);
+    background: var(--gray-light);
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.info-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+.info-message p {
+    margin: 0;
+    font-size: 16px;
 }
 
 .productos-tabla-container {
