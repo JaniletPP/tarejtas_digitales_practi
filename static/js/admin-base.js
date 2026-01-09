@@ -483,6 +483,103 @@ function inicializarAdminBase() {
         console.log('[Admin Base] Botón Cancelar Producto inicializado');
     }
     
+    // 6.5. Inicializar botón de cargar lista de asistentes
+    const btnCargarAsistentes = document.getElementById('btnCargarAsistentes');
+    if (btnCargarAsistentes) {
+        const newBtn = btnCargarAsistentes.cloneNode(true);
+        btnCargarAsistentes.parentNode.replaceChild(newBtn, btnCargarAsistentes);
+        
+        newBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            console.log('[Admin Base] Cargando lista de asistentes...');
+            
+            // Deshabilitar botón mientras carga
+            newBtn.disabled = true;
+            const originalText = newBtn.textContent;
+            newBtn.textContent = '⏳ Cargando...';
+            
+            try {
+                const { response, data, error } = await hacerPeticion('/api/asistentes', { method: 'GET' });
+                
+                if (error) {
+                    if (typeof showAlert === 'function') {
+                        showAlert('error', `Error de conexión: ${error}`);
+                    } else {
+                        alert(`Error: ${error}`);
+                    }
+                    return;
+                }
+                
+                const listaDiv = document.getElementById('listaAsistentesAdmin');
+                if (!listaDiv) {
+                    console.error('[Admin Base] No se encontró el contenedor de lista');
+                    return;
+                }
+                
+                if (data.success) {
+                    if (data.data.length === 0) {
+                        listaDiv.className = 'resultado show info';
+                        listaDiv.textContent = 'No hay asistentes registrados.';
+                        if (typeof showAlert === 'function') {
+                            showAlert('info', 'No hay asistentes registrados en el sistema');
+                        }
+                    } else {
+                        // Crear tabla
+                        let tablaHTML = '<table><thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Fecha Registro</th><th>Estado</th></tr></thead><tbody>';
+                        
+                        data.data.forEach(asistente => {
+                            const estado = asistente.activo ? '✅ Activo' : '❌ Inactivo';
+                            const fecha = new Date(asistente.fecha_registro).toLocaleString('es-ES');
+                            
+                            tablaHTML += `
+                                <tr>
+                                    <td>${asistente.id}</td>
+                                    <td>${asistente.nombre}</td>
+                                    <td>${asistente.email || 'N/A'}</td>
+                                    <td>${asistente.telefono || 'N/A'}</td>
+                                    <td>${fecha}</td>
+                                    <td>${estado}</td>
+                                </tr>
+                            `;
+                        });
+                        
+                        tablaHTML += '</tbody></table>';
+                        listaDiv.className = 'resultado show success';
+                        listaDiv.innerHTML = `<p><strong>Total de asistentes:</strong> ${data.data.length}</p>${tablaHTML}`;
+                        
+                        if (typeof showAlert === 'function') {
+                            showAlert('success', `Se encontraron ${data.data.length} asistente(s)`, 'Lista cargada');
+                        }
+                    }
+                } else {
+                    listaDiv.className = 'resultado show error';
+                    listaDiv.textContent = data.error || 'Error al cargar la lista';
+                    if (typeof showAlert === 'function') {
+                        showAlert('error', data.error || 'Error al cargar la lista');
+                    }
+                }
+            } catch (error) {
+                console.error('[Admin Base] Error al cargar lista:', error);
+                const listaDiv = document.getElementById('listaAsistentesAdmin');
+                if (listaDiv) {
+                    listaDiv.className = 'resultado show error';
+                    listaDiv.textContent = `Error: ${error.message}`;
+                }
+                if (typeof showAlert === 'function') {
+                    showAlert('error', `Error inesperado: ${error.message}`);
+                }
+            } finally {
+                // Rehabilitar botón
+                newBtn.disabled = false;
+                newBtn.textContent = originalText;
+            }
+        });
+        console.log('[Admin Base] Botón Cargar Lista de Asistentes inicializado');
+    }
+    
     // 7. Cerrar modales al hacer clic fuera
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', function(e) {
