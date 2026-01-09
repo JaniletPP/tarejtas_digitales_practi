@@ -94,7 +94,223 @@ function cerrarModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.classList.remove('show');
+        
+        // Limpiar formulario si existe
+        const form = modal.querySelector('form');
+        if (form) {
+            form.reset();
+        }
+        
         console.log('[Admin Base] Modal cerrado:', modalId);
+    }
+}
+
+// ============================================
+// FUNCIÓN PARA HACER PETICIONES AL BACKEND
+// ============================================
+async function hacerPeticion(url, options = {}) {
+    try {
+        const defaultOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        
+        const response = await fetch(url, { ...defaultOptions, ...options });
+        const data = await response.json();
+        
+        return { response, data };
+    } catch (error) {
+        console.error('[Admin Base] Error en petición:', error);
+        return { error: error.message };
+    }
+}
+
+// ============================================
+// REGISTRO DE ASISTENTES
+// ============================================
+async function registrarAsistente(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    
+    console.log('[Admin Base] Registrando asistente...');
+    
+    // Obtener datos del formulario
+    const nombre = document.getElementById('asistenteNombreAdmin')?.value.trim();
+    const email = document.getElementById('asistenteEmailAdmin')?.value.trim() || null;
+    const telefono = document.getElementById('asistenteTelefonoAdmin')?.value.trim() || null;
+    
+    // Validar
+    if (!nombre) {
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'El nombre es obligatorio');
+        } else {
+            alert('El nombre es obligatorio');
+        }
+        return;
+    }
+    
+    // Deshabilitar botón
+    const btnGuardar = document.getElementById('btnGuardarAsistenteAdmin');
+    const btnText = btnGuardar?.querySelector('.btn-text');
+    const btnLoader = btnGuardar?.querySelector('.btn-loader');
+    
+    if (btnGuardar) {
+        btnGuardar.disabled = true;
+        if (btnText) btnText.style.display = 'none';
+        if (btnLoader) btnLoader.style.display = 'inline-block';
+    }
+    
+    try {
+        const formData = { nombre, email, telefono };
+        
+        console.log('[Admin Base] Enviando datos:', formData);
+        
+        const { response, data, error } = await hacerPeticion('/api/asistentes', {
+            method: 'POST',
+            body: JSON.stringify(formData)
+        });
+        
+        if (error) {
+            if (typeof showAlert === 'function') {
+                showAlert('error', `Error: ${error}`);
+            } else {
+                alert(`Error: ${error}`);
+            }
+            return;
+        }
+        
+        if (response.ok && data.success) {
+            console.log('[Admin Base] Asistente registrado:', data.data);
+            
+            if (typeof showAlert === 'function') {
+                showAlert('success', `Asistente "${nombre}" registrado correctamente`, 'Registro Exitoso');
+            } else {
+                alert(`Asistente "${nombre}" registrado correctamente`);
+            }
+            
+            // Cerrar modal
+            cerrarModal('modalAsistenteAdmin');
+            
+        } else {
+            const errorMsg = data?.error || 'Error al registrar el asistente';
+            if (typeof showAlert === 'function') {
+                showAlert('error', errorMsg);
+            } else {
+                alert(errorMsg);
+            }
+        }
+        
+    } catch (error) {
+        console.error('[Admin Base] Error al registrar:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('error', `Error inesperado: ${error.message}`);
+        } else {
+            alert(`Error: ${error.message}`);
+        }
+    } finally {
+        // Rehabilitar botón
+        if (btnGuardar) {
+            btnGuardar.disabled = false;
+            if (btnText) btnText.style.display = 'inline';
+            if (btnLoader) btnLoader.style.display = 'none';
+        }
+    }
+}
+
+// ============================================
+// REGISTRO DE PRODUCTOS
+// ============================================
+async function registrarProducto(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    
+    console.log('[Admin Base] Registrando producto...');
+    
+    // Obtener datos del formulario
+    const nombre = document.getElementById('productoNombreAdmin')?.value.trim();
+    const tipo = document.getElementById('productoTipoAdmin')?.value.trim();
+    const precio = parseFloat(document.getElementById('productoPrecioAdmin')?.value);
+    const disponible = document.getElementById('productoDisponibleAdmin')?.checked;
+    
+    // Validar
+    if (!nombre || !tipo || isNaN(precio) || precio <= 0) {
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'Por favor completa todos los campos correctamente');
+        } else {
+            alert('Por favor completa todos los campos correctamente');
+        }
+        return;
+    }
+    
+    // Deshabilitar botón
+    const btnGuardar = document.getElementById('btnGuardarProductoAdmin');
+    const btnText = btnGuardar?.querySelector('.btn-text');
+    const btnLoader = btnGuardar?.querySelector('.btn-loader');
+    
+    if (btnGuardar) {
+        btnGuardar.disabled = true;
+        if (btnText) btnText.style.display = 'none';
+        if (btnLoader) btnLoader.style.display = 'inline-block';
+    }
+    
+    try {
+        const formData = { nombre, tipo, precio, disponible };
+        
+        console.log('[Admin Base] Enviando datos:', formData);
+        
+        const { response, data, error } = await hacerPeticion('/api/productos', {
+            method: 'POST',
+            body: JSON.stringify(formData)
+        });
+        
+        if (error) {
+            if (typeof showAlert === 'function') {
+                showAlert('error', `Error: ${error}`);
+            } else {
+                alert(`Error: ${error}`);
+            }
+            return;
+        }
+        
+        if (response.ok && data.success) {
+            console.log('[Admin Base] Producto registrado:', data.data);
+            
+            if (typeof showAlert === 'function') {
+                showAlert('success', `Producto "${nombre}" registrado correctamente`, 'Registro Exitoso');
+            } else {
+                alert(`Producto "${nombre}" registrado correctamente`);
+            }
+            
+            // Cerrar modal
+            cerrarModal('modalProductoAdmin');
+            
+        } else {
+            const errorMsg = data?.error || 'Error al registrar el producto';
+            if (typeof showAlert === 'function') {
+                showAlert('error', errorMsg);
+            } else {
+                alert(errorMsg);
+            }
+        }
+        
+    } catch (error) {
+        console.error('[Admin Base] Error al registrar:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('error', `Error inesperado: ${error.message}`);
+        } else {
+            alert(`Error: ${error.message}`);
+        }
+    } finally {
+        // Rehabilitar botón
+        if (btnGuardar) {
+            btnGuardar.disabled = false;
+            if (btnText) btnText.style.display = 'inline';
+            if (btnLoader) btnLoader.style.display = 'none';
+        }
     }
 }
 
@@ -175,26 +391,34 @@ function inicializarAdminBase() {
         console.log('[Admin Base] Listener global agregado');
     }
     
-    // 4. Inicializar botones de modales
-    const btnNuevoAsistente = document.getElementById('btnNuevoAsistente');
-    if (btnNuevoAsistente) {
-        btnNuevoAsistente.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            abrirModal('modalAsistenteAdmin');
-        });
-        console.log('[Admin Base] Botón Nuevo Asistente inicializado');
-    }
-    
-    const btnNuevoProducto = document.getElementById('btnNuevoProductoAdmin');
-    if (btnNuevoProducto) {
-        btnNuevoProducto.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            abrirModal('modalProductoAdmin');
-        });
-        console.log('[Admin Base] Botón Nuevo Producto inicializado');
-    }
+            // 4. Inicializar botones de modales
+            const btnNuevoAsistente = document.getElementById('btnNuevoAsistente');
+            if (btnNuevoAsistente) {
+                const newBtn = btnNuevoAsistente.cloneNode(true);
+                btnNuevoAsistente.parentNode.replaceChild(newBtn, btnNuevoAsistente);
+                
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    abrirModal('modalAsistenteAdmin');
+                });
+                console.log('[Admin Base] Botón Nuevo Asistente inicializado');
+            }
+
+            const btnNuevoProducto = document.getElementById('btnNuevoProductoAdmin');
+            if (btnNuevoProducto) {
+                const newBtn = btnNuevoProducto.cloneNode(true);
+                btnNuevoProducto.parentNode.replaceChild(newBtn, btnNuevoProducto);
+                
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    abrirModal('modalProductoAdmin');
+                });
+                console.log('[Admin Base] Botón Nuevo Producto inicializado');
+            }
     
     // 5. Inicializar botones de cerrar modales
     const cerrarModalAsistente = document.getElementById('cerrarModalAsistenteAdmin');
@@ -236,7 +460,7 @@ function inicializarAdminBase() {
         console.log('[Admin Base] Botón Cancelar Producto inicializado');
     }
     
-    // 6. Cerrar modales al hacer clic fuera
+            // 7. Cerrar modales al hacer clic fuera
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
@@ -245,7 +469,7 @@ function inicializarAdminBase() {
         });
     });
     
-    // 7. Prevenir que formularios de reportes cambien de sección
+            // 8. Prevenir que formularios de reportes cambien de sección
     const formFiltrosVentas = document.getElementById('formFiltrosVentas');
     if (formFiltrosVentas) {
         formFiltrosVentas.addEventListener('submit', function(e) {
@@ -278,7 +502,7 @@ function inicializarAdminBase() {
         }
     });
     
-    // 8. Cargar sección inicial (dashboard)
+            // 9. Cargar sección inicial (dashboard)
     cambiarSeccion('dashboard');
     
     console.log('[Admin Base] Inicialización completa');
