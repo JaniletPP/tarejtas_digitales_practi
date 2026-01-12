@@ -1264,19 +1264,30 @@ def actualizar_perfil():
         
         # Manejar subida de archivo
         foto_perfil = None
+        print(f"[DEBUG] Actualizando perfil para usuario: {usuario_actual}")
+        print(f"[DEBUG] Archivos recibidos: {list(request.files.keys())}")
+        
         if 'foto_perfil' in request.files:
             file = request.files['foto_perfil']
+            print(f"[DEBUG] Archivo recibido: {file.filename if file else 'None'}")
+            
             if file and file.filename:
                 from config import Config
                 import os
                 
+                print(f"[DEBUG] Carpeta de uploads: {Config.UPLOAD_FOLDER}")
+                
                 # Crear directorio si no existe
                 os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
+                print(f"[DEBUG] Directorio creado/verificado: {Config.UPLOAD_FOLDER}")
                 
                 # Validar extensión
                 filename = secure_filename(file.filename)
                 ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+                print(f"[DEBUG] Extensión del archivo: {ext}")
+                
                 if ext not in Config.ALLOWED_EXTENSIONS:
+                    print(f"[DEBUG] Extensión no permitida: {ext}")
                     return jsonify({
                         'success': False,
                         'error': f'Formato no permitido. Use: {", ".join(Config.ALLOWED_EXTENSIONS)}'
@@ -1286,12 +1297,32 @@ def actualizar_perfil():
                 import uuid
                 unique_filename = f"{usuario_actual}_{uuid.uuid4().hex[:8]}.{ext}"
                 filepath = os.path.join(Config.UPLOAD_FOLDER, unique_filename)
+                print(f"[DEBUG] Guardando archivo en: {filepath}")
                 
                 # Guardar archivo
-                file.save(filepath)
+                try:
+                    file.save(filepath)
+                    print(f"[DEBUG] Archivo guardado exitosamente: {filepath}")
+                    
+                    # Verificar que el archivo existe
+                    if os.path.exists(filepath):
+                        print(f"[DEBUG] Archivo verificado en disco: {os.path.getsize(filepath)} bytes")
+                    else:
+                        print(f"[ERROR] Archivo no encontrado después de guardar: {filepath}")
+                except Exception as save_error:
+                    print(f"[ERROR] Error al guardar archivo: {str(save_error)}")
+                    return jsonify({
+                        'success': False,
+                        'error': f'Error al guardar la imagen: {str(save_error)}'
+                    }), 500
                 
-                # Ruta relativa para guardar en BD
-                foto_perfil = f"/static/uploads/perfiles/{unique_filename}"
+                # Ruta relativa para guardar en BD (debe coincidir con la carpeta real)
+                foto_perfil = f"/static/uploads/fotos_perfil/{unique_filename}"
+                print(f"[DEBUG] Ruta de foto para BD: {foto_perfil}")
+            else:
+                print("[DEBUG] No hay archivo o filename vacío")
+        else:
+            print("[DEBUG] No se recibió 'foto_perfil' en request.files")
         
         # Actualizar perfil
         usuario_actualizado = Usuario.actualizar_perfil(

@@ -1622,13 +1622,32 @@ async function actualizarPerfil() {
             console.log('[Admin Base] Foto agregada al FormData:', inputFoto.files[0].name);
         }
         
+        console.log('[Admin Base] Enviando actualización de perfil...');
+        console.log('[Admin Base] FormData tiene foto:', inputFoto && inputFoto.files[0] ? 'Sí' : 'No');
+        
         const { response, data, error } = await hacerPeticion('/api/perfil', {
             method: 'PUT',
             body: formData
         });
         
+        console.log('[Admin Base] Respuesta del servidor:', { response, data, error });
+        
         if (error) {
+            console.error('[Admin Base] Error en la petición:', error);
             showAlert('error', `Error: ${error}`);
+            return;
+        }
+        
+        if (!response) {
+            console.error('[Admin Base] No hay respuesta del servidor');
+            showAlert('error', 'No se recibió respuesta del servidor');
+            return;
+        }
+        
+        if (response.status !== 200) {
+            console.error('[Admin Base] Error HTTP:', response.status);
+            const errorMsg = data?.error || `Error ${response.status}`;
+            showAlert('error', errorMsg);
             return;
         }
         
@@ -1646,9 +1665,11 @@ async function actualizarPerfil() {
                 sidebarAvatar.innerHTML = `<img src="${data.data.foto_perfil}" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
             }
             
-            console.log('[Admin Base] Perfil actualizado correctamente');
+            console.log('[Admin Base] Perfil actualizado correctamente:', data.data);
         } else {
-            showAlert('error', data?.error || 'Error al actualizar el perfil');
+            const errorMsg = data?.error || 'Error al actualizar el perfil';
+            console.error('[Admin Base] Error del servidor:', errorMsg);
+            showAlert('error', errorMsg);
         }
     } catch (error) {
         console.error('[Admin Base] Error actualizando perfil:', error);
