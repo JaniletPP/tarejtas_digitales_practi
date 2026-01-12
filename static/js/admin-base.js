@@ -131,12 +131,21 @@ async function hacerPeticion(url, options = {}) {
     try {
         const defaultOptions = {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: {}
         };
         
-        const response = await fetch(url, { ...defaultOptions, ...options });
+        // Solo agregar Content-Type si no es FormData
+        if (!(options.body instanceof FormData)) {
+            defaultOptions.headers['Content-Type'] = 'application/json';
+        }
+        
+        const finalOptions = { ...defaultOptions, ...options };
+        // Si hay headers personalizados, combinarlos
+        if (options.headers) {
+            finalOptions.headers = { ...defaultOptions.headers, ...options.headers };
+        }
+        
+        const response = await fetch(url, finalOptions);
         const data = await response.json();
         
         return { response, data };
@@ -1526,6 +1535,131 @@ function detenerEscaneoQRTarjeta() {
 // ============================================
 let listenerGlobalAgregado = false;
 
+// ============================================
+// MÓDULO DE PERFIL
+// ============================================
+
+let perfilOriginal = null;
+
+async function cargarPerfil() {
+    try {
+        const { data, error } = await hacerPeticion('/api/perfil', { method: 'GET' });
+        if (error || !data.success) {
+            console.error('[Admin Base] Error cargando perfil:', error || data.error);
+            showAlert('error', 'Error al cargar el perfil');
+            return;
+        }
+        
+        perfilOriginal = data.data;
+        mostrarPerfil(perfilOriginal);
+        console.log('[Admin Base] Perfil cargado correctamente');
+    } catch (error) {
+        console.error('[Admin Base] Error cargando perfil:', error);
+        showAlert('error', 'Error de conexión al cargar el perfil');
+    }
+}
+
+function mostrarPerfil(perfil) {
+    const nombreInput = document.getElementById('perfilNombreCompleto');
+    const emailInput = document.getElementById('perfilEmail');
+    const telefonoInput = document.getElementById('perfilTelefono');
+    const usuarioInput = document.getElementById('perfilUsuario');
+    const rolInput = document.getElementById('perfilRol');
+    const fotoImg = document.getElementById('fotoPerfilImg');
+    const fotoPlaceholder = document.getElementById('fotoPerfilPlaceholder');
+    const btnEliminarFoto = document.getElementById('btnEliminarFoto');
+    
+    if (nombreInput) nombreInput.value = perfil.nombre_completo || '';
+    if (emailInput) emailInput.value = perfil.email || '';
+    if (telefonoInput) telefonoInput.value = perfil.telefono || '';
+    if (usuarioInput) usuarioInput.value = perfil.usuario || '';
+    if (rolInput) rolInput.value = perfil.rol === 'admin' ? 'Administrador' : perfil.rol;
+    
+    // Mostrar foto de perfil
+    if (fotoImg && fotoPlaceholder && btnEliminarFoto) {
+        if (perfil.foto_perfil) {
+            fotoImg.src = perfil.foto_perfil;
+            fotoImg.style.display = 'block';
+            fotoPlaceholder.style.display = 'none';
+            btnEliminarFoto.style.display = 'inline-block';
+        } else {
+            fotoImg.style.display = 'none';
+            fotoPlaceholder.style.display = 'flex';
+            btnEliminarFoto.style.display = 'none';
+        }
+    }
+}
+
+async function actualizarPerfil() {
+    const formEditarPerfil = document.getElementById('formEditarPerfil');
+    if (!formEditarPerfil) {
+        console.error('[Admin Base] Formulario de perfil no encontrado');
+        return;
+    }
+    
+    const btnGuardar = document.getElementById('btnGuardarPerfil');
+    const btnText = btnGuardar ? btnGuardar.querySelector('.btn-text') : null;
+    const btnLoader = btnGuardar ? btnGuardar.querySelector('.btn-loader') : null;
+    
+    if (btnGuardar) btnGuardar.disabled = true;
+    if (btnText) btnText.style.display = 'none';
+    if (btnLoader) btnLoader.style.display = 'inline-block';
+    
+    try {
+        const formData = new FormData();
+        const nombreInput = document.getElementById('perfilNombreCompleto');
+        const emailInput = document.getElementById('perfilEmail');
+        const telefonoInput = document.getElementById('perfilTelefono');
+        const inputFoto = document.getElementById('inputFotoPerfil');
+        
+        if (nombreInput) formData.append('nombre_completo', nombreInput.value.trim());
+        if (emailInput) formData.append('email', emailInput.value.trim());
+        if (telefonoInput) formData.append('telefono', telefonoInput.value.trim());
+        
+        // Agregar foto si hay una seleccionada
+        if (inputFoto && inputFoto.files[0]) {
+            formData.append('foto_perfil', inputFoto.files[0]);
+            console.log('[Admin Base] Foto agregada al FormData:', inputFoto.files[0].name);
+        }
+        
+        const { response, data, error } = await hacerPeticion('/api/perfil', {
+            method: 'PUT',
+            body: formData
+        });
+        
+        if (error) {
+            showAlert('error', `Error: ${error}`);
+            return;
+        }
+        
+        if (data && data.success) {
+            showAlert('success', 'Perfil actualizado correctamente', 'Éxito');
+            perfilOriginal = data.data;
+            mostrarPerfil(data.data);
+            
+            // Limpiar input de foto después de guardar
+            if (inputFoto) inputFoto.value = '';
+            
+            // Actualizar avatar en sidebar si existe
+            const sidebarAvatar = document.querySelector('.user-avatar');
+            if (sidebarAvatar && data.data.foto_perfil) {
+                sidebarAvatar.innerHTML = `<img src="${data.data.foto_perfil}" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            }
+            
+            console.log('[Admin Base] Perfil actualizado correctamente');
+        } else {
+            showAlert('error', data?.error || 'Error al actualizar el perfil');
+        }
+    } catch (error) {
+        console.error('[Admin Base] Error actualizando perfil:', error);
+        showAlert('error', 'Error de conexión al actualizar el perfil');
+    } finally {
+        if (btnGuardar) btnGuardar.disabled = false;
+        if (btnText) btnText.style.display = 'inline';
+        if (btnLoader) btnLoader.style.display = 'none';
+    }
+}
+
 function inicializarAdminBase() {
     console.log('[Admin Base] Inicializando...');
     
@@ -1961,7 +2095,7 @@ function inicializarAdminBase() {
     
     // Prevenir que otros formularios cambien de sección accidentalmente
     document.querySelectorAll('form').forEach(form => {
-        if (form.id !== 'formFiltrosVentas' && form.id !== 'formFiltrosTransacciones') {
+        if (form.id !== 'formFiltrosVentas' && form.id !== 'formFiltrosTransacciones' && form.id !== 'formEditarPerfil') {
             form.addEventListener('submit', function(e) {
                 // Solo prevenir propagación, no el submit (para que funcione el backend)
                 e.stopPropagation();
@@ -1969,7 +2103,113 @@ function inicializarAdminBase() {
         }
     });
     
-            // 10. Cargar sección inicial (dashboard)
+            // 10. Inicializar módulo de perfil
+            // Cargar perfil cuando se muestra la sección
+            const perfilLink = document.querySelector('[data-section="perfil"]');
+            if (perfilLink) {
+                perfilLink.addEventListener('click', function() {
+                    setTimeout(() => {
+                        cargarPerfil();
+                    }, 100);
+                });
+                console.log('[Admin Base] Listener de perfil inicializado');
+            }
+            
+            // Preview de foto antes de subir
+            const inputFoto = document.getElementById('inputFotoPerfil');
+            if (inputFoto) {
+                const newInput = inputFoto.cloneNode(true);
+                inputFoto.parentNode.replaceChild(newInput, inputFoto);
+                
+                newInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Validar tamaño (5MB)
+                        if (file.size > 5 * 1024 * 1024) {
+                            showAlert('error', 'El archivo es demasiado grande. Máximo 5MB');
+                            e.target.value = '';
+                            return;
+                        }
+                        
+                        // Validar tipo
+                        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                        if (!allowedTypes.includes(file.type)) {
+                            showAlert('error', 'Formato no permitido. Use JPG, PNG o GIF');
+                            e.target.value = '';
+                            return;
+                        }
+                        
+                        // Mostrar preview
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const fotoImg = document.getElementById('fotoPerfilImg');
+                            const fotoPlaceholder = document.getElementById('fotoPerfilPlaceholder');
+                            const btnEliminarFoto = document.getElementById('btnEliminarFoto');
+                            
+                            if (fotoImg) {
+                                fotoImg.src = event.target.result;
+                                fotoImg.style.display = 'block';
+                            }
+                            if (fotoPlaceholder) fotoPlaceholder.style.display = 'none';
+                            if (btnEliminarFoto) btnEliminarFoto.style.display = 'inline-block';
+                        };
+                        reader.readAsDataURL(file);
+                        console.log('[Admin Base] Preview de foto mostrado');
+                    }
+                });
+                console.log('[Admin Base] Listener de preview de foto inicializado');
+            }
+            
+            // Eliminar foto
+            const btnEliminarFoto = document.getElementById('btnEliminarFoto');
+            if (btnEliminarFoto) {
+                btnEliminarFoto.addEventListener('click', function() {
+                    const fotoImg = document.getElementById('fotoPerfilImg');
+                    const fotoPlaceholder = document.getElementById('fotoPerfilPlaceholder');
+                    const inputFoto = document.getElementById('inputFotoPerfil');
+                    
+                    if (fotoImg) {
+                        fotoImg.src = '';
+                        fotoImg.style.display = 'none';
+                    }
+                    if (fotoPlaceholder) fotoPlaceholder.style.display = 'flex';
+                    if (inputFoto) inputFoto.value = '';
+                    this.style.display = 'none';
+                    console.log('[Admin Base] Foto eliminada del preview');
+                });
+                console.log('[Admin Base] Listener de eliminar foto inicializado');
+            }
+            
+            // Formulario de edición de perfil
+            const formEditarPerfil = document.getElementById('formEditarPerfil');
+            if (formEditarPerfil) {
+                const newForm = formEditarPerfil.cloneNode(true);
+                formEditarPerfil.parentNode.replaceChild(newForm, formEditarPerfil);
+                
+                newForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    actualizarPerfil();
+                });
+                console.log('[Admin Base] Formulario de perfil inicializado');
+            }
+            
+            // Botón cancelar perfil
+            const btnCancelarPerfil = document.getElementById('btnCancelarPerfil');
+            if (btnCancelarPerfil) {
+                btnCancelarPerfil.addEventListener('click', function() {
+                    if (perfilOriginal) {
+                        mostrarPerfil(perfilOriginal);
+                        const inputFoto = document.getElementById('inputFotoPerfil');
+                        if (inputFoto) inputFoto.value = '';
+                        console.log('[Admin Base] Perfil restaurado a valores originales');
+                    }
+                });
+                console.log('[Admin Base] Botón cancelar perfil inicializado');
+            }
+    
+            // 11. Cargar sección inicial (dashboard)
     cambiarSeccion('dashboard');
     
     console.log('[Admin Base] Inicialización completa');
