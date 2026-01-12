@@ -62,6 +62,7 @@ body {
     z-index: 1000;
     left: 0;
     top: 0;
+    transition: transform 0.3s ease;
 }
 
 .sidebar-header {
@@ -1547,17 +1548,85 @@ input:checked + .slider:before {
    RESPONSIVE
    ============================================ */
 
+/* Botón hamburguesa para móvil */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: var(--primary-blue);
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 6px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(8px, 8px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* Overlay para móvil */
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
 @media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
     .admin-sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
+        width: 280px;
+        transform: translateX(-100%);
         z-index: 1000;
+    }
+    
+    .admin-sidebar.mobile-open {
+        transform: translateX(0);
     }
     
     .admin-content {
         margin-left: 0;
         width: 100%;
+        padding-top: 60px;
     }
     
     .content-header {
@@ -1583,6 +1652,21 @@ input:checked + .slider:before {
     
     .filtro-group {
         min-width: 100%;
+    }
+    
+    /* Asegurar que los enlaces sean táctiles */
+    .nav-link,
+    .dropdown-item {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .dropdown-menu {
+        position: relative;
+        width: 100%;
     }
 }
 
