@@ -1263,9 +1263,9 @@ async function iniciarEscaneoQRTarjeta() {
     // Verificar que Html5Qrcode esté disponible
     if (typeof Html5Qrcode === 'undefined') {
         if (typeof showAlert === 'function') {
-            showAlert('error', 'La librería de escaneo QR no está disponible');
+            showAlert('error', 'La librería de escaneo QR no está disponible. Recarga la página.');
         } else {
-            alert('La librería de escaneo QR no está disponible');
+            alert('La librería de escaneo QR no está disponible. Recarga la página.');
         }
         return;
     }
@@ -1283,65 +1283,144 @@ async function iniciarEscaneoQRTarjeta() {
         return;
     }
     
+    // Limpiar contenido anterior del escáner
+    qrReader.innerHTML = '';
+    
     // Mostrar modal
     modal.style.display = 'flex';
     if (qrStatus) qrStatus.innerHTML = '<p>⏳ Iniciando cámara...</p>';
     
     try {
+        // Detener escáner anterior si existe
+        if (html5QrCodeTarjetas && qrScannerActiveTarjetas) {
+            try {
+                await html5QrCodeTarjetas.stop();
+                html5QrCodeTarjetas.clear();
+            } catch (e) {
+                console.log('[Admin Base] Limpiando escáner anterior...');
+            }
+        }
+        
         // Inicializar el escáner
         html5QrCodeTarjetas = new Html5Qrcode("qr-reader-tarjeta");
         
-        // Iniciar escaneo
-        await html5QrCodeTarjetas.start(
-            { facingMode: "environment" },
-            {
-                fps: 10,
-                qrbox: { width: 250, height: 250 }
-            },
-            (decodedText, decodedResult) => {
-                // QR escaneado exitosamente
-                detenerEscaneoQRTarjeta();
-                
-                // Validar formato
-                const numeroTarjeta = decodedText.trim().toUpperCase();
-                if (numeroTarjeta.match(/^TARJ-\d{6}$/)) {
-                    // Asignar al input
-                    const input = document.getElementById('numero_tarjeta_admin');
-                    if (input) {
-                        input.value = numeroTarjeta;
-                        // Disparar evento input para verificar tarjeta
-                        input.dispatchEvent(new Event('input'));
-                        
+        // Intentar primero con cámara trasera, luego frontal
+        let cameraConfig = { facingMode: "environment" };
+        
+        try {
+            // Iniciar escaneo con cámara trasera
+            await html5QrCodeTarjetas.start(
+                cameraConfig,
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0
+                },
+                (decodedText, decodedResult) => {
+                    // QR escaneado exitosamente
+                    console.log('[Admin Base] QR escaneado:', decodedText);
+                    detenerEscaneoQRTarjeta();
+                    
+                    // Validar formato
+                    const numeroTarjeta = decodedText.trim().toUpperCase();
+                    if (numeroTarjeta.match(/^TARJ-\d{6}$/)) {
+                        // Asignar al input
+                        const input = document.getElementById('numero_tarjeta_admin');
+                        if (input) {
+                            input.value = numeroTarjeta;
+                            // Disparar evento input para verificar tarjeta
+                            input.dispatchEvent(new Event('input'));
+                            
+                            if (typeof showAlert === 'function') {
+                                showAlert('success', `Tarjeta escaneada: ${numeroTarjeta}`, 'Escaneo Exitoso');
+                            } else {
+                                alert(`Tarjeta escaneada: ${numeroTarjeta}`);
+                            }
+                        }
+                    } else {
                         if (typeof showAlert === 'function') {
-                            showAlert('success', `Tarjeta escaneada: ${numeroTarjeta}`, 'Escaneo Exitoso');
+                            showAlert('error', `Formato inválido: ${numeroTarjeta}. Debe ser TARJ-XXXXXX`);
                         } else {
-                            alert(`Tarjeta escaneada: ${numeroTarjeta}`);
+                            alert(`Formato inválido: ${numeroTarjeta}. Debe ser TARJ-XXXXXX`);
                         }
                     }
-                } else {
-                    if (typeof showAlert === 'function') {
-                        showAlert('error', `Formato inválido: ${numeroTarjeta}. Debe ser TARJ-XXXXXX`);
-                    } else {
-                        alert(`Formato inválido: ${numeroTarjeta}. Debe ser TARJ-XXXXXX`);
+                },
+                (errorMessage) => {
+                    // Error al escanear (se ignora, es normal mientras busca)
+                    // Solo loguear errores importantes
+                    if (errorMessage && !errorMessage.includes('NotFoundException') && !errorMessage.includes('No QR code found')) {
+                        console.log('[Admin Base] Escaneando...', errorMessage);
                     }
                 }
-            },
-            (errorMessage) => {
-                // Error al escanear (se ignora, es normal mientras busca)
-            }
-        );
-        
-        qrScannerActiveTarjetas = true;
-        if (qrStatus) qrStatus.innerHTML = '<p style="color: #28a745;">✅ Cámara activa - Escanea el código QR</p>';
+            );
+            
+            qrScannerActiveTarjetas = true;
+            if (qrStatus) qrStatus.innerHTML = '<p style="color: #28a745;">✅ Cámara activa - Escanea el código QR</p>';
+            
+        } catch (cameraError) {
+            // Si falla con cámara trasera, intentar con frontal
+            console.log('[Admin Base] Intentando con cámara frontal...');
+            cameraConfig = { facingMode: "user" };
+            
+            await html5QrCodeTarjetas.start(
+                cameraConfig,
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0
+                },
+                (decodedText, decodedResult) => {
+                    detenerEscaneoQRTarjeta();
+                    const numeroTarjeta = decodedText.trim().toUpperCase();
+                    if (numeroTarjeta.match(/^TARJ-\d{6}$/)) {
+                        const input = document.getElementById('numero_tarjeta_admin');
+                        if (input) {
+                            input.value = numeroTarjeta;
+                            input.dispatchEvent(new Event('input'));
+                            if (typeof showAlert === 'function') {
+                                showAlert('success', `Tarjeta escaneada: ${numeroTarjeta}`, 'Escaneo Exitoso');
+                            }
+                        }
+                    } else {
+                        if (typeof showAlert === 'function') {
+                            showAlert('error', `Formato inválido: ${numeroTarjeta}. Debe ser TARJ-XXXXXX`);
+                        }
+                    }
+                },
+                (errorMessage) => {
+                    // Ignorar errores normales de escaneo
+                }
+            );
+            
+            qrScannerActiveTarjetas = true;
+            if (qrStatus) qrStatus.innerHTML = '<p style="color: #28a745;">✅ Cámara activa - Escanea el código QR</p>';
+        }
         
     } catch (error) {
         console.error('[Admin Base] Error iniciando escáner QR:', error);
-        if (qrStatus) qrStatus.innerHTML = `<p style="color: #dc3545;">❌ Error: ${error.message}</p>`;
-        if (typeof showAlert === 'function') {
-            showAlert('error', 'No se pudo acceder a la cámara. Verifica los permisos.');
-        } else {
-            alert('No se pudo acceder a la cámara. Verifica los permisos.');
+        const errorMsg = error.message || error.toString() || 'Error desconocido';
+        if (qrStatus) qrStatus.innerHTML = `<p style="color: #dc3545;">❌ Error: ${errorMsg}</p>`;
+        
+        // Mensaje más específico según el error
+        let mensajeUsuario = 'No se pudo acceder a la cámara.';
+        if (errorMsg.includes('Permission') || errorMsg.includes('permission')) {
+            mensajeUsuario = 'Permisos de cámara denegados. Por favor, permite el acceso a la cámara en la configuración del navegador.';
+        } else if (errorMsg.includes('NotFound') || errorMsg.includes('not found')) {
+            mensajeUsuario = 'No se encontró ninguna cámara disponible.';
+        } else if (errorMsg.includes('NotAllowed') || errorMsg.includes('not allowed')) {
+            mensajeUsuario = 'Acceso a la cámara denegado. Verifica los permisos del navegador.';
         }
+        
+        if (typeof showAlert === 'function') {
+            showAlert('error', mensajeUsuario);
+        } else {
+            alert(mensajeUsuario);
+        }
+        
+        // Cerrar modal después de mostrar error
+        setTimeout(() => {
+            detenerEscaneoQRTarjeta();
+        }, 2000);
     }
 }
 
@@ -1351,14 +1430,34 @@ function detenerEscaneoQRTarjeta() {
         html5QrCodeTarjetas.stop().then(() => {
             html5QrCodeTarjetas.clear();
             qrScannerActiveTarjetas = false;
+            console.log('[Admin Base] Escáner detenido correctamente');
         }).catch((err) => {
             console.error('[Admin Base] Error deteniendo escáner:', err);
+            // Forzar limpieza aunque haya error
+            try {
+                html5QrCodeTarjetas.clear();
+            } catch (e) {
+                console.log('[Admin Base] Limpiando escáner...');
+            }
+            qrScannerActiveTarjetas = false;
         });
     }
     
     const modal = document.getElementById('modalScanQRTarjeta');
+    const qrReader = document.getElementById('qr-reader-tarjeta');
+    const qrStatus = document.getElementById('qr-reader-status-tarjeta');
+    
     if (modal) {
         modal.style.display = 'none';
+    }
+    
+    // Limpiar contenido del escáner
+    if (qrReader) {
+        qrReader.innerHTML = '';
+    }
+    
+    if (qrStatus) {
+        qrStatus.innerHTML = '<p>⏳ Iniciando cámara...</p>';
     }
 }
 
