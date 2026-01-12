@@ -1270,6 +1270,27 @@ async function iniciarEscaneoQRTarjeta() {
         return;
     }
     
+    // Verificar si el navegador soporta getUserMedia (cámara)
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'Tu navegador no soporta acceso a la cámara. Por favor, usa Chrome, Firefox o Edge actualizado.');
+        } else {
+            alert('Tu navegador no soporta acceso a la cámara.');
+        }
+        return;
+    }
+    
+    // Verificar si está en HTTPS (requerido para cámara)
+    const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isSecure) {
+        if (typeof showAlert === 'function') {
+            showAlert('error', 'La cámara requiere HTTPS. Por favor, accede a la aplicación usando https:// en lugar de http://');
+        } else {
+            alert('La cámara requiere HTTPS. Por favor, accede usando https://');
+        }
+        return;
+    }
+    
     const modal = document.getElementById('modalScanQRTarjeta');
     const qrReader = document.getElementById('qr-reader-tarjeta');
     const qrStatus = document.getElementById('qr-reader-status-tarjeta');
@@ -1304,17 +1325,44 @@ async function iniciarEscaneoQRTarjeta() {
         // Inicializar el escáner
         html5QrCodeTarjetas = new Html5Qrcode("qr-reader-tarjeta");
         
+        // Obtener lista de cámaras disponibles
+        const devices = await Html5Qrcode.getCameras();
+        if (!devices || devices.length === 0) {
+            throw new Error('No se encontraron cámaras disponibles');
+        }
+        
+        console.log('[Admin Base] Cámaras disponibles:', devices.length);
+        
         // Intentar primero con cámara trasera, luego frontal
-        let cameraConfig = { facingMode: "environment" };
+        let cameraId = null;
+        
+        // Buscar cámara trasera
+        const backCamera = devices.find(device => 
+            device.label && device.label.toLowerCase().includes('back') ||
+            device.label && device.label.toLowerCase().includes('rear') ||
+            device.label && device.label.toLowerCase().includes('environment')
+        );
+        
+        // Buscar cámara frontal
+        const frontCamera = devices.find(device => 
+            device.label && device.label.toLowerCase().includes('front') ||
+            device.label && device.label.toLowerCase().includes('user')
+        );
+        
+        // Usar la primera cámara disponible si no encontramos específicas
+        cameraId = backCamera ? backCamera.id : (frontCamera ? frontCamera.id : devices[0].id);
         
         try {
-            // Iniciar escaneo con cámara trasera
+            // Iniciar escaneo
             await html5QrCodeTarjetas.start(
-                cameraConfig,
+                cameraId,
                 {
                     fps: 10,
                     qrbox: { width: 250, height: 250 },
-                    aspectRatio: 1.0
+                    aspectRatio: 1.0,
+                    videoConstraints: {
+                        facingMode: backCamera ? "environment" : "user"
+                    }
                 },
                 (decodedText, decodedResult) => {
                     // QR escaneado exitosamente
@@ -1358,42 +1406,52 @@ async function iniciarEscaneoQRTarjeta() {
             if (qrStatus) qrStatus.innerHTML = '<p style="color: #28a745;">✅ Cámara activa - Escanea el código QR</p>';
             
         } catch (cameraError) {
-            // Si falla con cámara trasera, intentar con frontal
-            console.log('[Admin Base] Intentando con cámara frontal...');
-            cameraConfig = { facingMode: "user" };
+            // Si falla, intentar con otra cámara
+            console.log('[Admin Base] Error con primera cámara, intentando con otra...', cameraError);
             
-            await html5QrCodeTarjetas.start(
-                cameraConfig,
-                {
-                    fps: 10,
-                    qrbox: { width: 250, height: 250 },
-                    aspectRatio: 1.0
-                },
-                (decodedText, decodedResult) => {
-                    detenerEscaneoQRTarjeta();
-                    const numeroTarjeta = decodedText.trim().toUpperCase();
-                    if (numeroTarjeta.match(/^TARJ-\d{6}$/)) {
-                        const input = document.getElementById('numero_tarjeta_admin');
-                        if (input) {
-                            input.value = numeroTarjeta;
-                            input.dispatchEvent(new Event('input'));
-                            if (typeof showAlert === 'function') {
-                                showAlert('success', `Tarjeta escaneada: ${numeroTarjeta}`, 'Escaneo Exitoso');
+            if (devices.length > 1) {
+                // Intentar con la siguiente cámara disponible
+                const nextCameraId = devices.find(d => d.id !== cameraId)?.id || devices[0].id;
+                
+                try {
+                    await html5QrCodeTarjetas.start(
+                        nextCameraId,
+                        {
+                            fps: 10,
+                            qrbox: { width: 250, height: 250 },
+                            aspectRatio: 1.0
+                        },
+                        (decodedText, decodedResult) => {
+                            detenerEscaneoQRTarjeta();
+                            const numeroTarjeta = decodedText.trim().toUpperCase();
+                            if (numeroTarjeta.match(/^TARJ-\d{6}$/)) {
+                                const input = document.getElementById('numero_tarjeta_admin');
+                                if (input) {
+                                    input.value = numeroTarjeta;
+                                    input.dispatchEvent(new Event('input'));
+                                    if (typeof showAlert === 'function') {
+                                        showAlert('success', `Tarjeta escaneada: ${numeroTarjeta}`, 'Escaneo Exitoso');
+                                    }
+                                }
+                            } else {
+                                if (typeof showAlert === 'function') {
+                                    showAlert('error', `Formato inválido: ${numeroTarjeta}. Debe ser TARJ-XXXXXX`);
+                                }
                             }
+                        },
+                        (errorMessage) => {
+                            // Ignorar errores normales de escaneo
                         }
-                    } else {
-                        if (typeof showAlert === 'function') {
-                            showAlert('error', `Formato inválido: ${numeroTarjeta}. Debe ser TARJ-XXXXXX`);
-                        }
-                    }
-                },
-                (errorMessage) => {
-                    // Ignorar errores normales de escaneo
+                    );
+                    
+                    qrScannerActiveTarjetas = true;
+                    if (qrStatus) qrStatus.innerHTML = '<p style="color: #28a745;">✅ Cámara activa - Escanea el código QR</p>';
+                } catch (secondError) {
+                    throw cameraError; // Lanzar el error original
                 }
-            );
-            
-            qrScannerActiveTarjetas = true;
-            if (qrStatus) qrStatus.innerHTML = '<p style="color: #28a745;">✅ Cámara activa - Escanea el código QR</p>';
+            } else {
+                throw cameraError;
+            }
         }
         
     } catch (error) {
@@ -1403,12 +1461,14 @@ async function iniciarEscaneoQRTarjeta() {
         
         // Mensaje más específico según el error
         let mensajeUsuario = 'No se pudo acceder a la cámara.';
-        if (errorMsg.includes('Permission') || errorMsg.includes('permission')) {
+        if (errorMsg.includes('Permission') || errorMsg.includes('permission') || errorMsg.includes('NotAllowed')) {
             mensajeUsuario = 'Permisos de cámara denegados. Por favor, permite el acceso a la cámara en la configuración del navegador.';
-        } else if (errorMsg.includes('NotFound') || errorMsg.includes('not found')) {
-            mensajeUsuario = 'No se encontró ninguna cámara disponible.';
-        } else if (errorMsg.includes('NotAllowed') || errorMsg.includes('not allowed')) {
-            mensajeUsuario = 'Acceso a la cámara denegado. Verifica los permisos del navegador.';
+        } else if (errorMsg.includes('NotFound') || errorMsg.includes('not found') || errorMsg.includes('No cameras')) {
+            mensajeUsuario = 'No se encontró ninguna cámara disponible. Verifica que tu dispositivo tenga cámara.';
+        } else if (errorMsg.includes('streaming not supported') || errorMsg.includes('getUserMedia')) {
+            mensajeUsuario = 'Tu navegador no soporta streaming de cámara. Por favor, usa Chrome, Firefox o Edge actualizado, y asegúrate de acceder mediante HTTPS.';
+        } else if (errorMsg.includes('HTTPS') || errorMsg.includes('secure context')) {
+            mensajeUsuario = 'La cámara requiere HTTPS. Por favor, accede a la aplicación usando https:// en lugar de http://';
         }
         
         if (typeof showAlert === 'function') {
