@@ -101,9 +101,21 @@
                             <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">🔧</span>
                             <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Configuración</span>
                         </a>
+                    </div>
+                </div>
+
+                <!-- Sección Derecha: Usuario + Salir -->
+                <div class="navbar-right">
+                    <div class="navbar-user">
+                        <span class="user-avatar">👤</span>
+                        <span class="user-name">{{ session.usuario }}</span>
+                    </div>
+                    <a href="{{ url_for('auth.logout') }}" class="btn-logout-navbar">
+                        🚪 Salir
+                    </a>
                 </div>
             </nav>
-            </header>
+        </header>
 
         <!-- Main Content (con margin-top para el header fijo) -->
         <main class="admin-content">
