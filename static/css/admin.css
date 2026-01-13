@@ -44,6 +44,9 @@ body {
     flex-direction: column;
     min-height: 100vh;
     overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 /* ============================================
@@ -51,13 +54,16 @@ body {
    ============================================ */
 
 .content-header {
-    background: white;
+    background: white !important;
     border-bottom: 2px solid var(--primary-blue);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 1000;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0;
+    padding: 0;
 }
 
 .header-top {
@@ -297,12 +303,15 @@ body {
 
 .admin-content {
     flex: 1;
-    margin-left: 0;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     min-height: calc(100vh - 140px);
     background: var(--gray-light);
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     position: relative;
     overflow-x: hidden;
+    padding: 0;
 }
 
 /* ============================================
