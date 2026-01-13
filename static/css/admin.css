@@ -27,6 +27,20 @@
     box-sizing: border-box;
 }
 
+/* Asegurar que no haya sidebar visible */
+aside.admin-sidebar,
+.admin-sidebar,
+aside[class*="sidebar"]:not(.admin-nav-horizontal),
+[class*="sidebar"]:not(.admin-nav-horizontal) {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
     background: var(--gray-light);
