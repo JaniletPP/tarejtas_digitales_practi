@@ -362,16 +362,18 @@ body {
     left: 0 !important;
     background: white !important;
     min-width: 200px !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    max-width: 300px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     border-radius: 0 0 6px 6px !important;
-    z-index: 10000 !important; /* z-index alto para estar sobre otros elementos */
+    z-index: 99999 !important; /* z-index MUY alto para estar sobre TODO */
     border: 1px solid var(--border) !important;
-    border-top: none !important;
+    border-top: 2px solid var(--primary-blue) !important;
     padding: 0 !important;
     margin: 0 !important;
     list-style: none !important;
     transition: opacity 0.2s ease, visibility 0.2s ease !important;
     pointer-events: none !important; /* Deshabilitar clicks cuando está oculto */
+    overflow: visible !important;
 }
 
 /* Cuando tiene clase show, habilitar clicks y mostrar */
@@ -380,12 +382,7 @@ body {
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important; /* Habilitar clicks cuando está visible */
-}
-
-.admin-nav-horizontal .dropdown-menu.show {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    z-index: 99999 !important; /* Asegurar z-index alto cuando está visible */
 }
 
 /* Asegurar que show funcione incluso con otros selectores */
