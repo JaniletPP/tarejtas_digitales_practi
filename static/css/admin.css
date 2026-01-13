@@ -350,6 +350,8 @@ body {
    ============================================ */
 
 .admin-content {
+    display: flex !important;
+    flex-direction: column !important;
     flex: 1;
     margin-left: 0 !important;
     margin-right: 0 !important;
@@ -360,6 +362,12 @@ body {
     position: relative;
     overflow-x: hidden;
     padding: 0;
+}
+
+.admin-content > .content-header {
+    display: block !important;
+    visibility: visible !important;
+    order: -1 !important;
 }
 
 /* ============================================
