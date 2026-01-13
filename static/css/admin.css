@@ -42,10 +42,12 @@ aside[class*="sidebar"]:not(.admin-nav-horizontal),
 }
 
 /* FORZAR VISIBILIDAD DEL HEADER Y MENÚ - NUNCA OCULTAR */
+/* Sobrescribir cualquier estilo de style.css */
+body .admin-wrapper .admin-content header.content-header,
+body .admin-wrapper .admin-content .content-header,
+body .content-header,
 header.content-header,
-.content-header,
-nav.admin-nav-horizontal,
-.admin-nav-horizontal {
+.content-header {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -53,13 +55,40 @@ nav.admin-nav-horizontal,
     min-height: auto !important;
     max-height: none !important;
     width: 100% !important;
+    max-width: 100% !important;
     overflow: visible !important;
-    position: relative !important;
+    position: sticky !important;
+    top: 0 !important;
     z-index: 1000 !important;
+    background: white !important;
+    text-align: left !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
 }
 
-nav.admin-nav-horizontal {
+body .admin-wrapper .admin-content nav.admin-nav-horizontal,
+body .admin-wrapper .admin-content .admin-nav-horizontal,
+body nav.admin-nav-horizontal,
+nav.admin-nav-horizontal,
+.admin-nav-horizontal {
     display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    min-height: 50px !important;
+    max-height: none !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    position: relative !important;
+    z-index: 1001 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    background: var(--primary-blue) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
 }
 
 body {
