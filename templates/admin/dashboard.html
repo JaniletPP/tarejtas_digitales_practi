@@ -9,34 +9,19 @@
 </head>
 <body>
     <div class="admin-wrapper">
-        <!-- Header fijo con Menú Horizontal (FUERA del main) -->
-        <header class="content-header fixed-header">
-                <div class="header-top">
-                    <div class="header-left">
-                        <div class="logo-container-horizontal">
-                    <div class="logo-icon">🏔️</div>
-                    <div class="logo-text">
-                                <h1 id="pageTitle">Dashboard General</h1>
-                                <p class="header-subtitle">Sistema de Tarjetas Inteligentes - Saltillo, Coahuila</p>
-                            </div>
-                        </div>
+        <!-- Navbar único integrado -->
+        <header class="admin-navbar fixed-header">
+            <nav class="admin-nav-horizontal">
+                <!-- Sección Izquierda: Logo + Título -->
+                <div class="navbar-left">
+                    <div class="navbar-logo">
+                        <span class="logo-icon">🏔️</span>
+                        <span class="logo-text">Sistema de Tarjetas Inteligentes</span>
                     </div>
-                    <div class="header-right">
-                        <div class="user-info-horizontal">
-                            <div class="user-avatar">👤</div>
-                            <div class="user-details">
-                                <strong>{{ session.usuario }}</strong>
-                                <small>Administrador</small>
-                            </div>
-                        </div>
-                        <a href="{{ url_for('auth.logout') }}" class="btn-logout-header">
-                            🚪 Salir
-                        </a>
                 </div>
-            </div>
 
-                <!-- Menú Horizontal -->
-                <nav class="admin-nav-horizontal" style="display: flex !important; flex-direction: row !important; align-items: center !important; background: #1A3A5F !important; width: 100% !important; min-height: 50px !important; padding: 0 !important; margin: 0 !important; position: relative !important; z-index: 1001 !important;">
+                <!-- Sección Centro: Menú -->
+                <div class="navbar-center">
                     <div class="nav-menu-item" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
                         <a href="#dashboard" class="nav-link" data-section="dashboard" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
                             <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">📊</span>
@@ -116,9 +101,9 @@
                             <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">🔧</span>
                             <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Configuración</span>
                         </a>
-                    </div>
+                </div>
             </nav>
-        </header>
+            </header>
 
         <!-- Main Content (con margin-top para el header fijo) -->
         <main class="admin-content">
@@ -210,7 +195,7 @@
                                         <div class="asistente-info">
                                             <span class="asistente-nombre" id="asistenteNombreMostrar"></span>
                                             <span class="asistente-contacto" id="asistenteContactoMostrar"></span>
-                                        </div>
+                            </div>
                                         <button type="button" class="btn-clear-asistente" id="btnClearAsistente">×</button>
                                     </div>
                                 </div>
@@ -1220,7 +1205,7 @@
                         if (isShowing) {
                             menu.classList.remove('show');
                             console.log('[Dropdowns] Cerrado');
-                        } else {
+                    } else {
                             menu.classList.add('show');
                             console.log('[Dropdowns] Abierto - clase show agregada');
                             

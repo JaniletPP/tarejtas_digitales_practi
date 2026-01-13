@@ -71,29 +71,111 @@ header.content-header,
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
-body .admin-wrapper .admin-content nav.admin-nav-horizontal,
-body .admin-wrapper .admin-content .admin-nav-horizontal,
-body nav.admin-nav-horizontal,
-nav.admin-nav-horizontal,
+/* Navbar horizontal con 3 secciones */
 .admin-nav-horizontal {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
     height: auto !important;
-    min-height: 50px !important;
+    min-height: 60px !important;
     max-height: none !important;
     width: 100% !important;
-    overflow-x: auto !important;
-    overflow-y: visible !important;
-    overflow: visible !important; /* Permitir que los dropdowns se vean */
+    overflow: visible !important;
     position: relative !important;
     z-index: 1001 !important;
     flex-direction: row !important;
     align-items: center !important;
+    justify-content: space-between !important;
     background: var(--primary-blue) !important;
-    padding: 0 !important;
+    padding: 0 20px !important;
     margin: 0 !important;
     list-style: none !important;
+    gap: 20px !important;
+}
+
+/* Sección Izquierda: Logo + Título */
+.navbar-left {
+    display: flex !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+}
+
+.navbar-logo {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    color: white !important;
+}
+
+.navbar-logo .logo-icon {
+    font-size: 28px !important;
+    line-height: 1 !important;
+}
+
+.navbar-logo .logo-text {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: white !important;
+    white-space: nowrap !important;
+}
+
+/* Sección Centro: Menú */
+.navbar-center {
+    display: flex !important;
+    align-items: center !important;
+    flex: 1 !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+}
+
+/* Sección Derecha: Usuario + Salir */
+.navbar-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+}
+
+.navbar-user {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 6px 12px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 6px !important;
+    color: white !important;
+}
+
+.navbar-user .user-avatar {
+    font-size: 18px !important;
+    line-height: 1 !important;
+}
+
+.navbar-user .user-name {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: white !important;
+    white-space: nowrap !important;
+}
+
+.btn-logout-navbar {
+    padding: 8px 16px !important;
+    background: #DC2626 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    transition: background 0.2s !important;
+    white-space: nowrap !important;
+}
+
+.btn-logout-navbar:hover {
+    background: #B91C1C !important;
 }
 
 body {
@@ -453,8 +535,8 @@ body {
     flex: 1;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    margin-top: 180px !important; /* Espacio para header fijo (header-top ~90px + nav ~50px + padding) */
-    min-height: calc(100vh - 180px);
+    margin-top: 70px !important; /* Espacio para navbar único (60px altura + 10px margen) */
+    min-height: calc(100vh - 70px);
     background: var(--gray-light);
     width: 100% !important;
     max-width: 100% !important;
