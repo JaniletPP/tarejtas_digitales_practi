@@ -79,11 +79,13 @@ function toggleDropdown(dropdownElement) {
     }
     
     const isShowing = dropdownMenu.classList.contains('show');
+    console.log('[Admin Base] Estado actual del dropdown:', isShowing ? 'abierto' : 'cerrado');
     
-    // Cerrar otros dropdowns
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+    // Cerrar otros dropdowns primero
+    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
         if (menu !== dropdownMenu) {
             menu.classList.remove('show');
+            console.log('[Admin Base] Otro dropdown cerrado');
         }
     });
     
@@ -93,7 +95,15 @@ function toggleDropdown(dropdownElement) {
         console.log('[Admin Base] Dropdown cerrado');
     } else {
         dropdownMenu.classList.add('show');
-        console.log('[Admin Base] Dropdown abierto');
+        console.log('[Admin Base] Dropdown abierto, clase show agregada');
+        // Verificar que la clase se agregó
+        setTimeout(() => {
+            if (dropdownMenu.classList.contains('show')) {
+                console.log('[Admin Base] Confirmado: dropdown tiene clase show');
+            } else {
+                console.error('[Admin Base] ERROR: dropdown NO tiene clase show después de agregarla');
+            }
+        }, 10);
     }
 }
 
@@ -2307,43 +2317,51 @@ function inicializarAdminBase() {
     
     if (dropdownToggles.length === 0) {
         console.warn('[Admin Base] No se encontraron dropdown toggles');
-        return;
+    } else {
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('[Admin Base] Click en dropdown toggle');
+                const dropdown = this.closest('.dropdown');
+                if (dropdown) {
+                    console.log('[Admin Base] Dropdown encontrado:', dropdown);
+                    toggleDropdown(dropdown);
+                } else {
+                    console.error('[Admin Base] No se encontró el dropdown padre');
+                }
+            });
+        });
     }
-    
-    dropdownToggles.forEach(toggle => {
-        // Remover listeners anteriores si existen
-        const newToggle = toggle.cloneNode(true);
-        toggle.parentNode.replaceChild(newToggle, toggle);
-        
-        newToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            
-            const dropdown = this.closest('.dropdown');
-            if (dropdown) {
-                toggleDropdown(dropdown);
-            } else {
-                console.error('[Admin Base] No se encontró el dropdown padre');
-            }
-        }, true);
-    });
     
     // 3. Cerrar dropdowns al hacer clic fuera (solo agregar una vez)
     if (!listenerGlobalAgregado) {
-        document.addEventListener('click', function(e) {
-            const target = e.target;
-            
-            // Si el click fue en el nav o dentro de un dropdown, no hacer nada
-            if (target.closest('.admin-nav-horizontal') || target.closest('.dropdown')) {
-                return;
-            }
-            
-            // Si el click fue fuera de cualquier dropdown, cerrarlos todos
-            document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                menu.classList.remove('show');
+        // Usar setTimeout para que el click del toggle se procese primero
+        setTimeout(() => {
+            document.addEventListener('click', function(e) {
+                const target = e.target;
+                
+                // Si el click fue en un dropdown-toggle, no hacer nada (ya se maneja arriba)
+                if (target.closest('.dropdown-toggle')) {
+                    return;
+                }
+                
+                // Si el click fue dentro de un dropdown-menu, no cerrar
+                if (target.closest('.dropdown-menu')) {
+                    return;
+                }
+                
+                // Si el click fue fuera de cualquier dropdown, cerrarlos todos
+                const menusAbiertos = document.querySelectorAll('.dropdown-menu.show');
+                if (menusAbiertos.length > 0) {
+                    console.log('[Admin Base] Cerrando', menusAbiertos.length, 'dropdowns');
+                    menusAbiertos.forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                }
             });
-        }, true);
+        }, 100);
         
         listenerGlobalAgregado = true;
         console.log('[Admin Base] Listener global agregado');

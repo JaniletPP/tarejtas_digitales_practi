@@ -377,7 +377,15 @@ body {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    animation: fadeIn 0.2s ease-in;
+}
+
+/* Asegurar que show funcione incluso con otros selectores */
+.admin-nav-horizontal .nav-menu-item.dropdown .dropdown-menu.show,
+.admin-nav-horizontal .dropdown .dropdown-menu.show,
+.dropdown-menu.show {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .admin-nav-horizontal .dropdown-menu li {
