@@ -277,6 +277,10 @@ body {
     display: inline-block !important;
     vertical-align: top !important;
     float: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    width: auto !important;
 }
 
 .admin-nav-horizontal .nav-link {
@@ -312,14 +316,22 @@ body {
 }
 
 .admin-nav-horizontal .nav-icon {
-    font-size: 16px;
-    margin-right: 8px;
-    width: 20px;
-    text-align: center;
+    font-size: 16px !important;
+    margin-right: 8px !important;
+    width: 20px !important;
+    text-align: center !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .admin-nav-horizontal .nav-text {
     flex: 1;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .admin-nav-horizontal .dropdown-arrow {
@@ -502,6 +514,46 @@ body .admin-wrapper .admin-content > .content-header nav.admin-nav-horizontal {
     z-index: 100000 !important;
     flex-direction: row !important;
     align-items: center !important;
+}
+
+/* Asegurar que los elementos del menú sean visibles */
+body .admin-wrapper .admin-content > header.content-header nav.admin-nav-horizontal .nav-menu-item,
+body .admin-wrapper .admin-content > .content-header nav.admin-nav-horizontal .nav-menu-item,
+.admin-nav-horizontal .nav-menu-item {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    width: auto !important;
+}
+
+body .admin-wrapper .admin-content > header.content-header nav.admin-nav-horizontal .nav-link,
+body .admin-wrapper .admin-content > .content-header nav.admin-nav-horizontal .nav-link,
+.admin-nav-horizontal .nav-link {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    height: auto !important;
+    width: auto !important;
+}
+
+body .admin-wrapper .admin-content > header.content-header nav.admin-nav-horizontal .nav-link .nav-icon,
+body .admin-wrapper .admin-content > .content-header nav.admin-nav-horizontal .nav-link .nav-icon,
+.admin-nav-horizontal .nav-link .nav-icon {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+body .admin-wrapper .admin-content > header.content-header nav.admin-nav-horizontal .nav-link .nav-text,
+body .admin-wrapper .admin-content > .content-header nav.admin-nav-horizontal .nav-link .nav-text,
+.admin-nav-horizontal .nav-link .nav-text {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .section-header {
