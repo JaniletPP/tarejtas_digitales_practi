@@ -2334,14 +2334,14 @@ function inicializarAdminBase() {
         document.addEventListener('click', function(e) {
             const target = e.target;
             
-            // Si el click fue en el sidebar-nav o dentro de un dropdown, no hacer nada
-            if (target.closest('.sidebar-nav') || target.closest('.dropdown')) {
+            // Si el click fue en el nav o dentro de un dropdown, no hacer nada
+            if (target.closest('.admin-nav-horizontal') || target.closest('.dropdown')) {
                 return;
             }
             
             // Si el click fue fuera de cualquier dropdown, cerrarlos todos
-            document.querySelectorAll('.dropdown').forEach(dropdown => {
-                dropdown.classList.remove('active');
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.classList.remove('show');
             });
         }, true);
         
