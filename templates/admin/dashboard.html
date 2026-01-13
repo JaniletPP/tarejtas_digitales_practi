@@ -805,6 +805,132 @@
                 </div>
             </section>
 
+            <!-- Punto de Venta Section -->
+            <section id="section-punto-venta" class="admin-section hidden">
+                <div class="section-header">
+                    <h2>🛒 Punto de Venta</h2>
+                    <p class="section-description">Procese ventas y descuente saldo de tarjetas</p>
+                </div>
+
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Columna Izquierda: Selección y Productos -->
+                    <div>
+                        <!-- Selector de Punto de Venta -->
+                        <div class="content-card" style="margin-bottom: 20px;">
+                            <h3>Seleccionar Punto de Venta</h3>
+                            <div class="form-group">
+                                <label for="puntoVentaSelect">Punto de Venta *</label>
+                                <select id="puntoVentaSelect" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px;">
+                                    <option value="">Seleccione un punto de venta</option>
+                                </select>
+                                <small class="form-help">Seleccione el punto de venta donde se realizará la venta</small>
+                            </div>
+                        </div>
+
+                        <!-- Búsqueda de Tarjeta -->
+                        <div class="content-card" style="margin-bottom: 20px;">
+                            <h3>Buscar Tarjeta</h3>
+                            <form id="formBuscarTarjetaPOS">
+                                <div class="form-group">
+                                    <label for="numeroTarjetaPOS">Número de Tarjeta *</label>
+                                    <div style="display: flex; gap: 10px; align-items: center;">
+                                        <input 
+                                            type="text" 
+                                            id="numeroTarjetaPOS" 
+                                            name="numero_tarjeta"
+                                            placeholder="TARJ-XXXXXX"
+                                            required
+                                            style="flex: 1;"
+                                        >
+                                        <button type="button" class="btn btn-secondary" id="btnEscanearQRPOS" title="Escanear QR">
+                                            📷 Escanear QR
+                                        </button>
+                                    </div>
+                                    <small class="form-help">Ingrese el número de tarjeta o escanee el código QR</small>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary" id="btnBuscarTarjetaPOS">
+                                        🔍 Buscar Tarjeta
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <!-- Información de Tarjeta -->
+                            <div id="infoTarjetaPOS" style="display: none; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px; border-left: 4px solid var(--accent-blue);">
+                                <h4 style="margin: 0 0 10px 0;">Información de la Tarjeta</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>
+                                        <strong>Asistente:</strong>
+                                        <span id="asistenteNombrePOS">-</span>
+                                    </div>
+                                    <div>
+                                        <strong>Saldo Disponible:</strong>
+                                        <span id="saldoDisponiblePOS" style="font-weight: bold; color: var(--accent-blue); font-size: 1.2em;">$-</span>
+                                    </div>
+                                    <div>
+                                        <strong>Estado:</strong>
+                                        <span id="estadoTarjetaPOS">-</span>
+                                    </div>
+                                    <div>
+                                        <strong>Número:</strong>
+                                        <span id="numeroTarjetaInfoPOS">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Productos Disponibles -->
+                        <div class="content-card">
+                            <h3>Productos Disponibles</h3>
+                            <div id="productosPOSContainer">
+                                <p style="color: #666; text-align: center; padding: 20px;">
+                                    Seleccione un punto de venta para ver los productos
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: Carrito y Procesamiento -->
+                    <div>
+                        <!-- Carrito de Compras -->
+                        <div class="content-card" style="margin-bottom: 20px;">
+                            <h3>Carrito de Compras</h3>
+                            <div id="carritoPOSContainer">
+                                <p style="color: #666; text-align: center; padding: 20px;">
+                                    El carrito está vacío. Agregue productos para continuar.
+                                </p>
+                            </div>
+                            <div id="resumenCarritoPOS" style="display: none; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <strong>Subtotal:</strong>
+                                    <span id="subtotalCarritoPOS">$0.00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 1.2em; font-weight: bold; color: var(--accent-blue); border-top: 2px solid var(--border); padding-top: 10px;">
+                                    <strong>Total:</strong>
+                                    <span id="totalCarritoPOS">$0.00</span>
+                                </div>
+                            </div>
+                            <div class="form-actions" style="margin-top: 20px;">
+                                <button type="button" class="btn btn-secondary" id="btnLimpiarCarritoPOS">Limpiar Carrito</button>
+                                <button type="button" class="btn btn-primary" id="btnProcesarVentaPOS" disabled>
+                                    💳 Procesar Venta
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Historial de Ventas Recientes -->
+                        <div class="content-card">
+                            <h3>Ventas Recientes</h3>
+                            <div id="historialVentasPOS">
+                                <p style="color: #666; text-align: center; padding: 20px;">
+                                    Realice una venta para ver el historial
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section id="section-configuracion" class="admin-section hidden">
                 <h2>🔧 Configuración</h2>
                 <div class="content-card">
