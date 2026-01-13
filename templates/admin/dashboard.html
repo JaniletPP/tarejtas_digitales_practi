@@ -9,13 +9,13 @@
 </head>
 <body>
     <div class="admin-wrapper">
-        <!-- Header con Menú Horizontal - FUERA del main para que siempre sea visible -->
-        <header class="content-header" style="display: block !important; visibility: visible !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; background: white !important; z-index: 10000 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;">
-                <div class="header-top" style="display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 16px 24px !important; border-bottom: 1px solid #DEE2E6 !important; width: 100% !important;">
+        <!-- Header fijo con Menú Horizontal (FUERA del main) -->
+        <header class="content-header fixed-header">
+                <div class="header-top">
                     <div class="header-left">
                         <div class="logo-container-horizontal">
-                            <div class="logo-icon">🏔️</div>
-                            <div class="logo-text">
+                    <div class="logo-icon">🏔️</div>
+                    <div class="logo-text">
                                 <h1 id="pageTitle">Dashboard General</h1>
                                 <p class="header-subtitle">Sistema de Tarjetas Inteligentes - Saltillo, Coahuila</p>
                             </div>
@@ -32,67 +32,67 @@
                         <a href="{{ url_for('auth.logout') }}" class="btn-logout-header">
                             🚪 Salir
                         </a>
-                    </div>
                 </div>
-                
+            </div>
+
                 <!-- Menú Horizontal -->
                 <nav class="admin-nav-horizontal" style="display: flex !important; flex-direction: row !important; align-items: center !important; background: #1A3A5F !important; width: 100% !important; min-height: 50px !important; padding: 0 !important; margin: 0 !important; position: relative !important; z-index: 1001 !important;">
                     <div class="nav-menu-item" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
                         <a href="#dashboard" class="nav-link" data-section="dashboard" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
                             <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">📊</span>
                             <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Dashboard</span>
-                        </a>
-                    </div>
+                    </a>
+                </div>
 
-                    <!-- Menú desplegable: Gestión -->
+                <!-- Menú desplegable: Gestión -->
                     <div class="nav-menu-item dropdown" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
                         <a href="#gestion" class="nav-link dropdown-toggle" data-toggle="gestion" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
                             <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">⚙️</span>
                             <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Gestión</span>
                             <span class="dropdown-arrow" style="display: inline-block !important; font-size: 10px !important; margin-left: 8px !important; color: #FFFFFF !important;">▼</span>
+                    </a>
+                    <div class="dropdown-menu" id="dropdown-gestion">
+                        <a href="#asistentes" class="dropdown-item" data-section="asistentes">
+                            <span class="dropdown-icon">👥</span>
+                            Asistentes
                         </a>
-                        <div class="dropdown-menu" id="dropdown-gestion">
-                            <a href="#asistentes" class="dropdown-item" data-section="asistentes">
-                                <span class="dropdown-icon">👥</span>
-                                Asistentes
-                            </a>
-                            <a href="#tarjetas" class="dropdown-item" data-section="tarjetas">
-                                <span class="dropdown-icon">💳</span>
-                                Tarjetas
-                            </a>
-                            <a href="#productos" class="dropdown-item" data-section="productos">
-                                <span class="dropdown-icon">🛍️</span>
-                                Productos
-                            </a>
-                        </div>
+                        <a href="#tarjetas" class="dropdown-item" data-section="tarjetas">
+                            <span class="dropdown-icon">💳</span>
+                            Tarjetas
+                        </a>
+                        <a href="#productos" class="dropdown-item" data-section="productos">
+                            <span class="dropdown-icon">🛍️</span>
+                            Productos
+                        </a>
                     </div>
+                </div>
 
-                    <!-- Menú desplegable: Reportes -->
+                <!-- Menú desplegable: Reportes -->
                     <div class="nav-menu-item dropdown" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
                         <a href="#reportes" class="nav-link dropdown-toggle" data-toggle="reportes" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
                             <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">📈</span>
                             <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Reportes</span>
                             <span class="dropdown-arrow" style="display: inline-block !important; font-size: 10px !important; margin-left: 8px !important; color: #FFFFFF !important;">▼</span>
+                    </a>
+                    <div class="dropdown-menu" id="dropdown-reportes">
+                        <a href="#reportes-ventas" class="dropdown-item" data-section="reportes">
+                            <span class="dropdown-icon">💰</span>
+                            Ventas
                         </a>
-                        <div class="dropdown-menu" id="dropdown-reportes">
-                            <a href="#reportes-ventas" class="dropdown-item" data-section="reportes">
-                                <span class="dropdown-icon">💰</span>
-                                Ventas
-                            </a>
-                            <a href="#reportes-transacciones" class="dropdown-item" data-section="reportes-transacciones">
-                                <span class="dropdown-icon">📜</span>
-                                Transacciones
-                            </a>
-                        </div>
+                        <a href="#reportes-transacciones" class="dropdown-item" data-section="reportes-transacciones">
+                            <span class="dropdown-icon">📜</span>
+                            Transacciones
+                        </a>
                     </div>
+                </div>
 
                     <!-- Menú Caja -->
                     <div class="nav-menu-item" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
                         <a href="#caja" class="nav-link" data-section="caja" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
                             <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">💰</span>
                             <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Caja</span>
-                        </a>
-                    </div>
+                    </a>
+                </div>
 
                     <!-- Menú Punto de Venta -->
                     <div class="nav-menu-item" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
@@ -107,8 +107,8 @@
                         <a href="#perfil" class="nav-link" data-section="perfil" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
                             <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">👤</span>
                             <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Mi Perfil</span>
-                        </a>
-                    </div>
+                </a>
+            </div>
 
                     <!-- Menú Configuración -->
                     <div class="nav-menu-item" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
@@ -117,9 +117,11 @@
                             <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Configuración</span>
                         </a>
                     </div>
-                </nav>
-            </header>
+            </nav>
+        </header>
 
+        <!-- Main Content (con margin-top para el header fijo) -->
+        <main class="admin-content">
             <!-- Dashboard Section -->
             <section id="section-dashboard" class="admin-section active">
                 <div class="stats-grid">

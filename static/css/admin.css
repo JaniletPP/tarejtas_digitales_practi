@@ -41,13 +41,14 @@ aside[class*="sidebar"]:not(.admin-nav-horizontal),
     left: -9999px !important;
 }
 
-/* FORZAR VISIBILIDAD DEL HEADER Y MENÚ - NUNCA OCULTAR */
+/* HEADER FIJO - FUERA DEL MAIN */
 /* Sobrescribir cualquier estilo de style.css */
-body .admin-wrapper .admin-content header.content-header,
-body .admin-wrapper .admin-content .content-header,
+body .admin-wrapper header.content-header,
+body .admin-wrapper .content-header,
 body .content-header,
 header.content-header,
-.content-header {
+.content-header,
+.fixed-header {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -57,14 +58,17 @@ header.content-header,
     width: 100% !important;
     max-width: 100% !important;
     overflow: visible !important;
-    position: sticky !important;
+    position: fixed !important;
     top: 0 !important;
-    z-index: 1000 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
     background: white !important;
     text-align: left !important;
-    margin-bottom: 0 !important;
+    margin: 0 !important;
     padding: 0 !important;
     border-radius: 0 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 body .admin-wrapper .admin-content nav.admin-nav-horizontal,
@@ -416,15 +420,15 @@ body {
     flex: 1;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    margin-top: 140px !important; /* Espacio para el header fijo */
-    min-height: calc(100vh - 140px);
+    margin-top: 180px !important; /* Espacio para header fijo (header-top ~90px + nav ~50px + padding) */
+    min-height: calc(100vh - 180px);
     background: var(--gray-light);
     width: 100% !important;
     max-width: 100% !important;
     position: relative;
     overflow-x: hidden;
     overflow-y: visible !important;
-    padding: 0;
+    padding: 20px !important;
 }
 
 /* Asegurar que el header esté siempre visible y fijo */
