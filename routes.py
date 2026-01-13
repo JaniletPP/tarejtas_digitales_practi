@@ -238,6 +238,23 @@ def cargar_saldo():
         # Actualizar saldo en la tarjeta
         Tarjeta.actualizar_saldo(tarjeta['id'], saldo_nuevo)
         
+        # Desbloquear tarjeta si el saldo es mayor a 0
+        tarjeta_desbloqueada = False
+        if saldo_nuevo > 0:
+            from database import get_db_connection
+            connection = get_db_connection()
+            cursor = connection.cursor()
+            try:
+                cursor.execute("UPDATE tarjetas SET activa = TRUE WHERE id = %s", (tarjeta['id'],))
+                connection.commit()
+                tarjeta_desbloqueada = True
+            except Exception as e:
+                connection.rollback()
+                raise e
+            finally:
+                cursor.close()
+                connection.close()
+        
         # Registrar la transacción
         Transaccion.crear(
             tarjeta_id=tarjeta['id'],
@@ -253,12 +270,13 @@ def cargar_saldo():
         
         return jsonify({
             'success': True,
-            'message': f'Saldo recargado correctamente: ${monto:.2f}',
+            'message': f'Saldo recargado correctamente: ${monto:.2f}' + (' (Tarjeta desbloqueada)' if tarjeta_desbloqueada else ''),
             'data': {
                 'tarjeta': tarjeta_actualizada,
                 'monto_recargado': monto,
                 'saldo_anterior': saldo_anterior,
-                'saldo_nuevo': saldo_nuevo
+                'saldo_nuevo': saldo_nuevo,
+                'tarjeta_desbloqueada': tarjeta_desbloqueada
             }
         }), 200
         
@@ -329,6 +347,13 @@ def procesar_pago():
                 'error': 'Tarjeta no encontrada o inactiva'
             }), 404
         
+        # Verificar que la tarjeta esté activa
+        if not tarjeta.get('activa', False):
+            return jsonify({
+                'success': False,
+                'error': 'Tarjeta bloqueada. Recargue saldo para continuar.'
+            }), 400
+        
         # Verificar que el punto de venta existe
         punto_venta = PuntoVenta.obtener_por_id(punto_venta_id)
         if not punto_venta:
@@ -352,6 +377,23 @@ def procesar_pago():
         # Actualizar saldo en la tarjeta
         Tarjeta.actualizar_saldo(tarjeta['id'], saldo_nuevo)
         
+        # Bloquear tarjeta si el saldo llega a 0 o menos
+        tarjeta_bloqueada = False
+        if saldo_nuevo <= 0:
+            from database import get_db_connection
+            connection = get_db_connection()
+            cursor = connection.cursor()
+            try:
+                cursor.execute("UPDATE tarjetas SET activa = FALSE WHERE id = %s", (tarjeta['id'],))
+                connection.commit()
+                tarjeta_bloqueada = True
+            except Exception as e:
+                connection.rollback()
+                raise e
+            finally:
+                cursor.close()
+                connection.close()
+        
         # Registrar la transacción
         Transaccion.crear(
             tarjeta_id=tarjeta['id'],
@@ -368,13 +410,14 @@ def procesar_pago():
         
         return jsonify({
             'success': True,
-            'message': f'Pago procesado correctamente: ${monto:.2f}',
+            'message': f'Pago procesado correctamente: ${monto:.2f}' + (' (Tarjeta bloqueada por saldo insuficiente)' if tarjeta_bloqueada else ''),
             'data': {
                 'tarjeta': tarjeta_actualizada,
                 'punto_venta': punto_venta['nombre'],
                 'monto_pagado': monto,
                 'saldo_anterior': saldo_anterior,
-                'saldo_nuevo': saldo_nuevo
+                'saldo_nuevo': saldo_nuevo,
+                'tarjeta_bloqueada': tarjeta_bloqueada
             }
         }), 200
         
