@@ -2874,6 +2874,86 @@ function inicializarAdminBase() {
                 });
                 console.log('[Admin Base] Botón escanear QR (Caja) inicializado');
             }
+            
+            // ============================================
+            // INICIALIZAR MÓDULO DE PUNTO DE VENTA
+            // ============================================
+            
+            // Cargar puntos de venta
+            cargarPuntosVentaPOS();
+            
+            // Selector de punto de venta
+            const puntoVentaSelect = document.getElementById('puntoVentaSelect');
+            if (puntoVentaSelect) {
+                puntoVentaSelect.addEventListener('change', function() {
+                    const puntoVentaId = parseInt(this.value);
+                    if (puntoVentaId) {
+                        // Obtener nombre del punto de venta
+                        const option = this.options[this.selectedIndex];
+                        puntoVentaSeleccionadoPOS = {
+                            id: puntoVentaId,
+                            nombre: option.textContent
+                        };
+                        cargarProductosPorPuntoVenta(puntoVentaId);
+                    } else {
+                        puntoVentaSeleccionadoPOS = null;
+                        productosPOS = [];
+                        mostrarProductosPOS();
+                    }
+                });
+                console.log('[Admin Base] Selector de punto de venta inicializado');
+            }
+            
+            // Formulario de búsqueda de tarjeta
+            const formBuscarTarjetaPOS = document.getElementById('formBuscarTarjetaPOS');
+            if (formBuscarTarjetaPOS) {
+                const newForm = formBuscarTarjetaPOS.cloneNode(true);
+                formBuscarTarjetaPOS.parentNode.replaceChild(newForm, formBuscarTarjetaPOS);
+                
+                newForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    const numeroTarjeta = document.getElementById('numeroTarjetaPOS');
+                    if (numeroTarjeta) {
+                        buscarTarjetaPOS(numeroTarjeta.value);
+                    }
+                });
+                console.log('[Admin Base] Formulario de búsqueda de tarjeta (POS) inicializado');
+            }
+            
+            // Botón escanear QR (placeholder)
+            const btnEscanearQRPOS = document.getElementById('btnEscanearQRPOS');
+            if (btnEscanearQRPOS) {
+                btnEscanearQRPOS.addEventListener('click', function() {
+                    showAlert('info', 'Funcionalidad de escaneo QR próximamente');
+                });
+                console.log('[Admin Base] Botón escanear QR (POS) inicializado');
+            }
+            
+            // Botón limpiar carrito
+            const btnLimpiarCarritoPOS = document.getElementById('btnLimpiarCarritoPOS');
+            if (btnLimpiarCarritoPOS) {
+                btnLimpiarCarritoPOS.addEventListener('click', function() {
+                    carritoPOS = [];
+                    actualizarCarritoPOS();
+                });
+                console.log('[Admin Base] Botón limpiar carrito (POS) inicializado');
+            }
+            
+            // Botón procesar venta
+            const btnProcesarVentaPOS = document.getElementById('btnProcesarVentaPOS');
+            if (btnProcesarVentaPOS) {
+                btnProcesarVentaPOS.addEventListener('click', function() {
+                    procesarVentaPOS();
+                });
+                console.log('[Admin Base] Botón procesar venta (POS) inicializado');
+            }
+            
+            // Hacer funciones globales para onclick
+            window.agregarAlCarritoPOS = agregarAlCarritoPOS;
+            window.modificarCantidadPOS = modificarCantidadPOS;
+            window.eliminarDelCarritoPOS = eliminarDelCarritoPOS;
     
             // 11. Cargar sección inicial (dashboard)
     cambiarSeccion('dashboard');
