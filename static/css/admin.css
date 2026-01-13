@@ -411,13 +411,26 @@ body {
     max-width: 100% !important;
     position: relative;
     overflow-x: hidden;
+    overflow-y: visible !important;
     padding: 0;
 }
 
-.admin-content > .content-header {
+/* Asegurar que el header esté siempre visible y primero */
+.admin-content > .content-header,
+.admin-content > header.content-header,
+.admin-content header.content-header {
     display: block !important;
     visibility: visible !important;
-    order: -1 !important;
+    order: -999 !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10000 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    opacity: 1 !important;
 }
 
 /* ============================================
