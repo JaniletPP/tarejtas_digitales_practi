@@ -1152,6 +1152,14 @@
                 const toggles = document.querySelectorAll('.dropdown-toggle');
                 console.log('[Dropdowns] Toggles encontrados:', toggles.length);
                 
+                // Verificar que los menús existan
+                const menus = document.querySelectorAll('.dropdown-menu');
+                console.log('[Dropdowns] Menús encontrados:', menus.length);
+                menus.forEach(function(menu, index) {
+                    const items = menu.querySelectorAll('.dropdown-item');
+                    console.log('[Dropdowns] Menú', index + 1, 'tiene', items.length, 'items');
+                });
+                
                 if (toggles.length === 0) {
                     console.warn('[Dropdowns] No se encontraron toggles');
                     return;
@@ -1167,7 +1175,7 @@
                         e.preventDefault();
                         e.stopPropagation();
                         
-                        console.log('[Dropdowns] Click en toggle');
+                        console.log('[Dropdowns] Click en toggle:', this.textContent.trim());
                         
                         // Encontrar el dropdown padre
                         const dropdown = this.closest('.dropdown');
@@ -1183,9 +1191,23 @@
                             return;
                         }
                         
+                        // Verificar items del menú
+                        const items = menu.querySelectorAll('.dropdown-item');
+                        console.log('[Dropdowns] Menú tiene', items.length, 'items');
+                        items.forEach(function(item, idx) {
+                            console.log('[Dropdowns] Item', idx + 1, ':', item.textContent.trim());
+                        });
+                        
                         // Verificar estado actual
                         const isShowing = menu.classList.contains('show');
                         console.log('[Dropdowns] Estado actual:', isShowing ? 'abierto' : 'cerrado');
+                        
+                        // Verificar estilos computados
+                        const computedStyle = window.getComputedStyle(menu);
+                        console.log('[Dropdowns] Display:', computedStyle.display);
+                        console.log('[Dropdowns] Visibility:', computedStyle.visibility);
+                        console.log('[Dropdowns] Opacity:', computedStyle.opacity);
+                        console.log('[Dropdowns] Z-index:', computedStyle.zIndex);
                         
                         // Cerrar TODOS los otros dropdowns primero
                         document.querySelectorAll('.dropdown-menu').forEach(function(m) {
@@ -1200,16 +1222,26 @@
                             console.log('[Dropdowns] Cerrado');
                         } else {
                             menu.classList.add('show');
-                            console.log('[Dropdowns] Abierto');
+                            console.log('[Dropdowns] Abierto - clase show agregada');
                             
-                            // Verificar que se agregó la clase
+                            // Verificar que se agregó la clase y que los estilos se aplicaron
                             setTimeout(function() {
                                 if (menu.classList.contains('show')) {
+                                    const newComputedStyle = window.getComputedStyle(menu);
                                     console.log('[Dropdowns] ✓ Clase show confirmada');
+                                    console.log('[Dropdowns] Display después:', newComputedStyle.display);
+                                    console.log('[Dropdowns] Visibility después:', newComputedStyle.visibility);
+                                    console.log('[Dropdowns] Opacity después:', newComputedStyle.opacity);
+                                    
+                                    // Verificar que los items sean visibles
+                                    items.forEach(function(item, idx) {
+                                        const itemStyle = window.getComputedStyle(item);
+                                        console.log('[Dropdowns] Item', idx + 1, 'display:', itemStyle.display);
+                                    });
                                 } else {
                                     console.error('[Dropdowns] ✗ ERROR: Clase show NO se agregó');
                                 }
-                            }, 10);
+                            }, 50);
                         }
                     });
                 });
