@@ -9,141 +9,117 @@
 </head>
 <body>
     <div class="admin-wrapper">
-        <!-- Botón hamburguesa para móvil -->
-        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        
-        <!-- Overlay para móvil -->
-        <div class="mobile-overlay" id="mobileOverlay"></div>
-        
-        <!-- Sidebar -->
-        <aside class="admin-sidebar" id="adminSidebar">
-            <div class="sidebar-header">
-                <div class="logo-container">
-                    <div class="logo-icon">🏔️</div>
-                    <div class="logo-text">
-                        <h2>Sistema de Tarjetas</h2>
-                        <p>Sierra de Arteaga</p>
-                    </div>
-                </div>
-            </div>
-
-            <nav class="sidebar-nav">
-                <!-- Menú Dashboard -->
-                <div class="nav-menu-item">
-                    <a href="#dashboard" class="nav-link" data-section="dashboard">
-                        <span class="nav-icon">📊</span>
-                        <span class="nav-text">Dashboard</span>
-                    </a>
-                </div>
-
-                <!-- Menú desplegable: Gestión -->
-                <div class="nav-menu-item dropdown">
-                    <a href="#gestion" class="nav-link dropdown-toggle" data-toggle="gestion">
-                        <span class="nav-icon">⚙️</span>
-                        <span class="nav-text">Gestión</span>
-                        <span class="dropdown-arrow">▼</span>
-                    </a>
-                    <div class="dropdown-menu" id="dropdown-gestion">
-                        <a href="#asistentes" class="dropdown-item" data-section="asistentes">
-                            <span class="dropdown-icon">👥</span>
-                            Asistentes
-                        </a>
-                        <a href="#tarjetas" class="dropdown-item" data-section="tarjetas">
-                            <span class="dropdown-icon">💳</span>
-                            Tarjetas
-                        </a>
-                        <a href="#productos" class="dropdown-item" data-section="productos">
-                            <span class="dropdown-icon">🛍️</span>
-                            Productos
-                        </a>
-                    </div>
-                </div>
-
-
-                <!-- Menú desplegable: Reportes -->
-                <div class="nav-menu-item dropdown">
-                    <a href="#reportes" class="nav-link dropdown-toggle" data-toggle="reportes">
-                        <span class="nav-icon">📈</span>
-                        <span class="nav-text">Reportes</span>
-                        <span class="dropdown-arrow">▼</span>
-                    </a>
-                    <div class="dropdown-menu" id="dropdown-reportes">
-                        <a href="#reportes-ventas" class="dropdown-item" data-section="reportes">
-                            <span class="dropdown-icon">💰</span>
-                            Ventas
-                        </a>
-                        <a href="#reportes-transacciones" class="dropdown-item" data-section="reportes-transacciones">
-                            <span class="dropdown-icon">📜</span>
-                            Transacciones
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Menú Caja -->
-                <div class="nav-menu-item">
-                    <a href="#caja" class="nav-link" data-section="caja">
-                        <span class="nav-icon">💰</span>
-                        <span class="nav-text">Caja</span>
-                    </a>
-                </div>
-
-                <!-- Menú Punto de Venta -->
-                <div class="nav-menu-item">
-                    <a href="#punto-venta" class="nav-link" data-section="punto-venta">
-                        <span class="nav-icon">🛒</span>
-                        <span class="nav-text">Punto de Venta</span>
-                    </a>
-                </div>
-
-                <!-- Menú Perfil -->
-                <div class="nav-menu-item">
-                    <a href="#perfil" class="nav-link" data-section="perfil">
-                        <span class="nav-icon">👤</span>
-                        <span class="nav-text">Mi Perfil</span>
-                    </a>
-                </div>
-
-                <!-- Menú Configuración -->
-                <div class="nav-menu-item">
-                    <a href="#configuracion" class="nav-link" data-section="configuracion">
-                        <span class="nav-icon">🔧</span>
-                        <span class="nav-text">Configuración</span>
-                    </a>
-                </div>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar">👤</div>
-                    <div class="user-details">
-                        <strong>{{ session.usuario }}</strong>
-                        <small>Administrador</small>
-                    </div>
-                </div>
-                <a href="{{ url_for('auth.logout') }}" class="btn-logout-sidebar">
-                    🚪 Salir
-                </a>
-            </div>
-        </aside>
-
         <!-- Main Content -->
         <main class="admin-content">
-            <!-- Header -->
+            <!-- Header con Menú Horizontal -->
             <header class="content-header">
-                <div class="header-left">
-                    <h1 id="pageTitle">Dashboard General</h1>
-                    <p class="header-subtitle">Sistema de Tarjetas Inteligentes - Saltillo, Coahuila</p>
-                </div>
-                <div class="header-right">
-                    <div class="location-badge">
-                        <span>📍</span>
-                        <span>Saltillo, Coahuila</span>
+                <div class="header-top">
+                    <div class="header-left">
+                        <div class="logo-container-horizontal">
+                            <div class="logo-icon">🏔️</div>
+                            <div class="logo-text">
+                                <h1 id="pageTitle">Dashboard General</h1>
+                                <p class="header-subtitle">Sistema de Tarjetas Inteligentes - Saltillo, Coahuila</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <div class="user-info-horizontal">
+                            <div class="user-avatar">👤</div>
+                            <div class="user-details">
+                                <strong>{{ session.usuario }}</strong>
+                                <small>Administrador</small>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('auth.logout') }}" class="btn-logout-header">
+                            🚪 Salir
+                        </a>
                     </div>
                 </div>
+                
+                <!-- Menú Horizontal -->
+                <nav class="admin-nav-horizontal">
+                    <div class="nav-menu-item">
+                        <a href="#dashboard" class="nav-link" data-section="dashboard">
+                            <span class="nav-icon">📊</span>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </div>
+
+                    <!-- Menú desplegable: Gestión -->
+                    <div class="nav-menu-item dropdown">
+                        <a href="#gestion" class="nav-link dropdown-toggle" data-toggle="gestion">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-text">Gestión</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </a>
+                        <div class="dropdown-menu" id="dropdown-gestion">
+                            <a href="#asistentes" class="dropdown-item" data-section="asistentes">
+                                <span class="dropdown-icon">👥</span>
+                                Asistentes
+                            </a>
+                            <a href="#tarjetas" class="dropdown-item" data-section="tarjetas">
+                                <span class="dropdown-icon">💳</span>
+                                Tarjetas
+                            </a>
+                            <a href="#productos" class="dropdown-item" data-section="productos">
+                                <span class="dropdown-icon">🛍️</span>
+                                Productos
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Menú desplegable: Reportes -->
+                    <div class="nav-menu-item dropdown">
+                        <a href="#reportes" class="nav-link dropdown-toggle" data-toggle="reportes">
+                            <span class="nav-icon">📈</span>
+                            <span class="nav-text">Reportes</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </a>
+                        <div class="dropdown-menu" id="dropdown-reportes">
+                            <a href="#reportes-ventas" class="dropdown-item" data-section="reportes">
+                                <span class="dropdown-icon">💰</span>
+                                Ventas
+                            </a>
+                            <a href="#reportes-transacciones" class="dropdown-item" data-section="reportes-transacciones">
+                                <span class="dropdown-icon">📜</span>
+                                Transacciones
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Menú Caja -->
+                    <div class="nav-menu-item">
+                        <a href="#caja" class="nav-link" data-section="caja">
+                            <span class="nav-icon">💰</span>
+                            <span class="nav-text">Caja</span>
+                        </a>
+                    </div>
+
+                    <!-- Menú Punto de Venta -->
+                    <div class="nav-menu-item">
+                        <a href="#punto-venta" class="nav-link" data-section="punto-venta">
+                            <span class="nav-icon">🛒</span>
+                            <span class="nav-text">Punto de Venta</span>
+                        </a>
+                    </div>
+
+                    <!-- Menú Perfil -->
+                    <div class="nav-menu-item">
+                        <a href="#perfil" class="nav-link" data-section="perfil">
+                            <span class="nav-icon">👤</span>
+                            <span class="nav-text">Mi Perfil</span>
+                        </a>
+                    </div>
+
+                    <!-- Menú Configuración -->
+                    <div class="nav-menu-item">
+                        <a href="#configuracion" class="nav-link" data-section="configuracion">
+                            <span class="nav-icon">🔧</span>
+                            <span class="nav-text">Configuración</span>
+                        </a>
+                    </div>
+                </nav>
             </header>
 
             <!-- Dashboard Section -->
@@ -352,7 +328,7 @@
             <!-- Reportes Section -->
             <section id="section-reportes" class="admin-section hidden">
                 <div class="section-header">
-                    <h2>📈 Reportes de Ventas</h2>
+                <h2>📈 Reportes de Ventas</h2>
                     <button class="btn btn-primary" id="btnExportarVentas" style="display: none;">📥 Exportar CSV</button>
                 </div>
                 
@@ -489,7 +465,7 @@
             <!-- Transacciones Section -->
             <section id="section-reportes-transacciones" class="admin-section hidden">
                 <div class="section-header">
-                    <h2>📜 Reportes de Transacciones</h2>
+                <h2>📜 Reportes de Transacciones</h2>
                     <button class="btn btn-primary" id="btnExportarTransacciones" style="display: none;">📥 Exportar CSV</button>
                 </div>
                 

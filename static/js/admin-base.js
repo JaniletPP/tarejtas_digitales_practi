@@ -2265,50 +2265,6 @@ function agregarAlHistorialVentas(datosVenta, itemsCarrito) {
 function inicializarAdminBase() {
     console.log('[Admin Base] Inicializando...');
     
-    // 0. Inicializar menú móvil
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const adminSidebar = document.getElementById('adminSidebar');
-    const mobileOverlay = document.getElementById('mobileOverlay');
-    
-    if (mobileMenuToggle && adminSidebar) {
-        mobileMenuToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            adminSidebar.classList.toggle('mobile-open');
-            mobileMenuToggle.classList.toggle('active');
-            if (mobileOverlay) {
-                mobileOverlay.classList.toggle('active');
-            }
-        });
-        
-        // Cerrar menú al hacer clic en overlay
-        if (mobileOverlay) {
-            mobileOverlay.addEventListener('click', function() {
-                adminSidebar.classList.remove('mobile-open');
-                mobileMenuToggle.classList.remove('active');
-                mobileOverlay.classList.remove('active');
-            });
-        }
-        
-        // Cerrar menú al hacer clic en un enlace (móvil)
-        const navLinks = document.querySelectorAll('.nav-link, .dropdown-item');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    setTimeout(() => {
-                        adminSidebar.classList.remove('mobile-open');
-                        mobileMenuToggle.classList.remove('active');
-                        if (mobileOverlay) {
-                            mobileOverlay.classList.remove('active');
-                        }
-                    }, 300);
-                }
-            });
-        });
-        
-        console.log('[Admin Base] Menú móvil inicializado');
-    }
-    
     // 1. Inicializar navegación por secciones (solo items que NO son dropdown-toggle)
     const navLinks = document.querySelectorAll('.nav-link[data-section]:not(.dropdown-toggle), .dropdown-item[data-section]');
     console.log('[Admin Base] Encontrados', navLinks.length, 'enlaces de navegación');

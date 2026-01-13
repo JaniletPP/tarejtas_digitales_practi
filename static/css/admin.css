@@ -41,29 +41,14 @@ body {
 
 .admin-wrapper {
     display: flex;
+    flex-direction: column;
     min-height: 100vh;
     overflow-x: hidden;
 }
 
 /* ============================================
-   SIDEBAR
+   HEADER CON MENÚ HORIZONTAL
    ============================================ */
-
-.admin-sidebar {
-    width: 260px;
-    background: var(--primary-blue);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-    overflow-y: auto;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    transition: transform 0.3s ease;
-}
 
 .sidebar-header {
     padding: 24px 20px;
@@ -158,31 +143,58 @@ body {
     transform: rotate(180deg);
 }
 
-/* Menús Desplegables */
-.dropdown-menu {
+/* Menús Desplegables - Horizontal */
+.admin-nav-horizontal .dropdown-menu {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
-    background: rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    min-width: 200px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 6px 6px;
+    z-index: 1001;
+    border: 1px solid var(--border);
+    border-top: none;
     padding: 0;
     margin: 0;
-    width: 100%;
-    position: relative;
-    z-index: 1001;
-    overflow: visible;
-    min-height: 0;
-    max-height: 0;
     transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
-.dropdown.active .dropdown-menu {
+.admin-nav-horizontal .dropdown.active .dropdown-menu {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    height: auto !important;
-    max-height: none !important;
-    min-height: auto !important;
     animation: fadeIn 0.2s ease-in;
+}
+
+.admin-nav-horizontal .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: background 0.2s;
+    border-bottom: 1px solid var(--border);
+}
+
+.admin-nav-horizontal .dropdown-item:last-child {
+    border-bottom: none;
+    border-radius: 0 0 6px 6px;
+}
+
+.admin-nav-horizontal .dropdown-item:hover {
+    background: var(--gray-light);
+    color: var(--primary-blue);
+}
+
+.admin-nav-horizontal .dropdown-icon {
+    font-size: 16px;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
 }
 
 @keyframes fadeIn {
@@ -1548,89 +1560,40 @@ input:checked + .slider:before {
    RESPONSIVE
    ============================================ */
 
-/* Botón hamburguesa para móvil */
-.mobile-menu-toggle {
-    display: none;
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 1001;
-    background: var(--primary-blue);
-    border: none;
-    width: 45px;
-    height: 45px;
-    border-radius: 6px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.mobile-menu-toggle span {
-    display: block;
-    width: 24px;
-    height: 3px;
-    background: white;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-}
-
-.mobile-menu-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translate(8px, 8px);
-}
-
-.mobile-menu-toggle.active span:nth-child(2) {
-    opacity: 0;
-}
-
-.mobile-menu-toggle.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
-}
-
-/* Overlay para móvil */
-.mobile-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.mobile-overlay.active {
-    display: block;
-    opacity: 1;
-}
-
 @media (max-width: 768px) {
-    .mobile-menu-toggle {
-        display: flex;
+    .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 16px;
     }
     
-    .admin-sidebar {
-        width: 280px;
-        transform: translateX(-100%);
-        z-index: 1000;
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
     }
     
-    .admin-sidebar.mobile-open {
-        transform: translateX(0);
+    .admin-nav-horizontal {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .admin-nav-horizontal .nav-link {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+    
+    .admin-nav-horizontal .nav-icon {
+        font-size: 14px;
+        margin-right: 6px;
     }
     
     .admin-content {
-        margin-left: 0;
-        width: 100%;
-        padding-top: 60px;
+        padding-top: 0;
     }
     
     .content-header {
-        padding: 16px;
+        position: relative;
     }
     
     .admin-section {
@@ -1655,37 +1618,32 @@ input:checked + .slider:before {
     }
     
     /* Asegurar que los enlaces sean táctiles */
-    .nav-link,
-    .dropdown-item {
+    .admin-nav-horizontal .nav-link,
+    .admin-nav-horizontal .dropdown-item {
         min-height: 44px;
         display: flex;
         align-items: center;
-        padding: 12px 20px;
+        padding: 12px 16px;
         -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
     }
-    
-    .dropdown-menu {
-        position: relative;
-        width: 100%;
-    }
 }
 
-/* Scrollbar personalizado */
-.admin-sidebar::-webkit-scrollbar {
-    width: 6px;
+/* Scrollbar personalizado para menú horizontal */
+.admin-nav-horizontal::-webkit-scrollbar {
+    height: 6px;
 }
 
-.admin-sidebar::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
+.admin-nav-horizontal::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
 }
 
-.admin-sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+.admin-nav-horizontal::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 3px;
 }
 
-.admin-sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+.admin-nav-horizontal::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 /* ============================================
