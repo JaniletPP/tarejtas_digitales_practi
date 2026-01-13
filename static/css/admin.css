@@ -371,6 +371,15 @@ body {
     margin: 0 !important;
     list-style: none !important;
     transition: opacity 0.2s ease, visibility 0.2s ease !important;
+    pointer-events: none !important; /* Deshabilitar clicks cuando está oculto */
+}
+
+/* Cuando tiene clase show, habilitar clicks y mostrar */
+.admin-nav-horizontal .dropdown-menu.show {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important; /* Habilitar clicks cuando está visible */
 }
 
 .admin-nav-horizontal .dropdown-menu.show {
