@@ -1139,5 +1139,46 @@
             console.log('[HTML] DOM cargado, admin-base.js debería estar inicializado');
         });
     </script>
+    
+    <!-- Script de prueba para dropdowns -->
+    <script>
+        // Asegurar que los dropdowns funcionen después de cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[HTML] DOM cargado, verificando dropdowns...');
+            
+            // Verificar que los dropdowns existan
+            const dropdowns = document.querySelectorAll('.dropdown-menu');
+            console.log('[HTML] Dropdowns encontrados:', dropdowns.length);
+            
+            // Verificar que los toggles existan
+            const toggles = document.querySelectorAll('.dropdown-toggle');
+            console.log('[HTML] Toggles encontrados:', toggles.length);
+            
+            // Agregar listener directo como respaldo
+            toggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    console.log('[HTML] Click directo en toggle');
+                    const dropdown = this.closest('.dropdown');
+                    if (dropdown) {
+                        const menu = dropdown.querySelector('.dropdown-menu');
+                        if (menu) {
+                            const isShowing = menu.classList.contains('show');
+                            if (isShowing) {
+                                menu.classList.remove('show');
+                                console.log('[HTML] Dropdown cerrado directamente');
+                            } else {
+                                // Cerrar otros primero
+                                document.querySelectorAll('.dropdown-menu.show').forEach(m => {
+                                    if (m !== menu) m.classList.remove('show');
+                                });
+                                menu.classList.add('show');
+                                console.log('[HTML] Dropdown abierto directamente');
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
