@@ -40,8 +40,8 @@ window.cambiarSeccion = function cambiarSeccion(sectionName) {
     });
     
     // Cerrar todos los dropdowns
-    document.querySelectorAll('.dropdown').forEach(dropdown => {
-        dropdown.classList.remove('active');
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.remove('show');
     });
     
     // Inicializar sección específica
@@ -64,7 +64,7 @@ window.cambiarSeccion = function cambiarSeccion(sectionName) {
 }
 
 // ============================================
-// FUNCIÓN PARA TOGGLE DE DROPDOWNS
+// FUNCIÓN PARA TOGGLE DE DROPDOWNS (con clase 'show')
 // ============================================
 function toggleDropdown(dropdownElement) {
     if (!dropdownElement) {
@@ -72,21 +72,27 @@ function toggleDropdown(dropdownElement) {
         return;
     }
     
-    const isActive = dropdownElement.classList.contains('active');
+    const dropdownMenu = dropdownElement.querySelector('.dropdown-menu');
+    if (!dropdownMenu) {
+        console.error('[Admin Base] No se encontró .dropdown-menu dentro del dropdown');
+        return;
+    }
+    
+    const isShowing = dropdownMenu.classList.contains('show');
     
     // Cerrar otros dropdowns
-    document.querySelectorAll('.dropdown').forEach(d => {
-        if (d !== dropdownElement) {
-            d.classList.remove('active');
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if (menu !== dropdownMenu) {
+            menu.classList.remove('show');
         }
     });
     
     // Toggle del dropdown actual
-    if (isActive) {
-        dropdownElement.classList.remove('active');
+    if (isShowing) {
+        dropdownMenu.classList.remove('show');
         console.log('[Admin Base] Dropdown cerrado');
     } else {
-        dropdownElement.classList.add('active');
+        dropdownMenu.classList.add('show');
         console.log('[Admin Base] Dropdown abierto');
     }
 }
