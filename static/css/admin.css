@@ -178,30 +178,40 @@ body {
 
 /* Menú Horizontal */
 .admin-nav-horizontal {
-    display: flex;
-    align-items: center;
-    background: var(--primary-blue);
-    padding: 0;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    background: var(--primary-blue) !important;
+    padding: 0 !important;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+    margin: 0 !important;
+    list-style: none !important;
 }
 
 .admin-nav-horizontal .nav-menu-item {
-    position: relative;
-    margin: 0;
+    position: relative !important;
+    margin: 0 !important;
+    display: inline-block !important;
+    vertical-align: top !important;
+    float: none !important;
 }
 
 .admin-nav-horizontal .nav-link {
-    display: flex;
-    align-items: center;
-    padding: 14px 20px;
-    color: rgba(255, 255, 255, 0.9);
-    text-decoration: none;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 14px 20px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-decoration: none !important;
     transition: all 0.2s;
     cursor: pointer;
-    font-size: 14px;
-    white-space: nowrap;
-    border-bottom: 3px solid transparent;
+    font-size: 14px !important;
+    white-space: nowrap !important;
+    border-bottom: 3px solid transparent !important;
+    width: auto !important;
+    float: none !important;
 }
 
 .admin-nav-horizontal .nav-link:hover {
