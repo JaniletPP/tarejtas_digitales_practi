@@ -33,6 +33,10 @@ body {
     color: var(--text-primary);
     font-size: 14px;
     line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 /* ============================================
@@ -40,13 +44,15 @@ body {
    ============================================ */
 
 .admin-wrapper {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    overflow-x: hidden;
-    width: 100%;
-    margin: 0;
-    padding: 0;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative;
 }
 
 /* ============================================
