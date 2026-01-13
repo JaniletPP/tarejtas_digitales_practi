@@ -1681,6 +1681,192 @@ async function actualizarPerfil() {
     }
 }
 
+// ============================================
+// MÓDULO DE CAJA (RECARGAS)
+// ============================================
+
+let tarjetaActualCaja = null;
+
+async function cargarInfoTarjetaCaja(numero_tarjeta) {
+    if (!numero_tarjeta || numero_tarjeta.trim() === '') {
+        return;
+    }
+    
+    numero_tarjeta = numero_tarjeta.trim().toUpperCase();
+    
+    try {
+        const { data, error } = await hacerPeticion(`/api/tarjetas/saldo/${numero_tarjeta}`, { method: 'GET' });
+        
+        if (error || !data.success) {
+            const infoDiv = document.getElementById('infoTarjetaCaja');
+            if (infoDiv) infoDiv.style.display = 'none';
+            tarjetaActualCaja = null;
+            return;
+        }
+        
+        tarjetaActualCaja = data.data;
+        mostrarInfoTarjetaCaja(tarjetaActualCaja);
+        console.log('[Admin Base] Información de tarjeta cargada:', tarjetaActualCaja);
+    } catch (error) {
+        console.error('[Admin Base] Error cargando información de tarjeta:', error);
+        const infoDiv = document.getElementById('infoTarjetaCaja');
+        if (infoDiv) infoDiv.style.display = 'none';
+        tarjetaActualCaja = null;
+    }
+}
+
+function mostrarInfoTarjetaCaja(tarjeta) {
+    const infoDiv = document.getElementById('infoTarjetaCaja');
+    const asistenteNombre = document.getElementById('asistenteNombreCaja');
+    const saldoActual = document.getElementById('saldoActualCaja');
+    const estadoTarjeta = document.getElementById('estadoTarjetaCaja');
+    const numeroTarjetaInfo = document.getElementById('numeroTarjetaInfoCaja');
+    
+    if (!infoDiv || !tarjeta) {
+        return;
+    }
+    
+    if (asistenteNombre) asistenteNombre.textContent = tarjeta.asistente_nombre || 'N/A';
+    if (saldoActual) saldoActual.textContent = `$${parseFloat(tarjeta.saldo || 0).toFixed(2)}`;
+    if (numeroTarjetaInfo) numeroTarjetaInfo.textContent = tarjeta.numero_tarjeta || 'N/A';
+    
+    // Estado de la tarjeta
+    if (estadoTarjeta) {
+        const activa = tarjeta.activa !== undefined ? tarjeta.activa : true;
+        if (activa) {
+            estadoTarjeta.innerHTML = '<span style="color: #28a745; font-weight: bold;">✅ Activa</span>';
+        } else {
+            estadoTarjeta.innerHTML = '<span style="color: #dc3545; font-weight: bold;">🔒 Bloqueada</span>';
+        }
+    }
+    
+    infoDiv.style.display = 'block';
+}
+
+async function recargarSaldoCaja() {
+    const formRecargarCaja = document.getElementById('formRecargarCaja');
+    if (!formRecargarCaja) {
+        console.error('[Admin Base] Formulario de recarga no encontrado');
+        return;
+    }
+    
+    const numeroTarjeta = document.getElementById('numeroTarjetaCaja');
+    const montoInput = document.getElementById('montoRecargaCaja');
+    const btnRecargar = document.getElementById('btnRecargarCaja');
+    const btnText = btnRecargar ? btnRecargar.querySelector('.btn-text') : null;
+    const btnLoader = btnRecargar ? btnRecargar.querySelector('.btn-loader') : null;
+    
+    if (!numeroTarjeta || !montoInput) {
+        showAlert('error', 'Campos requeridos no encontrados');
+        return;
+    }
+    
+    const numero_tarjeta = numeroTarjeta.value.trim().toUpperCase();
+    const monto = parseFloat(montoInput.value);
+    
+    // Validaciones
+    if (!numero_tarjeta || !numero_tarjeta.match(/^TARJ-\d{6}$/)) {
+        showAlert('error', 'Número de tarjeta inválido. Debe ser TARJ-XXXXXX');
+        return;
+    }
+    
+    if (!monto || monto <= 0 || isNaN(monto)) {
+        showAlert('error', 'El monto debe ser mayor a cero');
+        return;
+    }
+    
+    if (btnRecargar) btnRecargar.disabled = true;
+    if (btnText) btnText.style.display = 'none';
+    if (btnLoader) btnLoader.style.display = 'inline-block';
+    
+    try {
+        const { response, data, error } = await hacerPeticion('/api/tarjetas/recargar', {
+            method: 'POST',
+            body: JSON.stringify({ numero_tarjeta, monto })
+        });
+        
+        if (error) {
+            showAlert('error', `Error de conexión: ${error}`);
+            return;
+        }
+        
+        if (!response) {
+            showAlert('error', 'No se recibió respuesta del servidor');
+            return;
+        }
+        
+        if (response.status !== 200) {
+            const errorMsg = data?.error || `Error ${response.status}`;
+            showAlert('error', errorMsg);
+            return;
+        }
+        
+        if (data && data.success) {
+            const mensaje = data.message || `Saldo recargado correctamente: $${monto.toFixed(2)}`;
+            if (data.data.tarjeta_desbloqueada) {
+                showAlert('success', mensaje + ' (Tarjeta desbloqueada)', 'Recarga Exitosa');
+            } else {
+                showAlert('success', mensaje, 'Recarga Exitosa');
+            }
+            
+            // Actualizar información de tarjeta
+            await cargarInfoTarjetaCaja(numero_tarjeta);
+            
+            // Agregar al historial
+            agregarAlHistorialRecargas(data.data);
+            
+            // Limpiar formulario (mantener número de tarjeta)
+            montoInput.value = '';
+            montoInput.focus();
+            
+            console.log('[Admin Base] Recarga exitosa:', data.data);
+        } else {
+            showAlert('error', data?.error || 'Error al recargar saldo');
+        }
+    } catch (error) {
+        console.error('[Admin Base] Error recargando saldo:', error);
+        showAlert('error', 'Error de conexión al recargar saldo');
+    } finally {
+        if (btnRecargar) btnRecargar.disabled = false;
+        if (btnText) btnText.style.display = 'inline';
+        if (btnLoader) btnLoader.style.display = 'none';
+    }
+}
+
+function agregarAlHistorialRecargas(datosRecarga) {
+    const historialDiv = document.getElementById('historialRecargasCaja');
+    if (!historialDiv) return;
+    
+    // Si es el primer elemento, limpiar mensaje inicial
+    if (historialDiv.querySelector('p[style*="text-align: center"]')) {
+        historialDiv.innerHTML = '';
+    }
+    
+    const fecha = new Date().toLocaleString('es-MX');
+    const itemHistorial = document.createElement('div');
+    itemHistorial.style.cssText = 'padding: 12px; margin-bottom: 10px; background: #f8f9fa; border-radius: 6px; border-left: 4px solid #28a745;';
+    itemHistorial.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+            <strong style="color: #28a745;">💰 Recarga: $${parseFloat(datosRecarga.monto_recargado || 0).toFixed(2)}</strong>
+            <small style="color: #666;">${fecha}</small>
+        </div>
+        <div style="font-size: 0.9em; color: #666;">
+            <div><strong>Tarjeta:</strong> ${datosRecarga.tarjeta?.numero_tarjeta || 'N/A'}</div>
+            <div><strong>Saldo anterior:</strong> $${parseFloat(datosRecarga.saldo_anterior || 0).toFixed(2)}</div>
+            <div><strong>Saldo nuevo:</strong> <span style="color: #28a745; font-weight: bold;">$${parseFloat(datosRecarga.saldo_nuevo || 0).toFixed(2)}</span></div>
+            ${datosRecarga.tarjeta_desbloqueada ? '<div style="color: #28a745; margin-top: 5px;">✅ Tarjeta desbloqueada</div>' : ''}
+        </div>
+    `;
+    
+    // Insertar al inicio
+    historialDiv.insertBefore(itemHistorial, historialDiv.firstChild);
+    
+    // Limitar a 10 elementos
+    while (historialDiv.children.length > 10) {
+        historialDiv.removeChild(historialDiv.lastChild);
+    }
+}
+
 function inicializarAdminBase() {
     console.log('[Admin Base] Inicializando...');
     
