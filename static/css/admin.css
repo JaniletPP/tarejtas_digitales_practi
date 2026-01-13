@@ -85,6 +85,7 @@ nav.admin-nav-horizontal,
     width: 100% !important;
     overflow-x: auto !important;
     overflow-y: visible !important;
+    overflow: visible !important; /* Permitir que los dropdowns se vean */
     position: relative !important;
     z-index: 1001 !important;
     flex-direction: row !important;
