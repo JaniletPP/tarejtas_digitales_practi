@@ -2415,6 +2415,70 @@ function inicializarAdminBase() {
                 });
                 console.log('[Admin Base] Botón cancelar perfil inicializado');
             }
+            
+            // ============================================
+            // INICIALIZAR MÓDULO DE CAJA
+            // ============================================
+            
+            // Cargar información de tarjeta cuando se ingresa número
+            const numeroTarjetaCaja = document.getElementById('numeroTarjetaCaja');
+            if (numeroTarjetaCaja) {
+                let timeoutCaja = null;
+                numeroTarjetaCaja.addEventListener('input', function() {
+                    clearTimeout(timeoutCaja);
+                    const numero = this.value.trim().toUpperCase();
+                    if (numero.match(/^TARJ-\d{6}$/)) {
+                        timeoutCaja = setTimeout(() => {
+                            cargarInfoTarjetaCaja(numero);
+                        }, 500);
+                    } else {
+                        const infoDiv = document.getElementById('infoTarjetaCaja');
+                        if (infoDiv) infoDiv.style.display = 'none';
+                        tarjetaActualCaja = null;
+                    }
+                });
+                console.log('[Admin Base] Listener de número de tarjeta (Caja) inicializado');
+            }
+            
+            // Formulario de recarga
+            const formRecargarCaja = document.getElementById('formRecargarCaja');
+            if (formRecargarCaja) {
+                const newForm = formRecargarCaja.cloneNode(true);
+                formRecargarCaja.parentNode.replaceChild(newForm, formRecargarCaja);
+                
+                newForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    recargarSaldoCaja();
+                });
+                console.log('[Admin Base] Formulario de recarga (Caja) inicializado');
+            }
+            
+            // Botón limpiar
+            const btnCancelarRecargaCaja = document.getElementById('btnCancelarRecargaCaja');
+            if (btnCancelarRecargaCaja) {
+                btnCancelarRecargaCaja.addEventListener('click', function() {
+                    const numeroTarjeta = document.getElementById('numeroTarjetaCaja');
+                    const montoInput = document.getElementById('montoRecargaCaja');
+                    const infoDiv = document.getElementById('infoTarjetaCaja');
+                    
+                    if (numeroTarjeta) numeroTarjeta.value = '';
+                    if (montoInput) montoInput.value = '';
+                    if (infoDiv) infoDiv.style.display = 'none';
+                    tarjetaActualCaja = null;
+                });
+                console.log('[Admin Base] Botón limpiar (Caja) inicializado');
+            }
+            
+            // Botón escanear QR (placeholder por ahora)
+            const btnEscanearQRCaja = document.getElementById('btnEscanearQRCaja');
+            if (btnEscanearQRCaja) {
+                btnEscanearQRCaja.addEventListener('click', function() {
+                    showAlert('info', 'Funcionalidad de escaneo QR próximamente');
+                });
+                console.log('[Admin Base] Botón escanear QR (Caja) inicializado');
+            }
     
             // 11. Cargar sección inicial (dashboard)
     cambiarSeccion('dashboard');
