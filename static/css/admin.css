@@ -457,6 +457,47 @@ body {
     display: none !important;
 }
 
+/* ============================================
+   REGLAS CRÍTICAS: HEADER Y MENÚ SIEMPRE VISIBLES
+   ============================================ */
+
+/* REGLA CRÍTICA: El header DEBE estar siempre visible */
+body .admin-wrapper .admin-content > header.content-header,
+body .admin-wrapper .admin-content > .content-header {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    min-height: 100px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 99999 !important;
+    background: white !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* El menú dentro del header también debe estar visible */
+body .admin-wrapper .admin-content > header.content-header > nav.admin-nav-horizontal,
+body .admin-wrapper .admin-content > .content-header > nav.admin-nav-horizontal,
+body .admin-wrapper .admin-content > header.content-header nav.admin-nav-horizontal,
+body .admin-wrapper .admin-content > .content-header nav.admin-nav-horizontal {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    min-height: 50px !important;
+    width: 100% !important;
+    background: var(--primary-blue) !important;
+    position: relative !important;
+    z-index: 100000 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+}
+
 .section-header {
     display: flex;
     justify-content: space-between;
