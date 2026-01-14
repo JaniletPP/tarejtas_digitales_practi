@@ -2700,3 +2700,107 @@ footer.bg-dark .btn-outline-light:hover {
 .admin-content {
     flex: 1 0 auto !important;
 }
+
+/* Estilos para clases Bootstrap del footer */
+.container-fluid {
+    width: 100% !important;
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+}
+
+.row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin-right: -15px !important;
+    margin-left: -15px !important;
+}
+
+.col-lg-3, .col-md-6 {
+    position: relative !important;
+    width: 100% !important;
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+}
+
+@media (min-width: 768px) {
+    .col-md-6 {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+}
+
+@media (min-width: 992px) {
+    .col-lg-3 {
+        flex: 0 0 25% !important;
+        max-width: 25% !important;
+    }
+}
+
+.mb-5 {
+    margin-bottom: 3rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.mt-4 {
+    margin-top: 1.5rem !important;
+}
+
+.pt-5 {
+    padding-top: 3rem !important;
+}
+
+.py-5 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+}
+
+.px-sm-3 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+.px-md-5 {
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.font-weight-bold {
+    font-weight: 700 !important;
+}
+
+.mr-2 {
+    margin-right: 0.5rem !important;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.flex-column {
+    flex-direction: column !important;
+}
+
+.justify-content-start {
+    justify-content: flex-start !important;
+}
