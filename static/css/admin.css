@@ -41,15 +41,39 @@ aside[class*="sidebar"]:not(.admin-nav-horizontal),
     left: -9999px !important;
 }
 
-/* HEADER FIJO - Solo para admin-navbar */
-/* Ocultar cualquier content-header antiguo */
+/* HEADER ANTIGUO - OCULTAR COMPLETAMENTE */
+/* Ocultar cualquier header antiguo que pueda estar duplicado */
 body .admin-wrapper header.content-header:not(.admin-navbar),
 body .admin-wrapper .content-header:not(.admin-navbar),
+header.content-header:not(.admin-navbar),
 .content-header:not(.admin-navbar) {
     display: none !important;
     visibility: hidden !important;
+    opacity: 0 !important;
     height: 0 !important;
+    width: 0 !important;
     overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+/* Ocultar header-top y sus elementos */
+.header-top,
+.header-left,
+.header-right,
+.logo-container-horizontal,
+.user-info-horizontal,
+.btn-logout-header,
+#pageTitle,
+.header-subtitle {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
 }
 
 /* Navbar horizontal con 3 secciones */
