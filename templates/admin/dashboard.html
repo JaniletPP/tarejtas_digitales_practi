@@ -9,8 +9,8 @@
 </head>
 <body>
     <div class="admin-wrapper">
-        <!-- Navbar único integrado -->
-        <header class="admin-navbar fixed-header">
+        <!-- Navbar único integrado - LIMPIO Y ORDENADO -->
+        <header class="admin-navbar">
             <nav class="admin-nav-horizontal">
                 <!-- Sección Izquierda: Logo + Título -->
                 <div class="navbar-left">
@@ -22,84 +22,76 @@
 
                 <!-- Sección Centro: Menú -->
                 <div class="navbar-center">
-                    <div class="nav-menu-item" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
-                        <a href="#dashboard" class="nav-link" data-section="dashboard" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
-                            <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">📊</span>
-                            <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Dashboard</span>
-                    </a>
-                </div>
-
-                <!-- Menú desplegable: Gestión -->
-                <div class="nav-menu-item dropdown" style="display: inline-block !important; margin: 0 !important; padding: 0 !important; position: relative !important;">
-                    <a href="#gestion" class="nav-link dropdown-toggle" data-toggle="gestion" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
-                        <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">⚙️</span>
-                        <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Gestión</span>
-                        <span class="dropdown-arrow" style="display: inline-block !important; font-size: 10px !important; margin-left: 8px !important; color: #FFFFFF !important;">▼</span>
-                    </a>
-                    <ul class="dropdown-menu" id="dropdown-gestion">
-                        <li><a href="#asistentes" class="dropdown-item" data-section="asistentes">
-                            <span class="dropdown-icon">👥</span>
-                            Asistentes
-                        </a></li>
-                        <li><a href="#tarjetas" class="dropdown-item" data-section="tarjetas">
-                            <span class="dropdown-icon">💳</span>
-                            Tarjetas
-                        </a></li>
-                        <li><a href="#productos" class="dropdown-item" data-section="productos">
-                            <span class="dropdown-icon">🛍️</span>
-                            Productos
-                        </a></li>
-                    </ul>
-                </div>
-
-                <!-- Menú desplegable: Reportes -->
-                <div class="nav-menu-item dropdown" style="display: inline-block !important; margin: 0 !important; padding: 0 !important; position: relative !important;">
-                    <a href="#reportes" class="nav-link dropdown-toggle" data-toggle="reportes" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
-                        <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">📈</span>
-                        <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Reportes</span>
-                        <span class="dropdown-arrow" style="display: inline-block !important; font-size: 10px !important; margin-left: 8px !important; color: #FFFFFF !important;">▼</span>
-                    </a>
-                    <ul class="dropdown-menu" id="dropdown-reportes">
-                        <li><a href="#reportes-ventas" class="dropdown-item" data-section="reportes">
-                            <span class="dropdown-icon">💰</span>
-                            Ventas
-                        </a></li>
-                        <li><a href="#reportes-transacciones" class="dropdown-item" data-section="reportes-transacciones">
-                            <span class="dropdown-icon">📜</span>
-                            Transacciones
-                        </a></li>
-                    </ul>
-                </div>
-
-                    <!-- Menú Caja -->
-                    <div class="nav-menu-item" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
-                        <a href="#caja" class="nav-link" data-section="caja" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
-                            <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">💰</span>
-                            <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Caja</span>
-                    </a>
-                </div>
-
-                    <!-- Menú Punto de Venta -->
-                    <div class="nav-menu-item" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
-                        <a href="#punto-venta" class="nav-link" data-section="punto-venta" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
-                            <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">🛒</span>
-                            <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Punto de Venta</span>
+                    <div class="nav-menu-item">
+                        <a href="#dashboard" class="nav-link" data-section="dashboard">
+                            <span class="nav-icon">📊</span>
+                            <span class="nav-text">Dashboard</span>
                         </a>
                     </div>
 
-                    <!-- Menú Perfil -->
-                    <div class="nav-menu-item" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
-                        <a href="#perfil" class="nav-link" data-section="perfil" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
-                            <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">👤</span>
-                            <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Mi Perfil</span>
-                </a>
-            </div>
+                    <!-- Menú desplegable: Gestión -->
+                    <div class="nav-menu-item dropdown">
+                        <a href="#gestion" class="nav-link dropdown-toggle" data-toggle="gestion">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-text">Gestión</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </a>
+                        <ul class="dropdown-menu" id="dropdown-gestion">
+                            <li><a href="#asistentes" class="dropdown-item" data-section="asistentes">
+                                <span class="dropdown-icon">👥</span>
+                                Asistentes
+                            </a></li>
+                            <li><a href="#tarjetas" class="dropdown-item" data-section="tarjetas">
+                                <span class="dropdown-icon">💳</span>
+                                Tarjetas
+                            </a></li>
+                            <li><a href="#productos" class="dropdown-item" data-section="productos">
+                                <span class="dropdown-icon">🛍️</span>
+                                Productos
+                            </a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Menú desplegable: Reportes -->
+                    <div class="nav-menu-item dropdown">
+                        <a href="#reportes" class="nav-link dropdown-toggle" data-toggle="reportes">
+                            <span class="nav-icon">📈</span>
+                            <span class="nav-text">Reportes</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </a>
+                        <ul class="dropdown-menu" id="dropdown-reportes">
+                            <li><a href="#reportes-ventas" class="dropdown-item" data-section="reportes">
+                                <span class="dropdown-icon">💰</span>
+                                Ventas
+                            </a></li>
+                            <li><a href="#reportes-transacciones" class="dropdown-item" data-section="reportes-transacciones">
+                                <span class="dropdown-icon">📜</span>
+                                Transacciones
+                            </a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Menú Caja -->
+                    <div class="nav-menu-item">
+                        <a href="#caja" class="nav-link" data-section="caja">
+                            <span class="nav-icon">💰</span>
+                            <span class="nav-text">Caja</span>
+                        </a>
+                    </div>
+
+                    <!-- Menú Punto de Venta -->
+                    <div class="nav-menu-item">
+                        <a href="#punto-venta" class="nav-link" data-section="punto-venta">
+                            <span class="nav-icon">🛒</span>
+                            <span class="nav-text">Punto de Venta</span>
+                        </a>
+                    </div>
 
                     <!-- Menú Configuración -->
-                    <div class="nav-menu-item" style="display: inline-block !important; margin: 0 !important; padding: 0 !important;">
-                        <a href="#configuracion" class="nav-link" data-section="configuracion" style="display: flex !important; align-items: center !important; padding: 15px 20px !important; color: #FFFFFF !important; text-decoration: none !important; font-size: 14px !important; cursor: pointer !important;">
-                            <span class="nav-icon" style="display: inline-block !important; font-size: 18px !important; margin-right: 8px !important; color: #FFFFFF !important;">🔧</span>
-                            <span class="nav-text" style="display: inline-block !important; color: #FFFFFF !important; font-size: 14px !important;">Configuración</span>
+                    <div class="nav-menu-item">
+                        <a href="#configuracion" class="nav-link" data-section="configuracion">
+                            <span class="nav-icon">🔧</span>
+                            <span class="nav-text">Configuración</span>
                         </a>
                     </div>
                 </div>
@@ -111,7 +103,7 @@
                         <span class="user-name">{{ session.usuario }}</span>
                     </div>
                     <a href="{{ url_for('auth.logout') }}" class="btn-logout-navbar">
-                        🚪 Salir
+                        Salir
                     </a>
                 </div>
             </nav>

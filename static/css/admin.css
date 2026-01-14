@@ -86,12 +86,12 @@ header.content-header:not(.admin-navbar),
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    height: auto !important;
+    height: 60px !important;
     background: #252531 !important; /* bg-secondary del template */
     z-index: 9999 !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -101,12 +101,12 @@ header.content-header:not(.admin-navbar),
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
-    height: 100% !important;
-    max-width: 1200px !important;
+    height: 60px !important;
+    max-width: 1400px !important;
     margin: 0 auto !important;
-    padding: 0 15px !important;
+    padding: 0 20px !important;
     background: transparent !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     box-sizing: border-box !important;
 }
 
@@ -150,17 +150,18 @@ header.content-header:not(.admin-navbar),
     color: #DFB163 !important; /* text-primary del template */
 }
 
-/* Sección Centro: Menú - DISEÑO PROFESIONAL */
+/* Sección Centro: Menú - LIMPIO Y SIN OVERFLOW */
 .navbar-center {
     display: flex !important;
     align-items: center !important;
     flex: 1 !important;
     justify-content: center !important;
-    gap: 2px !important;
-    overflow: visible !important;
+    gap: 0 !important;
+    overflow: hidden !important;
     min-width: 0 !important;
-    padding: 0 20px !important;
+    padding: 0 15px !important;
     flex-wrap: nowrap !important;
+    height: 100% !important;
 }
 
 /* Sección Derecha: Usuario + Salir - ESTILO TEMPLATE */
@@ -381,7 +382,7 @@ body {
 
 /* Estilos duplicados eliminados - usar los de arriba */
 
-/* Items del menú - ESTILO TEMPLATE */
+/* Items del menú - LIMPIO Y ORDENADO */
 .admin-nav-horizontal .nav-menu-item {
     display: inline-flex !important;
     margin: 0 !important;
@@ -389,13 +390,16 @@ body {
     position: relative !important;
     white-space: nowrap !important;
     align-items: center !important;
+    height: 100% !important;
+    flex-shrink: 0 !important;
 }
 
 .admin-nav-horizontal .nav-link {
     display: flex !important;
     align-items: center !important;
-    padding: 30px 15px !important; /* Estilo del template */
-    color: #F3F6FF !important; /* Color del template */
+    padding: 0 15px !important;
+    height: 60px !important;
+    color: #F3F6FF !important;
     text-decoration: none !important;
     font-size: 14px !important;
     font-weight: 400 !important;
@@ -404,13 +408,14 @@ body {
     border-radius: 0 !important;
     transition: color 0.3s ease !important;
     position: relative !important;
-    letter-spacing: 1px !important; /* Estilo del template */
+    letter-spacing: 1px !important;
     outline: none !important;
+    box-sizing: border-box !important;
 }
 
 .admin-nav-horizontal .nav-link:hover,
 .admin-nav-horizontal .nav-link.active {
-    color: #DFB163 !important; /* text-primary del template */
+    color: #DFB163 !important;
     background: transparent !important;
 }
 
@@ -541,7 +546,7 @@ body {
     flex: 1;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    margin-top: 80px !important; /* Altura del navbar */
+    margin-top: 60px !important; /* Altura del navbar */
     padding-bottom: 50px !important; /* Espacio para el footer */
     padding-top: 0 !important;
     min-height: calc(100vh - 70px);
