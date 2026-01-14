@@ -77,14 +77,14 @@ header.content-header:not(.admin-navbar),
 }
 
 /* ============================================
-   NAVBAR ÚNICO INTEGRADO
+   NAVBAR ÚNICO INTEGRADO - DISEÑO MODERNO
    ============================================ */
 
 .admin-navbar {
     display: block !important;
     visibility: visible !important;
-    background: var(--primary-blue) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    background: linear-gradient(135deg, #1A3A5F 0%, #2E5984 100%) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -94,120 +94,156 @@ header.content-header:not(.admin-navbar),
     max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    height: 60px !important; /* Altura fija */
-    overflow: hidden !important; /* Sin overflow */
+    height: 70px !important; /* Altura aumentada para mejor diseño */
+    overflow: hidden !important;
     box-sizing: border-box !important;
+    border-bottom: 3px solid #4A90A4 !important;
 }
 
-/* Navbar horizontal con 3 secciones - SIN SCROLL */
+/* Navbar horizontal con 3 secciones - DISEÑO MEJORADO */
 .admin-nav-horizontal {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-    height: auto !important;
-    min-height: 60px !important;
-    max-height: 60px !important;
+    height: 100% !important;
+    min-height: 70px !important;
+    max-height: 70px !important;
     width: 100% !important;
     max-width: 100% !important;
-    overflow: hidden !important; /* Sin scroll horizontal */
+    overflow: hidden !important;
     position: relative !important;
     z-index: 1001 !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
-    background: var(--primary-blue) !important;
-    padding: 0 20px !important;
+    background: transparent !important;
+    padding: 0 30px !important;
     margin: 0 !important;
     list-style: none !important;
-    gap: 15px !important;
+    gap: 20px !important;
     box-sizing: border-box !important;
 }
 
-/* Sección Izquierda: Logo + Título */
+/* Sección Izquierda: Logo + Título - DISEÑO MEJORADO */
 .navbar-left {
     display: flex !important;
     align-items: center !important;
     flex-shrink: 0 !important;
+    min-width: 250px !important;
 }
 
 .navbar-logo {
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 12px !important;
     color: white !important;
+    padding: 8px 16px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+.navbar-logo:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-1px) !important;
 }
 
 .navbar-logo .logo-icon {
-    font-size: 28px !important;
+    font-size: 32px !important;
     line-height: 1 !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
 }
 
 .navbar-logo .logo-text {
-    font-size: 16px !important;
-    font-weight: 600 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
     color: white !important;
     white-space: nowrap !important;
+    letter-spacing: 0.5px !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Sección Centro: Menú - SIN SCROLL */
+/* Sección Centro: Menú - DISEÑO MEJORADO */
 .navbar-center {
     display: flex !important;
     align-items: center !important;
     flex: 1 !important;
     justify-content: center !important;
-    gap: 0 !important;
-    overflow: hidden !important; /* Sin scroll */
-    min-width: 0 !important; /* Permitir que se reduzca */
+    gap: 4px !important;
+    overflow: hidden !important;
+    min-width: 0 !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
+    padding: 0 20px !important;
 }
 
-/* Sección Derecha: Usuario + Salir */
+/* Sección Derecha: Usuario + Salir - DISEÑO MEJORADO */
 .navbar-right {
     display: flex !important;
     align-items: center !important;
-    gap: 12px !important;
+    gap: 16px !important;
     flex-shrink: 0 !important;
+    min-width: 200px !important;
+    justify-content: flex-end !important;
 }
 
 .navbar-user {
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
-    padding: 6px 12px !important;
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-radius: 6px !important;
+    gap: 10px !important;
+    padding: 8px 16px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 10px !important;
     color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.navbar-user:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
 }
 
 .navbar-user .user-avatar {
-    font-size: 18px !important;
+    font-size: 20px !important;
     line-height: 1 !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 50% !important;
 }
 
 .navbar-user .user-name {
-    font-size: 14px !important;
-    font-weight: 500 !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
     color: white !important;
     white-space: nowrap !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
 
 .btn-logout-navbar {
-    padding: 8px 16px !important;
-    background: #DC2626 !important;
+    padding: 10px 20px !important;
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%) !important;
     color: white !important;
     border: none !important;
-    border-radius: 6px !important;
-    font-weight: 500 !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
     font-size: 14px !important;
     cursor: pointer !important;
     text-decoration: none !important;
-    transition: background 0.2s !important;
+    transition: all 0.3s ease !important;
     white-space: nowrap !important;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3) !important;
 }
 
 .btn-logout-navbar:hover {
-    background: #B91C1C !important;
+    background: linear-gradient(135deg, #B91C1C 0%, #991B1B 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
 }
 
 body {
@@ -391,29 +427,52 @@ body {
     flex-direction: row !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 12px 16px !important; /* Reducir padding para que quepa mejor */
-    color: #FFFFFF !important;
+    padding: 10px 18px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
     text-decoration: none !important;
     font-size: 14px !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     white-space: nowrap !important;
     cursor: pointer !important;
-    border-bottom: 3px solid transparent !important;
-    transition: all 0.2s ease !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
     background: transparent !important;
     box-sizing: border-box !important;
+    position: relative !important;
+}
+
+.admin-nav-horizontal .nav-link::before {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 0 !important;
+    height: 3px !important;
+    background: #4A90A4 !important;
+    transition: width 0.3s ease !important;
+    border-radius: 2px 2px 0 0 !important;
 }
 
 .admin-nav-horizontal .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
     color: #FFFFFF !important;
-    border-bottom-color: #4A90A4 !important;
+    transform: translateY(-2px) !important;
+}
+
+.admin-nav-horizontal .nav-link:hover::before {
+    width: 80% !important;
 }
 
 .admin-nav-horizontal .nav-link.active {
-    background: #2E5984 !important;
+    background: rgba(255, 255, 255, 0.2) !important;
     color: #FFFFFF !important;
-    border-bottom-color: #FFFFFF !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.admin-nav-horizontal .nav-link.active::before {
+    width: 100% !important;
+    background: #FFFFFF !important;
 }
 
 .admin-nav-horizontal .nav-link:hover {
@@ -562,9 +621,9 @@ body {
     flex: 1;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    margin-top: 60px !important; /* Exactamente la altura del navbar */
-    padding-top: 0 !important; /* Sin padding-top adicional */
-    min-height: calc(100vh - 60px);
+    margin-top: 70px !important; /* Altura del navbar (70px) */
+    padding-top: 0 !important;
+    min-height: calc(100vh - 70px);
     background: var(--gray-light);
     width: 100% !important;
     max-width: 100% !important;
