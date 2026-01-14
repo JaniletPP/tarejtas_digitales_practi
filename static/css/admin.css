@@ -383,21 +383,7 @@ body {
     background: #B91C1C;
 }
 
-/* Menú Horizontal - SIMPLIFICADO Y FUNCIONAL */
-.admin-nav-horizontal {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    background: #1A3A5F !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    min-height: 50px !important;
-    list-style: none !important;
-    position: relative !important;
-    z-index: 1001 !important;
-    overflow: visible !important;
-}
+/* Estilos duplicados eliminados - usar los de arriba */
 
 /* Items del menú - DISEÑO PROFESIONAL */
 .admin-nav-horizontal .nav-menu-item {
