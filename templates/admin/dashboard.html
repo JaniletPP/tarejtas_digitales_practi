@@ -1137,144 +1137,57 @@
         });
     </script>
     
-    <!-- Script SIMPLE y DIRECTO para dropdowns -->
+    <!-- Script SIMPLE para dropdowns -->
     <script>
         (function() {
             'use strict';
             
             function initDropdowns() {
-                console.log('[Dropdowns] Inicializando...');
-                
-                // Encontrar todos los toggles
                 const toggles = document.querySelectorAll('.dropdown-toggle');
-                console.log('[Dropdowns] Toggles encontrados:', toggles.length);
                 
-                // Verificar que los menús existan
-                const menus = document.querySelectorAll('.dropdown-menu');
-                console.log('[Dropdowns] Menús encontrados:', menus.length);
-                menus.forEach(function(menu, index) {
-                    const items = menu.querySelectorAll('.dropdown-item');
-                    console.log('[Dropdowns] Menú', index + 1, 'tiene', items.length, 'items');
-                });
-                
-                if (toggles.length === 0) {
-                    console.warn('[Dropdowns] No se encontraron toggles');
-                    return;
-                }
-                
-                // Agregar listener a cada toggle
                 toggles.forEach(function(toggle) {
-                    // Remover cualquier listener anterior
-                    const newToggle = toggle.cloneNode(true);
-                    toggle.parentNode.replaceChild(newToggle, toggle);
-                    
-                    newToggle.addEventListener('click', function(e) {
+                    toggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
                         
-                        console.log('[Dropdowns] Click en toggle:', this.textContent.trim());
-                        
-                        // Encontrar el dropdown padre
                         const dropdown = this.closest('.dropdown');
-                        if (!dropdown) {
-                            console.error('[Dropdowns] No se encontró .dropdown');
-                            return;
-                        }
+                        if (!dropdown) return;
                         
-                        // Encontrar el menú
                         const menu = dropdown.querySelector('.dropdown-menu');
-                        if (!menu) {
-                            console.error('[Dropdowns] No se encontró .dropdown-menu');
-                            return;
-                        }
+                        if (!menu) return;
                         
-                        // Verificar items del menú
-                        const items = menu.querySelectorAll('.dropdown-item');
-                        console.log('[Dropdowns] Menú tiene', items.length, 'items');
-                        items.forEach(function(item, idx) {
-                            console.log('[Dropdowns] Item', idx + 1, ':', item.textContent.trim());
-                        });
-                        
-                        // Verificar estado actual
                         const isShowing = menu.classList.contains('show');
-                        console.log('[Dropdowns] Estado actual:', isShowing ? 'abierto' : 'cerrado');
                         
-                        // Verificar estilos computados
-                        const computedStyle = window.getComputedStyle(menu);
-                        console.log('[Dropdowns] Display:', computedStyle.display);
-                        console.log('[Dropdowns] Visibility:', computedStyle.visibility);
-                        console.log('[Dropdowns] Opacity:', computedStyle.opacity);
-                        console.log('[Dropdowns] Z-index:', computedStyle.zIndex);
-                        
-                        // Cerrar TODOS los otros dropdowns primero
-                        document.querySelectorAll('.dropdown-menu').forEach(function(m) {
-                            if (m !== menu) {
-                                m.classList.remove('show');
-                            }
+                        // Cerrar otros dropdowns
+                        document.querySelectorAll('.dropdown-menu.show').forEach(function(m) {
+                            if (m !== menu) m.classList.remove('show');
                         });
                         
-                        // Toggle del dropdown actual
+                        // Toggle actual
                         if (isShowing) {
                             menu.classList.remove('show');
-                            console.log('[Dropdowns] Cerrado');
-                    } else {
+                        } else {
                             menu.classList.add('show');
-                            console.log('[Dropdowns] Abierto - clase show agregada');
-                            
-                            // Verificar que se agregó la clase y que los estilos se aplicaron
-                            setTimeout(function() {
-                                if (menu.classList.contains('show')) {
-                                    const newComputedStyle = window.getComputedStyle(menu);
-                                    console.log('[Dropdowns] ✓ Clase show confirmada');
-                                    console.log('[Dropdowns] Display después:', newComputedStyle.display);
-                                    console.log('[Dropdowns] Visibility después:', newComputedStyle.visibility);
-                                    console.log('[Dropdowns] Opacity después:', newComputedStyle.opacity);
-                                    
-                                    // Verificar que los items sean visibles
-                                    items.forEach(function(item, idx) {
-                                        const itemStyle = window.getComputedStyle(item);
-                                        console.log('[Dropdowns] Item', idx + 1, 'display:', itemStyle.display);
-                                    });
-                                } else {
-                                    console.error('[Dropdowns] ✗ ERROR: Clase show NO se agregó');
-                                }
-                            }, 50);
                         }
                     });
                 });
                 
-                // Cerrar dropdowns al hacer click fuera
+                // Cerrar al hacer click fuera
                 document.addEventListener('click', function(e) {
-                    const target = e.target;
-                    
-                    // Si el click fue en un toggle o dentro de un dropdown, no hacer nada
-                    if (target.closest('.dropdown-toggle') || target.closest('.dropdown-menu')) {
+                    if (e.target.closest('.dropdown-toggle') || e.target.closest('.dropdown-menu')) {
                         return;
                     }
-                    
-                    // Cerrar todos los dropdowns
-                    const menusAbiertos = document.querySelectorAll('.dropdown-menu.show');
-                    if (menusAbiertos.length > 0) {
-                        console.log('[Dropdowns] Cerrando', menusAbiertos.length, 'dropdowns (click fuera)');
-                        menusAbiertos.forEach(function(menu) {
-                            menu.classList.remove('show');
-                        });
-                    }
+                    document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                        menu.classList.remove('show');
+                    });
                 });
-                
-                console.log('[Dropdowns] Inicialización completa');
             }
             
-            // Inicializar cuando el DOM esté listo
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initDropdowns);
             } else {
-                // DOM ya está listo
                 initDropdowns();
             }
-            
-            // También intentar después de un pequeño delay por si acaso
-            setTimeout(initDropdowns, 500);
         })();
     </script>
 </body>
