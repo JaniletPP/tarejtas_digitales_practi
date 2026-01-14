@@ -439,25 +439,22 @@ body {
 
 .admin-nav-horizontal .dropdown-menu {
     display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
     position: absolute !important;
     top: 100% !important;
     left: 0 !important;
     background: white !important;
     min-width: 200px !important;
-    max-width: 300px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-    border-radius: 0 0 6px 6px !important;
-    z-index: 99999 !important; /* z-index MUY alto para estar sobre TODO */
-    border: 1px solid var(--border) !important;
-    border-top: 2px solid var(--primary-blue) !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 4px !important;
+    z-index: 10000 !important;
+    border: 1px solid #ddd !important;
+    padding: 4px 0 !important;
+    margin: 4px 0 0 0 !important;
     list-style: none !important;
-    transition: opacity 0.2s ease, visibility 0.2s ease !important;
-    pointer-events: none !important; /* Deshabilitar clicks cuando está oculto */
-    overflow: visible !important;
+}
+
+.admin-nav-horizontal .dropdown-menu.show {
+    display: block !important;
 }
 
 /* Dropdown items */
@@ -475,6 +472,8 @@ body {
     text-decoration: none !important;
     font-size: 14px !important;
     transition: background 0.2s !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .admin-nav-horizontal .dropdown-item:hover {
@@ -485,44 +484,6 @@ body {
 .admin-nav-horizontal .dropdown-icon {
     margin-right: 8px !important;
     font-size: 16px !important;
-}
-
-/* Ya está definido arriba */
-
-.admin-nav-horizontal .dropdown-menu li {
-    list-style: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: block !important;
-}
-
-.admin-nav-horizontal .dropdown-item {
-    display: flex !important;
-    align-items: center !important;
-    padding: 12px 20px !important;
-    color: var(--text-primary) !important;
-    text-decoration: none !important;
-    transition: background 0.2s !important;
-    border-bottom: 1px solid var(--border) !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.admin-nav-horizontal .dropdown-item:last-child {
-    border-bottom: none;
-    border-radius: 0 0 6px 6px;
-}
-
-.admin-nav-horizontal .dropdown-item:hover {
-    background: var(--gray-light);
-    color: var(--primary-blue);
-}
-
-.admin-nav-horizontal .dropdown-icon {
-    font-size: 16px;
-    margin-right: 10px;
-    width: 20px;
-    text-align: center;
 }
 
 @keyframes fadeIn {
