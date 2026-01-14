@@ -2645,3 +2645,58 @@ input:checked + .slider:before {
     padding: 8px 16px;
     font-size: 13px;
 }
+
+/* ============================================
+   FOOTER ESTILO TEMPLATE
+   ============================================ */
+
+footer.bg-dark {
+    background-color: #181818 !important; /* dark del template */
+    color: #fff !important;
+    margin-top: auto !important;
+    width: 100% !important;
+}
+
+footer.bg-dark .text-primary {
+    color: #DFB163 !important; /* primary del template */
+}
+
+footer.bg-dark .text-white {
+    color: #fff !important;
+}
+
+footer.bg-dark a.text-white {
+    color: #fff !important;
+    text-decoration: none !important;
+    transition: color 0.3s ease !important;
+}
+
+footer.bg-dark a.text-white:hover {
+    color: #DFB163 !important;
+}
+
+footer.bg-dark .border-secondary {
+    border-color: #252531 !important; /* secondary del template */
+}
+
+footer.bg-dark .btn-outline-light {
+    color: #fff !important;
+    border-color: #fff !important;
+    transition: all 0.3s ease !important;
+}
+
+footer.bg-dark .btn-outline-light:hover {
+    color: #181818 !important;
+    background-color: #fff !important;
+}
+
+/* Asegurar que el wrapper tenga flex para que el footer quede abajo */
+.admin-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+}
+
+.admin-content {
+    flex: 1 0 auto !important;
+}
