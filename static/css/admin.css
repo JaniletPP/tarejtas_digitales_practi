@@ -539,8 +539,9 @@ body {
     flex: 1;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    margin-top: 70px !important; /* Espacio para navbar único (60px altura + 10px margen) */
-    min-height: calc(100vh - 70px);
+    margin-top: 60px !important; /* Exactamente la altura del navbar */
+    padding-top: 0 !important; /* Sin padding-top adicional */
+    min-height: calc(100vh - 60px);
     background: var(--gray-light);
     width: 100% !important;
     max-width: 100% !important;
@@ -548,6 +549,7 @@ body {
     overflow-x: hidden;
     overflow-y: visible !important;
     padding: 20px !important;
+    box-sizing: border-box !important;
 }
 
 /* Asegurar que el header esté siempre visible y fijo */
