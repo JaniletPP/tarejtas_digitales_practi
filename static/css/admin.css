@@ -41,34 +41,15 @@ aside[class*="sidebar"]:not(.admin-nav-horizontal),
     left: -9999px !important;
 }
 
-/* HEADER FIJO - FUERA DEL MAIN */
-/* Sobrescribir cualquier estilo de style.css */
-body .admin-wrapper header.content-header,
-body .admin-wrapper .content-header,
-body .content-header,
-header.content-header,
-.content-header,
-.fixed-header {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    height: auto !important;
-    min-height: auto !important;
-    max-height: none !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: visible !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 9999 !important;
-    background: white !important;
-    text-align: left !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+/* HEADER FIJO - Solo para admin-navbar */
+/* Ocultar cualquier content-header antiguo */
+body .admin-wrapper header.content-header:not(.admin-navbar),
+body .admin-wrapper .content-header:not(.admin-navbar),
+.content-header:not(.admin-navbar) {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
 }
 
 /* Navbar horizontal con 3 secciones */
