@@ -76,16 +76,17 @@ header.content-header:not(.admin-navbar),
     left: -9999px !important;
 }
 
-/* Navbar horizontal con 3 secciones */
+/* Navbar horizontal con 3 secciones - SIN SCROLL */
 .admin-nav-horizontal {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
     height: auto !important;
     min-height: 60px !important;
-    max-height: none !important;
+    max-height: 60px !important;
     width: 100% !important;
-    overflow: visible !important;
+    max-width: 100% !important;
+    overflow: hidden !important; /* Sin scroll horizontal */
     position: relative !important;
     z-index: 1001 !important;
     flex-direction: row !important;
@@ -95,7 +96,8 @@ header.content-header:not(.admin-navbar),
     padding: 0 20px !important;
     margin: 0 !important;
     list-style: none !important;
-    gap: 20px !important;
+    gap: 15px !important;
+    box-sizing: border-box !important;
 }
 
 /* Sección Izquierda: Logo + Título */
@@ -124,15 +126,17 @@ header.content-header:not(.admin-navbar),
     white-space: nowrap !important;
 }
 
-/* Sección Centro: Menú */
+/* Sección Centro: Menú - SIN SCROLL */
 .navbar-center {
     display: flex !important;
     align-items: center !important;
     flex: 1 !important;
     justify-content: center !important;
     gap: 0 !important;
-    overflow-x: auto !important;
-    overflow-y: visible !important;
+    overflow: hidden !important; /* Sin scroll */
+    min-width: 0 !important; /* Permitir que se reduzca */
+    max-width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 /* Sección Derecha: Usuario + Salir */
@@ -351,10 +355,12 @@ body {
 }
 
 .admin-nav-horizontal .nav-menu-item {
-    display: inline-block !important;
+    display: inline-flex !important;
     margin: 0 !important;
     padding: 0 !important;
     position: relative !important;
+    flex-shrink: 0 !important; /* No reducir tamaño */
+    white-space: nowrap !important;
 }
 
 .admin-nav-horizontal .nav-link {
@@ -362,7 +368,7 @@ body {
     flex-direction: row !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 15px 20px !important;
+    padding: 12px 16px !important; /* Reducir padding para que quepa mejor */
     color: #FFFFFF !important;
     text-decoration: none !important;
     font-size: 14px !important;
@@ -372,6 +378,7 @@ body {
     border-bottom: 3px solid transparent !important;
     transition: all 0.2s ease !important;
     background: transparent !important;
+    box-sizing: border-box !important;
 }
 
 .admin-nav-horizontal .nav-link:hover {
