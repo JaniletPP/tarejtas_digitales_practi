@@ -390,18 +390,7 @@ body {
     background: rgba(255, 255, 255, 0.15) !important;
 }
 
-.admin-nav-horizontal .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border-bottom-color: var(--accent-blue);
-}
-
-.admin-nav-horizontal .nav-link.active {
-    background: var(--accent-blue);
-    color: white;
-    border-bottom-color: white;
-    font-weight: 500;
-}
+/* Estilos duplicados eliminados */
 
 .admin-nav-horizontal .nav-icon {
     display: inline-block !important;
