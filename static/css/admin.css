@@ -76,6 +76,29 @@ header.content-header:not(.admin-navbar),
     left: -9999px !important;
 }
 
+/* ============================================
+   NAVBAR ÚNICO INTEGRADO
+   ============================================ */
+
+.admin-navbar {
+    display: block !important;
+    visibility: visible !important;
+    background: var(--primary-blue) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 60px !important; /* Altura fija */
+    overflow: hidden !important; /* Sin overflow */
+    box-sizing: border-box !important;
+}
+
 /* Navbar horizontal con 3 secciones - SIN SCROLL */
 .admin-nav-horizontal {
     display: flex !important;
