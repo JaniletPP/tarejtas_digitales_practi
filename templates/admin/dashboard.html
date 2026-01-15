@@ -449,6 +449,114 @@
                 </div>
             </section>
 
+            <!-- Recargas Section -->
+            <section id="section-reportes-recargas" class="admin-section hidden">
+                <div class="section-header">
+                    <h2>💵 Reportes de Recargas</h2>
+                    <button class="btn btn-primary" id="btnExportarRecargas" style="display: none;">📥 Exportar CSV</button>
+                </div>
+                
+                <!-- Filtros -->
+                <div class="content-card">
+                    <h3>Filtros</h3>
+                    <form id="formFiltrosRecargas" class="filtros-reporte">
+                        <div class="filtros-grid">
+                            <div class="form-group">
+                                <label>Fecha Inicio</label>
+                                <input type="date" id="fechaInicioRecargas" class="filtro-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha Fin</label>
+                                <input type="date" id="fechaFinRecargas" class="filtro-input">
+                            </div>
+                            <div class="form-group form-actions-inline">
+                                <button type="submit" class="btn btn-primary">🔍 Aplicar Filtros</button>
+                                <button type="button" class="btn btn-secondary" id="btnLimpiarFiltrosRecargas">🔄 Limpiar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Resumen -->
+                <div id="resumenRecargas" class="resumen-reporte" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="stat-card stat-primary">
+                            <div class="stat-label">Total Recargas</div>
+                            <div class="stat-value" id="totalRecargas">$0.00</div>
+                        </div>
+                        <div class="stat-card stat-success">
+                            <div class="stat-label">Cantidad de Recargas</div>
+                            <div class="stat-value" id="cantidadRecargas">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Recargas -->
+                <div class="content-card">
+                    <h3>Listado de Recargas</h3>
+                    <div id="tablaRecargas" class="table-responsive">
+                        <p class="text-muted">Seleccione un rango de fechas y aplique los filtros para ver las recargas.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Consumos Section -->
+            <section id="section-reportes-consumos" class="admin-section hidden">
+                <div class="section-header">
+                    <h2>🛒 Reportes de Consumos</h2>
+                    <button class="btn btn-primary" id="btnExportarConsumos" style="display: none;">📥 Exportar CSV</button>
+                </div>
+                
+                <!-- Filtros -->
+                <div class="content-card">
+                    <h3>Filtros</h3>
+                    <form id="formFiltrosConsumos" class="filtros-reporte">
+                        <div class="filtros-grid">
+                            <div class="form-group">
+                                <label>Fecha Inicio</label>
+                                <input type="date" id="fechaInicioConsumos" class="filtro-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha Fin</label>
+                                <input type="date" id="fechaFinConsumos" class="filtro-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Punto de Venta</label>
+                                <select id="puntoVentaConsumos" class="filtro-input">
+                                    <option value="">Todos los puntos de venta</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-actions-inline">
+                                <button type="submit" class="btn btn-primary">🔍 Aplicar Filtros</button>
+                                <button type="button" class="btn btn-secondary" id="btnLimpiarFiltrosConsumos">🔄 Limpiar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Resumen -->
+                <div id="resumenConsumos" class="resumen-reporte" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="stat-card stat-primary">
+                            <div class="stat-label">Total Consumos</div>
+                            <div class="stat-value" id="totalConsumos">$0.00</div>
+                        </div>
+                        <div class="stat-card stat-success">
+                            <div class="stat-label">Cantidad de Consumos</div>
+                            <div class="stat-value" id="cantidadConsumos">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Consumos -->
+                <div class="content-card">
+                    <h3>Listado de Consumos</h3>
+                    <div id="tablaConsumos" class="table-responsive">
+                        <p class="text-muted">Seleccione un rango de fechas y aplique los filtros para ver los consumos.</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- Transacciones Section -->
             <section id="section-reportes-transacciones" class="admin-section hidden">
                 <div class="section-header">
