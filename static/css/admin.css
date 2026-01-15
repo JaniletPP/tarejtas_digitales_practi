@@ -2783,3 +2783,150 @@ footer.bg-dark .btn-outline-light:hover {
 .justify-content-start {
     justify-content: flex-start !important;
 }
+
+/* ============================================
+   NAVBAR RESPONSIVE - MÓVIL
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Navbar ajustes móvil */
+    .admin-navbar {
+        height: auto !important;
+        min-height: 60px !important;
+    }
+    
+    .admin-nav-horizontal {
+        flex-wrap: wrap !important;
+        padding: 0 10px !important;
+    }
+    
+    /* Logo más pequeño en móvil */
+    .navbar-left {
+        min-width: auto !important;
+        flex: 0 0 auto !important;
+    }
+    
+    .navbar-logo .logo-text {
+        font-size: 1rem !important;
+    }
+    
+    .navbar-logo .logo-icon {
+        font-size: 20px !important;
+    }
+    
+    /* Mostrar botón hamburguesa */
+    .navbar-toggle {
+        display: block !important;
+    }
+    
+    /* Ocultar menú por defecto en móvil */
+    .navbar-center {
+        display: none !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        position: absolute !important;
+        top: 60px !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: #252531 !important;
+        padding: 0 !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+        z-index: 99998 !important;
+        max-height: calc(100vh - 60px) !important;
+        overflow-y: auto !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        gap: 0 !important;
+    }
+    
+    /* Mostrar menú cuando está abierto */
+    .navbar-center.mobile-open {
+        display: flex !important;
+    }
+    
+    /* Items del menú en móvil - vertical */
+    .navbar-center .nav-menu-item {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .navbar-center .nav-menu-item:last-child {
+        border-bottom: none !important;
+    }
+    
+    .navbar-center .nav-link {
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 15px 20px !important;
+        height: auto !important;
+        min-height: 50px !important;
+        color: #F3F6FF !important;
+        border-radius: 0 !important;
+    }
+    
+    .navbar-center .nav-link:hover {
+        background: rgba(223, 177, 99, 0.1) !important;
+        color: #DFB163 !important;
+    }
+    
+    /* Dropdowns en móvil */
+    .navbar-center .nav-menu-item.dropdown {
+        position: relative !important;
+    }
+    
+    .navbar-center .dropdown-menu {
+        position: static !important;
+        display: none !important;
+        width: 100% !important;
+        background: rgba(0, 0, 0, 0.2) !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .navbar-center .dropdown-menu.show {
+        display: block !important;
+    }
+    
+    .navbar-center .dropdown-item {
+        padding: 12px 20px 12px 40px !important;
+        color: #F3F6FF !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    .navbar-center .dropdown-item:hover {
+        background: rgba(223, 177, 99, 0.15) !important;
+        color: #DFB163 !important;
+    }
+    
+    /* Sección derecha en móvil - ocultar */
+    .navbar-right {
+        display: none !important;
+    }
+    
+    /* Ajustar wrapper para navbar móvil */
+    .admin-wrapper {
+        margin-top: 60px !important;
+    }
+}
+
+/* Tablet - ajustes intermedios */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .navbar-logo .logo-text {
+        font-size: 1.1rem !important;
+    }
+    
+    .admin-nav-horizontal .nav-link {
+        padding: 0 12px !important;
+        font-size: 13px !important;
+    }
+    
+    .navbar-right {
+        min-width: 150px !important;
+    }
+}
