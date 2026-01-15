@@ -489,14 +489,22 @@ body {
     height: auto !important;
 }
 
-.admin-nav-horizontal .dropdown-menu.show,
-.admin-nav-horizontal .nav-menu-item.dropdown:hover .dropdown-menu {
+/* FORZAR VISIBILIDAD CON HOVER Y CLASE SHOW */
+.admin-nav-horizontal .nav-menu-item.dropdown:hover .dropdown-menu,
+.admin-nav-horizontal .dropdown-menu.show {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important;
     max-height: none !important;
     height: auto !important;
+}
+
+/* Asegurar que el hover funcione incluso en el menú */
+.admin-nav-horizontal .nav-menu-item.dropdown:hover .dropdown-menu:hover {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 /* Dropdown items - ESTILO TEMPLATE */

@@ -1228,97 +1228,69 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin-base.js') }}"></script>
-    <!-- Script de dropdowns - SOLUCIÓN SIMPLE Y DIRECTA -->
+    <!-- Script de dropdowns - SOLUCIÓN ULTRA SIMPLE -->
     <script>
-        (function() {
-            'use strict';
+        console.log('[Dropdowns] Script iniciado');
+        
+        function initDropdowns() {
+            const dropdowns = document.querySelectorAll('.admin-nav-horizontal .nav-menu-item.dropdown');
+            console.log('[Dropdowns] Encontrados', dropdowns.length, 'dropdowns');
             
-            console.log('[Dropdowns] Iniciando script de dropdowns...');
-            
-            function setupDropdowns() {
-                console.log('[Dropdowns] Configurando dropdowns...');
+            dropdowns.forEach(function(dropdown) {
+                const toggle = dropdown.querySelector('.dropdown-toggle');
+                const menu = dropdown.querySelector('.dropdown-menu');
                 
-                // Seleccionar todos los dropdowns
-                const dropdowns = document.querySelectorAll('.admin-nav-horizontal .nav-menu-item.dropdown');
-                console.log('[Dropdowns] Encontrados', dropdowns.length, 'dropdowns');
+                if (!toggle || !menu) return;
                 
-                dropdowns.forEach(function(dropdown, idx) {
-                    const toggle = dropdown.querySelector('.dropdown-toggle');
-                    const menu = dropdown.querySelector('.dropdown-menu');
+                // Click
+                toggle.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     
-                    if (!toggle || !menu) {
-                        console.warn('[Dropdowns] Dropdown', idx, 'incompleto');
-                        return;
-                    }
-                    
-                    console.log('[Dropdowns] Configurando:', toggle.textContent.trim());
-                    
-                    // Remover listeners anteriores
-                    const newToggle = toggle.cloneNode(true);
-                    toggle.parentNode.replaceChild(newToggle, toggle);
-                    
-                    // Click handler
-                    newToggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        e.stopImmediatePropagation();
-                        
-                        console.log('[Dropdowns] Click en:', this.textContent.trim());
-                        
-                        // Cerrar otros
-                        document.querySelectorAll('.admin-nav-horizontal .dropdown-menu.show').forEach(function(m) {
-                            if (m !== menu) m.classList.remove('show');
-                        });
-                        
-                        // Toggle este
-                        menu.classList.toggle('show');
-                        console.log('[Dropdowns] Menu ahora:', menu.classList.contains('show') ? 'visible' : 'oculto');
-                        
-                        // Verificar visualmente
-                        setTimeout(function() {
-                            const style = window.getComputedStyle(menu);
-                            console.log('[Dropdowns] Estado visual - Display:', style.display, 'Visibility:', style.visibility, 'Opacity:', style.opacity);
-                        }, 10);
+                    // Cerrar otros
+                    document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(m) {
+                        if (m !== menu) m.classList.remove('show');
                     });
                     
-                    // Hover handlers
-                    dropdown.addEventListener('mouseenter', function() {
-                        menu.classList.add('show');
-                    });
-                    
-                    dropdown.addEventListener('mouseleave', function() {
-                        // Solo cerrar si no hay click activo
-                        setTimeout(function() {
-                            if (!dropdown.matches(':hover')) {
-                                menu.classList.remove('show');
-                            }
-                        }, 100);
-                    });
-                });
+                    // Toggle
+                    menu.classList.toggle('show');
+                    console.log('[Dropdowns] Toggle:', menu.classList.contains('show'));
+                };
                 
-                // Click fuera para cerrar
-                document.addEventListener('click', function(e) {
-                    if (!e.target.closest('.admin-nav-horizontal .nav-menu-item.dropdown')) {
-                        document.querySelectorAll('.admin-nav-horizontal .dropdown-menu.show').forEach(function(menu) {
+                // Hover
+                dropdown.onmouseenter = function() {
+                    menu.classList.add('show');
+                };
+                
+                dropdown.onmouseleave = function() {
+                    setTimeout(function() {
+                        if (!dropdown.matches(':hover')) {
                             menu.classList.remove('show');
-                        });
-                    }
-                });
-                
-                console.log('[Dropdowns] Configuración completa');
-            }
+                        }
+                    }, 200);
+                };
+            });
             
-            // Ejecutar múltiples veces para asegurar
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', setupDropdowns);
-            } else {
-                setupDropdowns();
-            }
-            
-            setTimeout(setupDropdowns, 100);
-            setTimeout(setupDropdowns, 500);
-            setTimeout(setupDropdowns, 1000);
-        })();
+            // Click fuera
+            document.onclick = function(e) {
+                if (!e.target.closest('.admin-nav-horizontal .nav-menu-item.dropdown')) {
+                    document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(menu) {
+                        menu.classList.remove('show');
+                    });
+                }
+            };
+        }
+        
+        // Ejecutar inmediatamente y varias veces
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDropdowns);
+        } else {
+            initDropdowns();
+        }
+        
+        setTimeout(initDropdowns, 50);
+        setTimeout(initDropdowns, 200);
+        setTimeout(initDropdowns, 500);
     </script>
     
     </div> <!-- Cierre de admin-wrapper -->
