@@ -88,10 +88,10 @@ header.content-header:not(.admin-navbar),
     width: 100% !important;
     height: 60px !important;
     background: #252531 !important; /* bg-secondary del template */
-    z-index: 9999 !important;
+    z-index: 99999 !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -106,7 +106,7 @@ header.content-header:not(.admin-navbar),
     margin: 0 auto !important;
     padding: 0 20px !important;
     background: transparent !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     box-sizing: border-box !important;
 }
 

@@ -1228,69 +1228,147 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin-base.js') }}"></script>
-    <!-- Script de dropdowns - SOLUCIÓN ULTRA SIMPLE -->
+    <!-- Script de Dropdowns y Navegación - SOLUCIÓN COMPLETA -->
     <script>
-        console.log('[Dropdowns] Script iniciado');
-        
-        function initDropdowns() {
-            const dropdowns = document.querySelectorAll('.admin-nav-horizontal .nav-menu-item.dropdown');
-            console.log('[Dropdowns] Encontrados', dropdowns.length, 'dropdowns');
+        (function() {
+            'use strict';
             
-            dropdowns.forEach(function(dropdown) {
-                const toggle = dropdown.querySelector('.dropdown-toggle');
-                const menu = dropdown.querySelector('.dropdown-menu');
-                
-                if (!toggle || !menu) return;
-                
-                // Click
-                toggle.onclick = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Cerrar otros
-                    document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(m) {
-                        if (m !== menu) m.classList.remove('show');
-                    });
-                    
-                    // Toggle
-                    menu.classList.toggle('show');
-                    console.log('[Dropdowns] Toggle:', menu.classList.contains('show'));
-                };
-                
-                // Hover
-                dropdown.onmouseenter = function() {
-                    menu.classList.add('show');
-                };
-                
-                dropdown.onmouseleave = function() {
-                    setTimeout(function() {
-                        if (!dropdown.matches(':hover')) {
-                            menu.classList.remove('show');
-                        }
-                    }, 200);
-                };
-            });
+            console.log('[Navbar] Inicializando navbar completo...');
             
-            // Click fuera
-            document.onclick = function(e) {
-                if (!e.target.closest('.admin-nav-horizontal .nav-menu-item.dropdown')) {
-                    document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(menu) {
-                        menu.classList.remove('show');
-                    });
+            // Función para cambiar de sección
+            function cambiarSeccion(sectionName) {
+                console.log('[Navbar] Cambiando a sección:', sectionName);
+                
+                // Ocultar todas las secciones
+                document.querySelectorAll('.admin-section').forEach(function(sec) {
+                    sec.classList.remove('active');
+                    sec.classList.add('hidden');
+                });
+                
+                // Mostrar la sección seleccionada
+                const targetSection = document.getElementById('section-' + sectionName);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    targetSection.classList.add('active');
+                    console.log('[Navbar] Sección mostrada:', sectionName);
+                } else {
+                    console.warn('[Navbar] Sección no encontrada:', sectionName);
+                    // Crear placeholder si no existe
+                    const placeholder = document.createElement('section');
+                    placeholder.id = 'section-' + sectionName;
+                    placeholder.className = 'admin-section active';
+                    placeholder.innerHTML = '<div class="section-header"><h2>' + sectionName.charAt(0).toUpperCase() + sectionName.slice(1).replace(/-/g, ' ') + '</h2></div><div class="content-card"><p>Contenido en desarrollo...</p></div>';
+                    document.querySelector('.admin-content').appendChild(placeholder);
                 }
-            };
-        }
-        
-        // Ejecutar inmediatamente y varias veces
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initDropdowns);
-        } else {
-            initDropdowns();
-        }
-        
-        setTimeout(initDropdowns, 50);
-        setTimeout(initDropdowns, 200);
-        setTimeout(initDropdowns, 500);
+                
+                // Cerrar todos los dropdowns
+                document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+                    menu.classList.remove('show');
+                });
+            }
+            
+            // Inicializar dropdowns
+            function initDropdowns() {
+                const dropdowns = document.querySelectorAll('.admin-nav-horizontal .nav-menu-item.dropdown');
+                console.log('[Navbar] Dropdowns encontrados:', dropdowns.length);
+                
+                dropdowns.forEach(function(dropdown) {
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    const menu = dropdown.querySelector('.dropdown-menu');
+                    
+                    if (!toggle || !menu) {
+                        console.warn('[Navbar] Dropdown incompleto');
+                        return;
+                    }
+                    
+                    // Click en el toggle
+                    toggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        
+                        console.log('[Navbar] Click en dropdown toggle');
+                        
+                        // Cerrar otros dropdowns
+                        document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(m) {
+                            if (m !== menu) m.classList.remove('show');
+                        });
+                        
+                        // Toggle este dropdown
+                        menu.classList.toggle('show');
+                        console.log('[Navbar] Dropdown', menu.classList.contains('show') ? 'abierto' : 'cerrado');
+                    });
+                    
+                    // Hover para mostrar
+                    dropdown.addEventListener('mouseenter', function() {
+                        menu.classList.add('show');
+                    });
+                    
+                    // Hover para ocultar (con delay)
+                    dropdown.addEventListener('mouseleave', function() {
+                        setTimeout(function() {
+                            if (!dropdown.matches(':hover')) {
+                                menu.classList.remove('show');
+                            }
+                        }, 200);
+                    });
+                });
+                
+                // Click fuera para cerrar
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.admin-nav-horizontal .nav-menu-item.dropdown')) {
+                        document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(menu) {
+                            menu.classList.remove('show');
+                        });
+                    }
+                });
+            }
+            
+            // Inicializar navegación
+            function initNavigation() {
+                // Enlaces normales
+                document.querySelectorAll('.admin-nav-horizontal .nav-link[data-section]').forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const section = this.getAttribute('data-section');
+                        if (section) cambiarSeccion(section);
+                    });
+                });
+                
+                // Items de dropdown
+                document.querySelectorAll('.admin-nav-horizontal .dropdown-item[data-section]').forEach(function(item) {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const section = this.getAttribute('data-section');
+                        if (section) {
+                            cambiarSeccion(section);
+                            // Cerrar dropdown
+                            const menu = this.closest('.dropdown-menu');
+                            if (menu) menu.classList.remove('show');
+                        }
+                    });
+                });
+            }
+            
+            // Ejecutar inicialización
+            function init() {
+                initDropdowns();
+                initNavigation();
+                console.log('[Navbar] Inicialización completa');
+            }
+            
+            // Ejecutar cuando el DOM esté listo
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+            
+            // Ejecutar también después de delays
+            setTimeout(init, 100);
+            setTimeout(init, 500);
+        })();
     </script>
     
     </div> <!-- Cierre de admin-wrapper -->
