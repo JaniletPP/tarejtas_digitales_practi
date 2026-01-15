@@ -1118,10 +1118,124 @@
     <script src="{{ url_for('static', filename='js/admin-base.js') }}"></script>
     <!-- Script de dropdowns - debe ejecutarse después de admin-base.js -->
     <script>
-        // Script mínimo - solo verificación
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('[HTML] DOM cargado, admin-base.js debería estar inicializado');
-        });
+        // Script de dropdowns del navbar - Sobrescribe cualquier inicialización anterior
+        (function() {
+            'use strict';
+            
+            function initDropdowns() {
+                console.log('[Dropdowns Navbar] Inicializando dropdowns del navbar...');
+                
+                // Seleccionar todos los elementos con clase dropdown en el navbar
+                const dropdowns = document.querySelectorAll('.admin-nav-horizontal .nav-menu-item.dropdown');
+                console.log('[Dropdowns Navbar] Dropdowns encontrados:', dropdowns.length);
+                
+                if (dropdowns.length === 0) {
+                    console.warn('[Dropdowns Navbar] No se encontraron dropdowns en el navbar');
+                    return;
+                }
+                
+                dropdowns.forEach(function(dropdown, index) {
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    const menu = dropdown.querySelector('.dropdown-menu');
+                    
+                    if (!toggle || !menu) {
+                        console.warn('[Dropdowns Navbar] Dropdown', index, 'sin toggle o menu');
+                        return;
+                    }
+                    
+                    const dropdownName = toggle.textContent.trim();
+                    console.log('[Dropdowns Navbar] Configurando dropdown', index, ':', dropdownName);
+                    
+                    // Remover cualquier listener anterior
+                    const newToggle = toggle.cloneNode(true);
+                    toggle.parentNode.replaceChild(newToggle, toggle);
+                    
+                    // Guardar referencias
+                    const menuRef = menu;
+                    const dropdownRef = dropdown;
+                    
+                    // Evento click en el toggle
+                    newToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation(); // Prevenir que otros handlers se ejecuten
+                        
+                        console.log('[Dropdowns Navbar] Click en:', dropdownName);
+                        
+                        const isShowing = menuRef.classList.contains('show');
+                        console.log('[Dropdowns Navbar] Estado actual:', isShowing ? 'abierto' : 'cerrado');
+                        
+                        // Cerrar todos los otros dropdowns
+                        document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(m) {
+                            if (m !== menuRef) {
+                                m.classList.remove('show');
+                            }
+                        });
+                        
+                        // Toggle del dropdown actual
+                        if (isShowing) {
+                            menuRef.classList.remove('show');
+                            console.log('[Dropdowns Navbar] Cerrado');
+                        } else {
+                            menuRef.classList.add('show');
+                            console.log('[Dropdowns Navbar] Abierto - clase show agregada');
+                            
+                            // Verificación después de un momento
+                            setTimeout(function() {
+                                const computed = window.getComputedStyle(menuRef);
+                                console.log('[Dropdowns Navbar] Verificación:');
+                                console.log('  - Tiene clase show:', menuRef.classList.contains('show'));
+                                console.log('  - Display:', computed.display);
+                                console.log('  - Visibility:', computed.visibility);
+                                console.log('  - Opacity:', computed.opacity);
+                                console.log('  - Z-index:', computed.zIndex);
+                            }, 50);
+                        }
+                    }, true); // Usar capture phase para ejecutarse primero
+                    
+                    // Evento hover
+                    dropdownRef.addEventListener('mouseenter', function() {
+                        const menu = this.querySelector('.dropdown-menu');
+                        if (menu) {
+                            menu.classList.add('show');
+                            console.log('[Dropdowns Navbar] Hover - Menu mostrado');
+                        }
+                    });
+                    
+                    dropdownRef.addEventListener('mouseleave', function() {
+                        const menu = this.querySelector('.dropdown-menu');
+                        if (menu) {
+                            menu.classList.remove('show');
+                            console.log('[Dropdowns Navbar] Hover - Menu ocultado');
+                        }
+                    });
+                });
+                
+                // Cerrar al hacer click fuera
+                document.addEventListener('click', function(e) {
+                    const clickedDropdown = e.target.closest('.admin-nav-horizontal .nav-menu-item.dropdown');
+                    if (!clickedDropdown) {
+                        document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(menu) {
+                            menu.classList.remove('show');
+                        });
+                    }
+                });
+                
+                console.log('[Dropdowns Navbar] Inicialización completa');
+            }
+            
+            // Esperar a que el DOM y admin-base.js estén listos
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(initDropdowns, 500);
+                });
+            } else {
+                setTimeout(initDropdowns, 500);
+            }
+            
+            // Ejecutar también después de más tiempo para asegurar que todo esté listo
+            setTimeout(initDropdowns, 1000);
+        })();
     </script>
     
     <!-- Script para dropdowns - MEJORADO Y FUNCIONAL -->
