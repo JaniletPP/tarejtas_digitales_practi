@@ -8,106 +8,107 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 </head>
 <body>
-    <div class="admin-wrapper">
-        <!-- Navbar único integrado - LIMPIO Y ORDENADO -->
-        <header class="admin-navbar">
-            <nav class="admin-nav-horizontal">
-                <!-- Sección Izquierda: Logo + Título -->
-                <div class="navbar-left">
-                    <div class="navbar-logo">
-                        <span class="logo-icon">🏔️</span>
-                        <span class="logo-text"><span>S</span>istema de Tarjetas Inteligentes</span>
-                    </div>
+    <!-- Navbar único integrado - ESTRUCTURA CORRECTA -->
+    <header class="admin-navbar">
+        <nav class="admin-nav-horizontal">
+            <!-- Sección Izquierda: Logo + Título -->
+            <div class="navbar-left">
+                <div class="navbar-logo">
+                    <span class="logo-icon">🏔️</span>
+                    <span class="logo-text"><span>S</span>istema de Tarjetas Inteligentes</span>
                 </div>
+            </div>
 
-                <!-- Sección Centro: Menú -->
-                <div class="navbar-center">
-                    <div class="nav-menu-item">
-                        <a href="#dashboard" class="nav-link" data-section="dashboard">
-                            <span class="nav-icon">📊</span>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                    </div>
-
-                    <!-- Menú desplegable: Gestión -->
-                    <div class="nav-menu-item dropdown">
-                        <a href="#gestion" class="nav-link dropdown-toggle" data-toggle="gestion">
-                            <span class="nav-icon">⚙️</span>
-                            <span class="nav-text">Gestión</span>
-                            <span class="dropdown-arrow">▼</span>
-                        </a>
-                        <ul class="dropdown-menu" id="dropdown-gestion">
-                            <li><a href="#asistentes" class="dropdown-item" data-section="asistentes">
-                                <span class="dropdown-icon">👥</span>
-                                Asistentes
-                            </a></li>
-                            <li><a href="#tarjetas" class="dropdown-item" data-section="tarjetas">
-                                <span class="dropdown-icon">💳</span>
-                                Tarjetas
-                            </a></li>
-                            <li><a href="#productos" class="dropdown-item" data-section="productos">
-                                <span class="dropdown-icon">🛍️</span>
-                                Productos
-                            </a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Menú desplegable: Reportes -->
-                    <div class="nav-menu-item dropdown">
-                        <a href="#reportes" class="nav-link dropdown-toggle" data-toggle="reportes">
-                            <span class="nav-icon">📈</span>
-                            <span class="nav-text">Reportes</span>
-                            <span class="dropdown-arrow">▼</span>
-                        </a>
-                        <ul class="dropdown-menu" id="dropdown-reportes">
-                            <li><a href="#reportes-ventas" class="dropdown-item" data-section="reportes">
-                                <span class="dropdown-icon">💰</span>
-                                Ventas
-                            </a></li>
-                            <li><a href="#reportes-transacciones" class="dropdown-item" data-section="reportes-transacciones">
-                                <span class="dropdown-icon">📜</span>
-                                Transacciones
-                            </a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Menú Caja -->
-                    <div class="nav-menu-item">
-                        <a href="#caja" class="nav-link" data-section="caja">
-                            <span class="nav-icon">💰</span>
-                            <span class="nav-text">Caja</span>
-                        </a>
-                    </div>
-
-                    <!-- Menú Punto de Venta -->
-                    <div class="nav-menu-item">
-                        <a href="#punto-venta" class="nav-link" data-section="punto-venta">
-                            <span class="nav-icon">🛒</span>
-                            <span class="nav-text">Punto de Venta</span>
-                        </a>
-                    </div>
-
-                    <!-- Menú Configuración -->
-                    <div class="nav-menu-item">
-                        <a href="#configuracion" class="nav-link" data-section="configuracion">
-                            <span class="nav-icon">🔧</span>
-                            <span class="nav-text">Configuración</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Sección Derecha: Usuario + Salir -->
-                <div class="navbar-right">
-                    <div class="navbar-user">
-                        <span class="user-avatar">👤</span>
-                        <span class="user-name">{{ session.usuario }}</span>
-                    </div>
-                    <a href="{{ url_for('auth.logout') }}" class="btn-logout-navbar">
-                        Salir
+            <!-- Sección Centro: Menú -->
+            <div class="navbar-center">
+                <div class="nav-menu-item">
+                    <a href="#dashboard" class="nav-link" data-section="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
                     </a>
                 </div>
-            </nav>
-        </header>
+
+                <!-- Menú desplegable: Gestión -->
+                <div class="nav-menu-item dropdown">
+                    <a href="#gestion" class="nav-link dropdown-toggle" data-toggle="gestion">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Gestión</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </a>
+                    <ul class="dropdown-menu" id="dropdown-gestion">
+                        <li><a href="#asistentes" class="dropdown-item" data-section="asistentes">
+                            <span class="dropdown-icon">👥</span>
+                            Asistentes
+                        </a></li>
+                        <li><a href="#tarjetas" class="dropdown-item" data-section="tarjetas">
+                            <span class="dropdown-icon">💳</span>
+                            Tarjetas
+                        </a></li>
+                        <li><a href="#productos" class="dropdown-item" data-section="productos">
+                            <span class="dropdown-icon">🛍️</span>
+                            Productos
+                        </a></li>
+                    </ul>
+                </div>
+
+                <!-- Menú desplegable: Reportes -->
+                <div class="nav-menu-item dropdown">
+                    <a href="#reportes" class="nav-link dropdown-toggle" data-toggle="reportes">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Reportes</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </a>
+                    <ul class="dropdown-menu" id="dropdown-reportes">
+                        <li><a href="#reportes-ventas" class="dropdown-item" data-section="reportes">
+                            <span class="dropdown-icon">💰</span>
+                            Ventas
+                        </a></li>
+                        <li><a href="#reportes-transacciones" class="dropdown-item" data-section="reportes-transacciones">
+                            <span class="dropdown-icon">📜</span>
+                            Transacciones
+                        </a></li>
+                    </ul>
+                </div>
+
+                <!-- Menú Caja -->
+                <div class="nav-menu-item">
+                    <a href="#caja" class="nav-link" data-section="caja">
+                        <span class="nav-icon">💰</span>
+                        <span class="nav-text">Caja</span>
+                    </a>
+                </div>
+
+                <!-- Menú Punto de Venta -->
+                <div class="nav-menu-item">
+                    <a href="#punto-venta" class="nav-link" data-section="punto-venta">
+                        <span class="nav-icon">🛒</span>
+                        <span class="nav-text">Punto de Venta</span>
+                    </a>
+                </div>
+
+                <!-- Menú Configuración -->
+                <div class="nav-menu-item">
+                    <a href="#configuracion" class="nav-link" data-section="configuracion">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-text">Configuración</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Sección Derecha: Usuario + Salir -->
+            <div class="navbar-right">
+                <div class="navbar-user">
+                    <span class="user-avatar">👤</span>
+                    <span class="user-name">{{ session.usuario }}</span>
+                </div>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout-navbar">
+                    Salir
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="admin-wrapper">
 
         <!-- Main Content (con margin-top para el header fijo) -->
         <main class="admin-content">
@@ -1177,7 +1178,7 @@
                         if (isShowing) {
                             menu.classList.remove('show');
                             console.log('[Dropdowns] Cerrado');
-                        } else {
+                    } else {
                             menu.classList.add('show');
                             console.log('[Dropdowns] Abierto');
                         }

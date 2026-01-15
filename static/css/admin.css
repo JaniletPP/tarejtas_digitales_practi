@@ -255,6 +255,7 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     position: relative;
+    margin-top: 60px !important; /* Espacio para el navbar fijo */
 }
 
 /* ============================================
