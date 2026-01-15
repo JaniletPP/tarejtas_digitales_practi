@@ -248,14 +248,14 @@ body {
 .admin-wrapper {
     display: flex !important;
     flex-direction: column !important;
-    min-height: 100vh !important;
+    min-height: calc(100vh - 60px) !important;
     overflow-x: hidden !important;
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
+    margin-top: 60px !important; /* Espacio para el navbar fijo */
     padding: 0 !important;
     position: relative;
-    margin-top: 60px !important; /* Espacio para el navbar fijo */
 }
 
 /* ============================================
