@@ -150,6 +150,33 @@ header.content-header:not(.admin-navbar),
     color: #DFB163 !important; /* text-primary del template */
 }
 
+/* Botón Hamburguesa (oculto por defecto, visible en móvil) */
+.navbar-toggle {
+    display: none !important;
+    background: transparent !important;
+    border: none !important;
+    color: #F3F6FF !important;
+    font-size: 24px !important;
+    cursor: pointer !important;
+    padding: 10px 15px !important;
+    margin-left: auto !important;
+    z-index: 100000 !important;
+    transition: color 0.3s ease !important;
+}
+
+.navbar-toggle:hover {
+    color: #DFB163 !important;
+}
+
+.navbar-toggle.active .hamburger-icon {
+    transform: rotate(90deg) !important;
+}
+
+.hamburger-icon {
+    display: block !important;
+    transition: transform 0.3s ease !important;
+}
+
 /* Sección Centro: Menú - CON OVERFLOW VISIBLE PARA DROPDOWNS */
 .navbar-center {
     display: flex !important;
