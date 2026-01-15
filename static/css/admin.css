@@ -511,13 +511,16 @@ body {
     margin-top: 0 !important;
     list-style: none !important;
     overflow: visible !important;
+    overflow-y: visible !important;
+    overflow-x: visible !important;
     pointer-events: none !important;
-    transition: opacity 0.2s ease, visibility 0.2s ease !important;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease !important;
     max-height: none !important;
     height: auto !important;
+    transform: translateY(-10px) !important;
 }
 
-/* FORZAR VISIBILIDAD CON HOVER Y CLASE SHOW */
+/* FORZAR VISIBILIDAD CON HOVER Y CLASE SHOW - ACORDEÓN SIN SCROLL */
 .admin-nav-horizontal .nav-menu-item.dropdown:hover .dropdown-menu,
 .admin-nav-horizontal .dropdown-menu.show {
     display: block !important;
@@ -526,6 +529,10 @@ body {
     pointer-events: auto !important;
     max-height: none !important;
     height: auto !important;
+    overflow: visible !important;
+    overflow-y: visible !important;
+    overflow-x: visible !important;
+    transform: translateY(0) !important;
 }
 
 /* Asegurar que el hover funcione incluso en el menú */

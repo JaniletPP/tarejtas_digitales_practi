@@ -107,8 +107,8 @@
                     <a href="{{ url_for('auth.logout') }}" class="nav-link">
                         <span class="nav-icon">🚪</span>
                         <span class="nav-text">Salir</span>
-                    </a>
-                </div>
+                </a>
+            </div>
             </div>
 
             <!-- Sección Derecha: Usuario + Salir (solo desktop) -->
@@ -116,11 +116,11 @@
                 <div class="navbar-user">
                     <span class="user-avatar">👤</span>
                     <span class="user-name">{{ session.usuario }}</span>
-                    </div>
+                </div>
                 <a href="{{ url_for('auth.logout') }}" class="btn-logout-navbar">
                     Salir
                 </a>
-            </div>
+                    </div>
         </nav>
             </header>
 
@@ -1270,7 +1270,7 @@
                     targetSection.classList.remove('hidden');
                     targetSection.classList.add('active');
                     console.log('[Navbar] Sección mostrada:', sectionName);
-                } else {
+                    } else {
                     console.warn('[Navbar] Sección no encontrada:', sectionName);
                     // Crear placeholder si no existe
                     const placeholder = document.createElement('section');
@@ -1321,7 +1321,7 @@
                 });
             }
             
-            // Inicializar dropdowns
+            // Inicializar dropdowns - ACORDEÓN SIN SCROLL
             function initDropdowns() {
                 const dropdowns = document.querySelectorAll('.admin-nav-horizontal .nav-menu-item.dropdown');
                 console.log('[Navbar] Dropdowns encontrados:', dropdowns.length);
@@ -1335,7 +1335,13 @@
                         return;
                     }
                     
-                    // Click en el toggle
+                    // Asegurar que el menú no tenga limitaciones de altura
+                    menu.style.maxHeight = 'none';
+                    menu.style.overflow = 'visible';
+                    menu.style.overflowY = 'visible';
+                    menu.style.height = 'auto';
+                    
+                    // Click en el toggle - ACORDEÓN
                     toggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -1343,20 +1349,38 @@
                         
                         console.log('[Navbar] Click en dropdown toggle');
                         
-                        // Cerrar otros dropdowns
+                        const isShowing = menu.classList.contains('show');
+                        
+                        // Cerrar otros dropdowns primero (comportamiento acordeón)
                         document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(m) {
-                            if (m !== menu) m.classList.remove('show');
+                            if (m !== menu) {
+                                m.classList.remove('show');
+                                m.style.maxHeight = 'none';
+                                m.style.overflow = 'visible';
+                            }
                         });
                         
                         // Toggle este dropdown
-                        menu.classList.toggle('show');
-                        console.log('[Navbar] Dropdown', menu.classList.contains('show') ? 'abierto' : 'cerrado');
+                        if (isShowing) {
+                            menu.classList.remove('show');
+                            console.log('[Navbar] Dropdown cerrado');
+                        } else {
+                            menu.classList.add('show');
+                            // Asegurar que se muestre completamente
+                            menu.style.maxHeight = 'none';
+                            menu.style.overflow = 'visible';
+                            menu.style.overflowY = 'visible';
+                            menu.style.height = 'auto';
+                            console.log('[Navbar] Dropdown abierto - todas las opciones visibles');
+                        }
                     });
                     
                     // Hover para mostrar (solo en desktop)
                     if (window.innerWidth > 768) {
                         dropdown.addEventListener('mouseenter', function() {
                             menu.classList.add('show');
+                            menu.style.maxHeight = 'none';
+                            menu.style.overflow = 'visible';
                         });
                         
                         dropdown.addEventListener('mouseleave', function() {
@@ -1374,6 +1398,8 @@
                     if (!e.target.closest('.admin-nav-horizontal .nav-menu-item.dropdown')) {
                         document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(menu) {
                             menu.classList.remove('show');
+                            menu.style.maxHeight = 'none';
+                            menu.style.overflow = 'visible';
                         });
                     }
                 });
