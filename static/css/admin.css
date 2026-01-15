@@ -460,6 +460,9 @@ body {
 /* Asegurar position: relative en el nav-menu-item dropdown */
 .admin-nav-horizontal .nav-menu-item.dropdown {
     position: relative !important;
+    height: 100% !important;
+    display: inline-flex !important;
+    align-items: center !important;
 }
 
 .admin-nav-horizontal .dropdown-menu {

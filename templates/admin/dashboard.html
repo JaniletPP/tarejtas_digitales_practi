@@ -21,13 +21,6 @@
 
             <!-- Sección Centro: Menú -->
             <div class="navbar-center">
-                <div class="nav-menu-item">
-                    <a href="#dashboard" class="nav-link" data-section="dashboard">
-                        <span class="nav-icon">📊</span>
-                        <span class="nav-text">Dashboard</span>
-                    </a>
-                </div>
-
                 <!-- Menú desplegable: Gestión -->
                 <div class="nav-menu-item dropdown">
                     <a href="#gestion" class="nav-link dropdown-toggle" data-toggle="gestion">
@@ -1136,65 +1129,91 @@
             'use strict';
             
             function initDropdowns() {
-                console.log('[Dropdowns] Inicializando...');
+                console.log('[Dropdowns] Inicializando dropdowns...');
                 
-                const toggles = document.querySelectorAll('.dropdown-toggle');
-                console.log('[Dropdowns] Toggles encontrados:', toggles.length);
+                // Seleccionar todos los elementos con clase dropdown
+                const dropdowns = document.querySelectorAll('.nav-menu-item.dropdown');
+                console.log('[Dropdowns] Dropdowns encontrados:', dropdowns.length);
                 
-                toggles.forEach(function(toggle) {
-                    // Remover listeners anteriores si existen
+                dropdowns.forEach(function(dropdown) {
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    const menu = dropdown.querySelector('.dropdown-menu');
+                    
+                    if (!toggle || !menu) {
+                        console.warn('[Dropdowns] Dropdown sin toggle o menu:', dropdown);
+                        return;
+                    }
+                    
+                    console.log('[Dropdowns] Configurando dropdown:', toggle.textContent.trim());
+                    
+                    // Remover listeners anteriores
                     const newToggle = toggle.cloneNode(true);
                     toggle.parentNode.replaceChild(newToggle, toggle);
                     
+                    // Evento click en el toggle
                     newToggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
                         
-                        console.log('[Dropdowns] Click en toggle');
+                        console.log('[Dropdowns] Click en:', this.textContent.trim());
                         
-                        const dropdown = this.closest('.dropdown');
-                        if (!dropdown) {
-                            console.error('[Dropdowns] No se encontró .dropdown');
+                        const currentDropdown = this.closest('.dropdown');
+                        const currentMenu = currentDropdown ? currentDropdown.querySelector('.dropdown-menu') : null;
+                        
+                        if (!currentMenu) {
+                            console.error('[Dropdowns] No se encontró el menu');
                             return;
                         }
                         
-                        const menu = dropdown.querySelector('.dropdown-menu');
-                        if (!menu) {
-                            console.error('[Dropdowns] No se encontró .dropdown-menu');
-                            return;
-                        }
+                        const isShowing = currentMenu.classList.contains('show');
+                        console.log('[Dropdowns] Estado:', isShowing ? 'abierto' : 'cerrado');
                         
-                        const isShowing = menu.classList.contains('show');
-                        console.log('[Dropdowns] Estado actual:', isShowing ? 'abierto' : 'cerrado');
-                        
-                        // Cerrar otros dropdowns
+                        // Cerrar todos los otros dropdowns
                         document.querySelectorAll('.dropdown-menu').forEach(function(m) {
-                            if (m !== menu) {
+                            if (m !== currentMenu) {
                                 m.classList.remove('show');
                             }
                         });
                         
-                        // Toggle actual
+                        // Toggle del dropdown actual
                         if (isShowing) {
-                            menu.classList.remove('show');
+                            currentMenu.classList.remove('show');
                             console.log('[Dropdowns] Cerrado');
-                    } else {
-                            menu.classList.add('show');
+                        } else {
+                            currentMenu.classList.add('show');
                             console.log('[Dropdowns] Abierto');
+                        }
+                    });
+                    
+                    // Evento hover (opcional, para mejor UX)
+                    dropdown.addEventListener('mouseenter', function() {
+                        const menu = this.querySelector('.dropdown-menu');
+                        if (menu) {
+                            menu.classList.add('show');
+                        }
+                    });
+                    
+                    dropdown.addEventListener('mouseleave', function() {
+                        const menu = this.querySelector('.dropdown-menu');
+                        if (menu) {
+                            menu.classList.remove('show');
                         }
                     });
                 });
                 
                 // Cerrar al hacer click fuera
                 document.addEventListener('click', function(e) {
-                    if (!e.target.closest('.dropdown')) {
+                    if (!e.target.closest('.nav-menu-item.dropdown')) {
                         document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
                             menu.classList.remove('show');
                         });
                     }
                 });
+                
+                console.log('[Dropdowns] Inicialización completa');
             }
             
+            // Inicializar cuando el DOM esté listo
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initDropdowns);
             } else {
@@ -1202,7 +1221,7 @@
             }
             
             // También ejecutar después de un delay para asegurar que todo esté renderizado
-            setTimeout(initDropdowns, 100);
+            setTimeout(initDropdowns, 200);
         })();
     </script>
     </div> <!-- Cierre de admin-wrapper -->
