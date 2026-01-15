@@ -2894,16 +2894,34 @@ footer.bg-dark .btn-outline-light:hover {
         border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
         margin: 0 !important;
         padding: 0 !important;
+        overflow: visible !important;
+        overflow-y: visible !important;
+        overflow-x: visible !important;
+        max-height: none !important;
+        height: auto !important;
+        transform: none !important;
+        transition: opacity 0.3s ease, visibility 0.3s ease !important;
     }
     
     .navbar-center .dropdown-menu.show {
         display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     .navbar-center .dropdown-item {
-        padding: 12px 20px 12px 40px !important;
+        padding: 15px 20px 15px 45px !important;
         color: #F3F6FF !important;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: rgba(223, 177, 99, 0.2) !important;
+    }
+    
+    .navbar-center .dropdown-item:active {
+        background: rgba(223, 177, 99, 0.25) !important;
     }
     
     .navbar-center .dropdown-item:hover {
