@@ -56,9 +56,13 @@
                             <span class="dropdown-icon">💰</span>
                             Ventas
                         </a></li>
-                        <li><a href="#reportes-transacciones" class="dropdown-item" data-section="reportes-transacciones">
-                            <span class="dropdown-icon">📜</span>
-                            Transacciones
+                        <li><a href="#reportes-recargas" class="dropdown-item" data-section="reportes-recargas">
+                            <span class="dropdown-icon">💵</span>
+                            Recargas
+                        </a></li>
+                        <li><a href="#reportes-consumos" class="dropdown-item" data-section="reportes-consumos">
+                            <span class="dropdown-icon">🛒</span>
+                            Consumos
                         </a></li>
                     </ul>
                 </div>
@@ -68,8 +72,8 @@
                     <a href="#caja" class="nav-link" data-section="caja">
                         <span class="nav-icon">💰</span>
                         <span class="nav-text">Caja</span>
-                    </a>
-                </div>
+                        </a>
+                    </div>
 
                 <!-- Menú Punto de Venta -->
                 <div class="nav-menu-item">
@@ -93,13 +97,13 @@
                 <div class="navbar-user">
                     <span class="user-avatar">👤</span>
                     <span class="user-name">{{ session.usuario }}</span>
-                </div>
+                    </div>
                 <a href="{{ url_for('auth.logout') }}" class="btn-logout-navbar">
                     Salir
                 </a>
             </div>
         </nav>
-    </header>
+            </header>
 
     <div class="admin-wrapper">
 
@@ -1238,126 +1242,6 @@
         })();
     </script>
     
-    <!-- Script para dropdowns - MEJORADO Y FUNCIONAL -->
-    <script>
-        (function() {
-            'use strict';
-            
-            function initDropdowns() {
-                console.log('[Dropdowns] Inicializando dropdowns...');
-                
-                // Seleccionar todos los elementos con clase dropdown
-                const dropdowns = document.querySelectorAll('.nav-menu-item.dropdown');
-                console.log('[Dropdowns] Dropdowns encontrados:', dropdowns.length);
-                
-                if (dropdowns.length === 0) {
-                    console.warn('[Dropdowns] No se encontraron dropdowns');
-                    return;
-                }
-                
-                dropdowns.forEach(function(dropdown, index) {
-                    const toggle = dropdown.querySelector('.dropdown-toggle');
-                    const menu = dropdown.querySelector('.dropdown-menu');
-                    
-                    if (!toggle || !menu) {
-                        console.warn('[Dropdowns] Dropdown', index, 'sin toggle o menu');
-                        return;
-                    }
-                    
-                    console.log('[Dropdowns] Configurando dropdown', index, ':', toggle.textContent.trim());
-                    console.log('[Dropdowns] Menu encontrado:', menu);
-                    console.log('[Dropdowns] Menu display inicial:', window.getComputedStyle(menu).display);
-                    
-                    // Remover listeners anteriores si existen
-                    const newToggle = toggle.cloneNode(true);
-                    toggle.parentNode.replaceChild(newToggle, toggle);
-                    
-                    // Guardar referencia al menu para usar en el evento
-                    const menuRef = menu;
-                    const dropdownRef = dropdown;
-                    
-                    // Evento click en el toggle
-                    newToggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        console.log('[Dropdowns] Click en toggle:', this.textContent.trim());
-                        console.log('[Dropdowns] Menu referencia:', menuRef);
-                        console.log('[Dropdowns] Menu display antes:', window.getComputedStyle(menuRef).display);
-                        console.log('[Dropdowns] Menu tiene clase show?', menuRef.classList.contains('show'));
-                        
-                        const isShowing = menuRef.classList.contains('show');
-                        console.log('[Dropdowns] Estado actual:', isShowing ? 'abierto' : 'cerrado');
-                        
-                        // Cerrar todos los otros dropdowns
-                        document.querySelectorAll('.dropdown-menu').forEach(function(m) {
-                            if (m !== menuRef) {
-                                m.classList.remove('show');
-                            }
-                        });
-                        
-                        // Toggle del dropdown actual
-                        if (isShowing) {
-                            menuRef.classList.remove('show');
-                            console.log('[Dropdowns] Cerrado - clase show removida');
-                        } else {
-                            menuRef.classList.add('show');
-                            console.log('[Dropdowns] Abierto - clase show agregada');
-                            
-                            // Verificar después de un momento
-                            setTimeout(function() {
-                                console.log('[Dropdowns] Verificación - Menu display después:', window.getComputedStyle(menuRef).display);
-                                console.log('[Dropdowns] Verificación - Menu tiene clase show?', menuRef.classList.contains('show'));
-                                console.log('[Dropdowns] Verificación - Menu visibility:', window.getComputedStyle(menuRef).visibility);
-                                console.log('[Dropdowns] Verificación - Menu opacity:', window.getComputedStyle(menuRef).opacity);
-                            }, 50);
-                        }
-                    });
-                    
-                    // Evento hover (opcional, para mejor UX)
-                    dropdownRef.addEventListener('mouseenter', function() {
-                        const menu = this.querySelector('.dropdown-menu');
-                        if (menu) {
-                            menu.classList.add('show');
-                            console.log('[Dropdowns] Hover - Menu mostrado');
-                        }
-                    });
-                    
-                    dropdownRef.addEventListener('mouseleave', function() {
-                        const menu = this.querySelector('.dropdown-menu');
-                        if (menu) {
-                            menu.classList.remove('show');
-                            console.log('[Dropdowns] Hover - Menu ocultado');
-                        }
-                    });
-                });
-                
-                // Cerrar al hacer click fuera
-                document.addEventListener('click', function(e) {
-                    const clickedDropdown = e.target.closest('.nav-menu-item.dropdown');
-                    if (!clickedDropdown) {
-                        document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
-                            menu.classList.remove('show');
-                        });
-                        console.log('[Dropdowns] Click fuera - Todos los dropdowns cerrados');
-                    }
-                });
-                
-                console.log('[Dropdowns] Inicialización completa');
-            }
-            
-            // Inicializar cuando el DOM esté listo
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initDropdowns);
-            } else {
-                initDropdowns();
-            }
-            
-            // También ejecutar después de un delay para asegurar que todo esté renderizado
-            setTimeout(initDropdowns, 300);
-            setTimeout(initDropdowns, 600);
-        })();
-    </script>
     </div> <!-- Cierre de admin-wrapper -->
     
     <!-- Footer Start -->
