@@ -1135,78 +1135,96 @@
                 const dropdowns = document.querySelectorAll('.nav-menu-item.dropdown');
                 console.log('[Dropdowns] Dropdowns encontrados:', dropdowns.length);
                 
-                dropdowns.forEach(function(dropdown) {
+                if (dropdowns.length === 0) {
+                    console.warn('[Dropdowns] No se encontraron dropdowns');
+                    return;
+                }
+                
+                dropdowns.forEach(function(dropdown, index) {
                     const toggle = dropdown.querySelector('.dropdown-toggle');
                     const menu = dropdown.querySelector('.dropdown-menu');
                     
                     if (!toggle || !menu) {
-                        console.warn('[Dropdowns] Dropdown sin toggle o menu:', dropdown);
+                        console.warn('[Dropdowns] Dropdown', index, 'sin toggle o menu');
                         return;
                     }
                     
-                    console.log('[Dropdowns] Configurando dropdown:', toggle.textContent.trim());
+                    console.log('[Dropdowns] Configurando dropdown', index, ':', toggle.textContent.trim());
+                    console.log('[Dropdowns] Menu encontrado:', menu);
+                    console.log('[Dropdowns] Menu display inicial:', window.getComputedStyle(menu).display);
                     
-                    // Remover listeners anteriores
+                    // Remover listeners anteriores si existen
                     const newToggle = toggle.cloneNode(true);
                     toggle.parentNode.replaceChild(newToggle, toggle);
+                    
+                    // Guardar referencia al menu para usar en el evento
+                    const menuRef = menu;
+                    const dropdownRef = dropdown;
                     
                     // Evento click en el toggle
                     newToggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
                         
-                        console.log('[Dropdowns] Click en:', this.textContent.trim());
+                        console.log('[Dropdowns] Click en toggle:', this.textContent.trim());
+                        console.log('[Dropdowns] Menu referencia:', menuRef);
+                        console.log('[Dropdowns] Menu display antes:', window.getComputedStyle(menuRef).display);
+                        console.log('[Dropdowns] Menu tiene clase show?', menuRef.classList.contains('show'));
                         
-                        const currentDropdown = this.closest('.dropdown');
-                        const currentMenu = currentDropdown ? currentDropdown.querySelector('.dropdown-menu') : null;
-                        
-                        if (!currentMenu) {
-                            console.error('[Dropdowns] No se encontró el menu');
-                            return;
-                        }
-                        
-                        const isShowing = currentMenu.classList.contains('show');
-                        console.log('[Dropdowns] Estado:', isShowing ? 'abierto' : 'cerrado');
+                        const isShowing = menuRef.classList.contains('show');
+                        console.log('[Dropdowns] Estado actual:', isShowing ? 'abierto' : 'cerrado');
                         
                         // Cerrar todos los otros dropdowns
                         document.querySelectorAll('.dropdown-menu').forEach(function(m) {
-                            if (m !== currentMenu) {
+                            if (m !== menuRef) {
                                 m.classList.remove('show');
                             }
                         });
                         
                         // Toggle del dropdown actual
                         if (isShowing) {
-                            currentMenu.classList.remove('show');
-                            console.log('[Dropdowns] Cerrado');
+                            menuRef.classList.remove('show');
+                            console.log('[Dropdowns] Cerrado - clase show removida');
                         } else {
-                            currentMenu.classList.add('show');
-                            console.log('[Dropdowns] Abierto');
+                            menuRef.classList.add('show');
+                            console.log('[Dropdowns] Abierto - clase show agregada');
+                            
+                            // Verificar después de un momento
+                            setTimeout(function() {
+                                console.log('[Dropdowns] Verificación - Menu display después:', window.getComputedStyle(menuRef).display);
+                                console.log('[Dropdowns] Verificación - Menu tiene clase show?', menuRef.classList.contains('show'));
+                                console.log('[Dropdowns] Verificación - Menu visibility:', window.getComputedStyle(menuRef).visibility);
+                                console.log('[Dropdowns] Verificación - Menu opacity:', window.getComputedStyle(menuRef).opacity);
+                            }, 50);
                         }
                     });
                     
                     // Evento hover (opcional, para mejor UX)
-                    dropdown.addEventListener('mouseenter', function() {
+                    dropdownRef.addEventListener('mouseenter', function() {
                         const menu = this.querySelector('.dropdown-menu');
                         if (menu) {
                             menu.classList.add('show');
+                            console.log('[Dropdowns] Hover - Menu mostrado');
                         }
                     });
                     
-                    dropdown.addEventListener('mouseleave', function() {
+                    dropdownRef.addEventListener('mouseleave', function() {
                         const menu = this.querySelector('.dropdown-menu');
                         if (menu) {
                             menu.classList.remove('show');
+                            console.log('[Dropdowns] Hover - Menu ocultado');
                         }
                     });
                 });
                 
                 // Cerrar al hacer click fuera
                 document.addEventListener('click', function(e) {
-                    if (!e.target.closest('.nav-menu-item.dropdown')) {
+                    const clickedDropdown = e.target.closest('.nav-menu-item.dropdown');
+                    if (!clickedDropdown) {
                         document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
                             menu.classList.remove('show');
                         });
+                        console.log('[Dropdowns] Click fuera - Todos los dropdowns cerrados');
                     }
                 });
                 
@@ -1221,7 +1239,8 @@
             }
             
             // También ejecutar después de un delay para asegurar que todo esté renderizado
-            setTimeout(initDropdowns, 200);
+            setTimeout(initDropdowns, 300);
+            setTimeout(initDropdowns, 600);
         })();
     </script>
     </div> <!-- Cierre de admin-wrapper -->

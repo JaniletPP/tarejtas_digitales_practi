@@ -484,6 +484,8 @@ body {
     overflow: visible !important;
     pointer-events: none !important;
     transition: opacity 0.2s ease, visibility 0.2s ease !important;
+    max-height: none !important;
+    height: auto !important;
 }
 
 .admin-nav-horizontal .dropdown-menu.show {
@@ -491,6 +493,8 @@ body {
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important;
+    max-height: none !important;
+    height: auto !important;
 }
 
 /* Dropdown items - ESTILO TEMPLATE */
