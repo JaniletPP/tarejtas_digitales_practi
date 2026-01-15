@@ -150,18 +150,19 @@ header.content-header:not(.admin-navbar),
     color: #DFB163 !important; /* text-primary del template */
 }
 
-/* Sección Centro: Menú - LIMPIO Y SIN OVERFLOW */
+/* Sección Centro: Menú - CON OVERFLOW VISIBLE PARA DROPDOWNS */
 .navbar-center {
     display: flex !important;
     align-items: center !important;
     flex: 1 !important;
     justify-content: center !important;
     gap: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     min-width: 0 !important;
     padding: 0 15px !important;
     flex-wrap: nowrap !important;
     height: 100% !important;
+    position: relative !important;
 }
 
 /* Sección Derecha: Usuario + Salir - ESTILO TEMPLATE */
