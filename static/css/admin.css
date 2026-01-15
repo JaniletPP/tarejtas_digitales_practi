@@ -480,6 +480,7 @@ body {
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
     padding: 0.5rem 0 !important;
     margin: 0 !important;
+    margin-top: 0 !important;
     list-style: none !important;
     overflow: visible !important;
     pointer-events: none !important;
@@ -488,7 +489,8 @@ body {
     height: auto !important;
 }
 
-.admin-nav-horizontal .dropdown-menu.show {
+.admin-nav-horizontal .dropdown-menu.show,
+.admin-nav-horizontal .nav-menu-item.dropdown:hover .dropdown-menu {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;

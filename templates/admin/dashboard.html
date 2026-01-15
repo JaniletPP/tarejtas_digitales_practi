@@ -1228,125 +1228,96 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin-base.js') }}"></script>
-    <!-- Script de dropdowns - debe ejecutarse después de admin-base.js -->
+    <!-- Script de dropdowns - SOLUCIÓN SIMPLE Y DIRECTA -->
     <script>
-        // Script de dropdowns del navbar - Sobrescribe cualquier inicialización anterior
         (function() {
             'use strict';
             
-            function initDropdowns() {
-                console.log('[Dropdowns Navbar] Inicializando dropdowns del navbar...');
+            console.log('[Dropdowns] Iniciando script de dropdowns...');
+            
+            function setupDropdowns() {
+                console.log('[Dropdowns] Configurando dropdowns...');
                 
-                // Seleccionar todos los elementos con clase dropdown en el navbar
+                // Seleccionar todos los dropdowns
                 const dropdowns = document.querySelectorAll('.admin-nav-horizontal .nav-menu-item.dropdown');
-                console.log('[Dropdowns Navbar] Dropdowns encontrados:', dropdowns.length);
+                console.log('[Dropdowns] Encontrados', dropdowns.length, 'dropdowns');
                 
-                if (dropdowns.length === 0) {
-                    console.warn('[Dropdowns Navbar] No se encontraron dropdowns en el navbar');
-                    return;
-                }
-                
-                dropdowns.forEach(function(dropdown, index) {
+                dropdowns.forEach(function(dropdown, idx) {
                     const toggle = dropdown.querySelector('.dropdown-toggle');
                     const menu = dropdown.querySelector('.dropdown-menu');
                     
                     if (!toggle || !menu) {
-                        console.warn('[Dropdowns Navbar] Dropdown', index, 'sin toggle o menu');
+                        console.warn('[Dropdowns] Dropdown', idx, 'incompleto');
                         return;
                     }
                     
-                    const dropdownName = toggle.textContent.trim();
-                    console.log('[Dropdowns Navbar] Configurando dropdown', index, ':', dropdownName);
+                    console.log('[Dropdowns] Configurando:', toggle.textContent.trim());
                     
-                    // Remover cualquier listener anterior
+                    // Remover listeners anteriores
                     const newToggle = toggle.cloneNode(true);
                     toggle.parentNode.replaceChild(newToggle, toggle);
                     
-                    // Guardar referencias
-                    const menuRef = menu;
-                    const dropdownRef = dropdown;
-                    
-                    // Evento click en el toggle
+                    // Click handler
                     newToggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        e.stopImmediatePropagation(); // Prevenir que otros handlers se ejecuten
+                        e.stopImmediatePropagation();
                         
-                        console.log('[Dropdowns Navbar] Click en:', dropdownName);
+                        console.log('[Dropdowns] Click en:', this.textContent.trim());
                         
-                        const isShowing = menuRef.classList.contains('show');
-                        console.log('[Dropdowns Navbar] Estado actual:', isShowing ? 'abierto' : 'cerrado');
-                        
-                        // Cerrar todos los otros dropdowns
-                        document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(m) {
-                            if (m !== menuRef) {
-                                m.classList.remove('show');
-                            }
+                        // Cerrar otros
+                        document.querySelectorAll('.admin-nav-horizontal .dropdown-menu.show').forEach(function(m) {
+                            if (m !== menu) m.classList.remove('show');
                         });
                         
-                        // Toggle del dropdown actual
-                        if (isShowing) {
-                            menuRef.classList.remove('show');
-                            console.log('[Dropdowns Navbar] Cerrado');
-                        } else {
-                            menuRef.classList.add('show');
-                            console.log('[Dropdowns Navbar] Abierto - clase show agregada');
-                            
-                            // Verificación después de un momento
-                            setTimeout(function() {
-                                const computed = window.getComputedStyle(menuRef);
-                                console.log('[Dropdowns Navbar] Verificación:');
-                                console.log('  - Tiene clase show:', menuRef.classList.contains('show'));
-                                console.log('  - Display:', computed.display);
-                                console.log('  - Visibility:', computed.visibility);
-                                console.log('  - Opacity:', computed.opacity);
-                                console.log('  - Z-index:', computed.zIndex);
-                            }, 50);
-                        }
-                    }, true); // Usar capture phase para ejecutarse primero
-                    
-                    // Evento hover
-                    dropdownRef.addEventListener('mouseenter', function() {
-                        const menu = this.querySelector('.dropdown-menu');
-                        if (menu) {
-                            menu.classList.add('show');
-                            console.log('[Dropdowns Navbar] Hover - Menu mostrado');
-                        }
+                        // Toggle este
+                        menu.classList.toggle('show');
+                        console.log('[Dropdowns] Menu ahora:', menu.classList.contains('show') ? 'visible' : 'oculto');
+                        
+                        // Verificar visualmente
+                        setTimeout(function() {
+                            const style = window.getComputedStyle(menu);
+                            console.log('[Dropdowns] Estado visual - Display:', style.display, 'Visibility:', style.visibility, 'Opacity:', style.opacity);
+                        }, 10);
                     });
                     
-                    dropdownRef.addEventListener('mouseleave', function() {
-                        const menu = this.querySelector('.dropdown-menu');
-                        if (menu) {
-                            menu.classList.remove('show');
-                            console.log('[Dropdowns Navbar] Hover - Menu ocultado');
-                        }
+                    // Hover handlers
+                    dropdown.addEventListener('mouseenter', function() {
+                        menu.classList.add('show');
+                    });
+                    
+                    dropdown.addEventListener('mouseleave', function() {
+                        // Solo cerrar si no hay click activo
+                        setTimeout(function() {
+                            if (!dropdown.matches(':hover')) {
+                                menu.classList.remove('show');
+                            }
+                        }, 100);
                     });
                 });
                 
-                // Cerrar al hacer click fuera
+                // Click fuera para cerrar
                 document.addEventListener('click', function(e) {
-                    const clickedDropdown = e.target.closest('.admin-nav-horizontal .nav-menu-item.dropdown');
-                    if (!clickedDropdown) {
-                        document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(menu) {
+                    if (!e.target.closest('.admin-nav-horizontal .nav-menu-item.dropdown')) {
+                        document.querySelectorAll('.admin-nav-horizontal .dropdown-menu.show').forEach(function(menu) {
                             menu.classList.remove('show');
                         });
                     }
                 });
                 
-                console.log('[Dropdowns Navbar] Inicialización completa');
+                console.log('[Dropdowns] Configuración completa');
             }
             
-            // Esperar a que el DOM y admin-base.js estén listos
+            // Ejecutar múltiples veces para asegurar
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    setTimeout(initDropdowns, 500);
-                });
+                document.addEventListener('DOMContentLoaded', setupDropdowns);
             } else {
-                setTimeout(initDropdowns, 500);
+                setupDropdowns();
             }
             
-            // Ejecutar también después de más tiempo para asegurar que todo esté listo
-            setTimeout(initDropdowns, 1000);
+            setTimeout(setupDropdowns, 100);
+            setTimeout(setupDropdowns, 500);
+            setTimeout(setupDropdowns, 1000);
         })();
     </script>
     
