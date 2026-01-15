@@ -95,9 +95,23 @@
                         <span class="nav-text">Configuración</span>
                     </a>
                 </div>
+                
+                <!-- Usuario y Salir (solo visible en móvil) -->
+                <div class="nav-menu-item mobile-only">
+                    <div class="navbar-user-mobile">
+                        <span class="user-avatar">👤</span>
+                        <span class="user-name">{{ session.usuario }}</span>
+                    </div>
+                </div>
+                <div class="nav-menu-item mobile-only">
+                    <a href="{{ url_for('auth.logout') }}" class="nav-link">
+                        <span class="nav-icon">🚪</span>
+                        <span class="nav-text">Salir</span>
+                    </a>
+                </div>
             </div>
 
-            <!-- Sección Derecha: Usuario + Salir -->
+            <!-- Sección Derecha: Usuario + Salir (solo desktop) -->
             <div class="navbar-right">
                 <div class="navbar-user">
                     <span class="user-avatar">👤</span>

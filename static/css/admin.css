@@ -2909,9 +2909,38 @@ footer.bg-dark .btn-outline-light:hover {
         display: none !important;
     }
     
+    /* Mostrar items móviles */
+    .navbar-center .nav-menu-item.mobile-only {
+        display: block !important;
+    }
+    
+    .navbar-user-mobile {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 15px 20px !important;
+        color: #F3F6FF !important;
+    }
+    
+    .navbar-user-mobile .user-avatar {
+        font-size: 18px !important;
+    }
+    
+    .navbar-user-mobile .user-name {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+    }
+    
     /* Ajustar wrapper para navbar móvil */
     .admin-wrapper {
         margin-top: 60px !important;
+    }
+}
+
+/* Ocultar items móviles en desktop */
+@media (min-width: 769px) {
+    .nav-menu-item.mobile-only {
+        display: none !important;
     }
 }
 
