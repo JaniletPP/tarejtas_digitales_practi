@@ -1110,6 +1110,218 @@
     }
 }
 
+/* ============================================
+   MOBILE FIRST OVERRIDES (solo móvil)
+   Objetivo: 1 columna, sin scroll horizontal, touch-friendly
+   ============================================ */
+@media (max-width: 768px) {
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    .pos-main {
+        padding: 12px;
+    }
+
+    /* Header en una columna, sin amontonamiento */
+    .pos-header {
+        padding: 12px 14px;
+    }
+    .pos-header-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .pos-header h1 {
+        font-size: 1.25em;
+        white-space: normal;
+        text-align: left;
+    }
+    .pos-user-info {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: nowrap;
+    }
+    .pos-user-info .btn-logout {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+
+    /* Forzar 1 columna (ya lo es, pero aseguramos) */
+    .pos-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    /* Evitar que el panel izquierdo sea “caja enorme” con overflow raro */
+    .pos-left {
+        border-radius: 12px;
+        overflow: visible;
+        background: transparent;
+        box-shadow: none;
+    }
+    .pos-left .pos-card {
+        border-radius: 12px;
+        padding: 16px;
+        border: 1px solid var(--border);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        overflow: hidden; /* evita que pseudo-elementos generen scroll horizontal */
+    }
+    .pos-left .pos-card:first-child,
+    .pos-left .pos-card:last-child {
+        padding: 16px;
+    }
+
+    /* Quitar barras decorativas que se salen (causan scroll horizontal) */
+    .pos-left .pos-card:first-child h2::before,
+    .pos-left .pos-card:last-child h2::before {
+        display: none;
+    }
+    .pos-left .pos-card h2 {
+        font-size: 1.1em;
+        margin: 0 0 14px 0;
+        text-transform: none;
+        letter-spacing: 0.2px;
+    }
+
+    /* Inputs / selects full width y más altos */
+    .pos-card .form-group {
+        margin-bottom: 14px;
+    }
+    .input-label {
+        text-align: left;
+        margin-bottom: 8px;
+        font-size: 0.95em;
+    }
+    .input-tarjeta-container {
+        max-width: 100%;
+        margin: 0;
+    }
+    .pos-input-large {
+        font-size: 1em;
+        padding: 14px 14px;
+    }
+    .filtros-productos {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+    }
+    .filtros-productos label {
+        min-width: auto;
+    }
+    .filtro-select {
+        width: 100%;
+        padding: 14px 14px;
+        font-size: 1em;
+    }
+
+    /* Botones grandes (touch) */
+    .btn-buscar {
+        margin-top: 16px;
+        min-height: 52px;
+        font-size: 1em;
+    }
+    .btn-large,
+    #btnProcesarPago {
+        min-height: 52px;
+        font-size: 1.05em;
+    }
+    .btn-scan-qr {
+        min-width: 52px;
+        width: 52px;
+        padding: 12px;
+        font-size: 1.25em;
+    }
+
+    /* Productos: 1 columna (cards grandes) */
+    .productos-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .producto-item {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+        align-items: center;
+        text-align: left;
+        padding: 14px 14px;
+        border-radius: 12px;
+    }
+    .producto-nombre {
+        font-size: 1em;
+        margin: 0;
+    }
+    .producto-precio {
+        justify-self: end;
+        font-size: 1.1em;
+    }
+    .producto-tipo {
+        grid-column: 1 / -1;
+        margin-top: 6px;
+        font-size: 0.85em;
+    }
+
+    /* Carrito: evitar columnas apretadas -> stack */
+    .carrito-container {
+        max-height: none;
+        overflow: visible;
+        margin-bottom: 14px;
+    }
+    .carrito-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px 10px;
+    }
+    .carrito-item-nombre {
+        white-space: normal;
+    }
+    .carrito-item-acciones {
+        justify-content: space-between;
+        width: 100%;
+    }
+    .carrito-item-subtotal {
+        text-align: left;
+        min-width: 0;
+    }
+    .btn-cantidad {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    /* Total fijo visualmente al final de su card */
+    .carrito-total {
+        padding-top: 12px;
+    }
+    .total-line {
+        font-size: 1em;
+        padding: 6px 0;
+    }
+    .total-final {
+        font-size: 1.25em;
+        padding-top: 12px;
+    }
+
+    /* Modales: padding menor para pantallas pequeñas */
+    .modal.show {
+        padding: 12px;
+    }
+    .modal-body {
+        padding: 16px;
+    }
+    .modal-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .modal-actions .btn {
+        width: 100%;
+        min-height: 50px;
+    }
+}
+
 /* Modal para Escanear QR */
 .modal-qr {
     display: none;
