@@ -1393,12 +1393,10 @@
                         menu.classList.remove('mobile-open');
                         toggle.classList.remove('active');
                         if (overlay) overlay.classList.remove('active');
-                        document.body.classList.remove('menu-open');
                     } else {
                         menu.classList.add('mobile-open');
                         toggle.classList.add('active');
                         if (overlay) overlay.classList.add('active');
-                        document.body.classList.add('menu-open');
                     }
                     
                     console.log('[Navbar] Menú móvil', !isOpen ? 'abierto' : 'cerrado');
@@ -1452,7 +1450,6 @@
                     toggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        e.stopImmediatePropagation();
                         
                         console.log('[Navbar] Click en dropdown toggle:', dropdown);
                         
@@ -1471,9 +1468,11 @@
                         // Toggle este dropdown
                         if (isShowing) {
                             menu.classList.remove('show');
+                            dropdown.classList.remove('active');
                             console.log('[Navbar] Dropdown cerrado');
                         } else {
                             menu.classList.add('show');
+                            dropdown.classList.add('active');
                             menu.style.maxHeight = 'none';
                             menu.style.overflow = 'visible';
                             menu.style.overflowY = 'visible';
@@ -1536,7 +1535,6 @@
                     item.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        e.stopImmediatePropagation();
                         
                         const section = this.getAttribute('data-section');
                         if (section) {
@@ -1589,10 +1587,6 @@
                 init();
             }
             
-            // Ejecutar también después de delays para asegurar que admin-base.js se haya cargado
-            setTimeout(init, 100);
-            setTimeout(init, 500);
-            
             // Manejar resize para ajustar comportamiento
             let resizeTimer;
             window.addEventListener('resize', function() {
@@ -1605,7 +1599,6 @@
                         if (menu) menu.classList.remove('mobile-open');
                         if (toggle) toggle.classList.remove('active');
                         if (overlay) overlay.classList.remove('active');
-                        document.body.classList.remove('menu-open');
                     }
                 }, 250);
             });
