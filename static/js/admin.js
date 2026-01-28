@@ -124,9 +124,9 @@ window.inicializarNavegacion = function inicializarNavegacion() {
                 dropdown.classList.remove('active');
             });
         }, true);
-    });
+});
 
-    // Manejo de menús desplegables
+// Manejo de menús desplegables
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
     console.log('[Navegación] Encontrados', dropdownToggles.length, 'dropdown toggles');
     
@@ -141,7 +141,7 @@ window.inicializarNavegacion = function inicializarNavegacion() {
         toggle.parentNode.replaceChild(newToggle, toggle);
         
         newToggle.addEventListener('click', function(e) {
-            e.preventDefault();
+        e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
             
@@ -158,16 +158,16 @@ window.inicializarNavegacion = function inicializarNavegacion() {
             }
             
             console.log('[Navegación] Click en dropdown toggle', index);
-            
-            // Cerrar otros dropdowns
-            document.querySelectorAll('.dropdown').forEach(d => {
-                if (d !== dropdown) {
-                    d.classList.remove('active');
-                }
-            });
-            
-            // Toggle del dropdown actual
-            dropdown.classList.toggle('active');
+        
+        // Cerrar otros dropdowns
+        document.querySelectorAll('.dropdown').forEach(d => {
+            if (d !== dropdown) {
+                d.classList.remove('active');
+            }
+        });
+        
+        // Toggle del dropdown actual
+        dropdown.classList.toggle('active');
             const isActive = dropdown.classList.contains('active');
             
             console.log('[Navegación] Dropdown ahora está:', isActive ? 'activo' : 'inactivo');
@@ -199,9 +199,9 @@ window.inicializarNavegacion = function inicializarNavegacion() {
             }
             
             // Si el click fue fuera de cualquier dropdown, cerrarlos todos
-            document.querySelectorAll('.dropdown').forEach(dropdown => {
-                dropdown.classList.remove('active');
-            });
+        document.querySelectorAll('.dropdown').forEach(dropdown => {
+            dropdown.classList.remove('active');
+        });
         }, true);
         
         listenerGlobalAgregado = true;
@@ -319,7 +319,7 @@ function abrirModalNuevoAsistente() {
     if (!modal) {
         console.error('No se encontró el modal de asistentes');
         if (typeof showAlert !== 'undefined') {
-            showAlert('error', 'No se encontró el modal de asistentes');
+        showAlert('error', 'No se encontró el modal de asistentes');
         }
         return;
     }
@@ -377,7 +377,7 @@ function cerrarModalAsistente() {
 // Función para registrar asistente (disponible globalmente)
 async function registrarAsistenteAdmin(e) {
     if (e) {
-        e.preventDefault();
+            e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
     }
@@ -399,49 +399,49 @@ async function registrarAsistenteAdmin(e) {
     const telefono = telefonoInput ? telefonoInput.value.trim() || null : null;
     
     console.log('[Asistentes] Datos del formulario:', { nombre, email, telefono });
-    
-    // Validación
-    if (!nombre) {
+            
+            // Validación
+            if (!nombre) {
         console.warn('[Asistentes] Validación fallida: nombre vacío');
-        showAlert('error', 'El nombre es obligatorio');
+                showAlert('error', 'El nombre es obligatorio');
         const nombreGroup = nombreInput.closest('.form-group');
-        if (nombreGroup) {
-            nombreGroup.classList.add('error');
-            const errorElement = nombreGroup.querySelector('.form-error');
-            if (errorElement) {
-                errorElement.textContent = 'El nombre es obligatorio';
+                if (nombreGroup) {
+                    nombreGroup.classList.add('error');
+                    const errorElement = nombreGroup.querySelector('.form-error');
+                    if (errorElement) {
+                        errorElement.textContent = 'El nombre es obligatorio';
+                    }
+                }
+                return;
             }
-        }
-        return;
-    }
-    
-    // Validar email si se proporciona
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            
+            // Validar email si se proporciona
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         console.warn('[Asistentes] Validación fallida: email inválido');
-        showAlert('error', 'El formato del email no es válido');
-        return;
-    }
-    
-    // Deshabilitar botón
-    const btnGuardar = document.getElementById('btnGuardarAsistenteAdmin');
+                showAlert('error', 'El formato del email no es válido');
+                return;
+            }
+            
+            // Deshabilitar botón
+            const btnGuardar = document.getElementById('btnGuardarAsistenteAdmin');
     if (!btnGuardar) {
         console.error('[Asistentes] No se encontró el botón de guardar');
         showAlert('error', 'Error: No se encontró el botón de guardar');
         return;
     }
     
-    const btnText = btnGuardar.querySelector('.btn-text');
-    const btnLoader = btnGuardar.querySelector('.btn-loader');
+            const btnText = btnGuardar.querySelector('.btn-text');
+            const btnLoader = btnGuardar.querySelector('.btn-loader');
     const wasDisabled = btnGuardar.disabled;
-    btnGuardar.disabled = true;
-    if (btnText) btnText.style.display = 'none';
-    if (btnLoader) btnLoader.style.display = 'inline-block';
-    
-    try {
+            btnGuardar.disabled = true;
+            if (btnText) btnText.style.display = 'none';
+            if (btnLoader) btnLoader.style.display = 'inline-block';
+            
+            try {
         const formData = {
-            nombre,
-            email,
-            telefono
+                        nombre,
+                        email,
+                        telefono
         };
         
         console.log('[Asistentes] Enviando petición POST a /api/asistentes con datos:', formData);
@@ -456,9 +456,9 @@ async function registrarAsistenteAdmin(e) {
         if (error) {
             console.error('[Asistentes] Error en la petición:', error);
             showAlert('error', `Error de conexión: ${error}`);
-            return;
-        }
-        
+                    return;
+                }
+                
         if (!response) {
             console.error('[Asistentes] No se recibió respuesta del servidor');
             showAlert('error', 'No se recibió respuesta del servidor');
@@ -482,35 +482,35 @@ async function registrarAsistenteAdmin(e) {
         console.log('[Asistentes] Asistente registrado exitosamente:', data.data);
         
         showAlert('success', `Asistente "${nombre}" registrado correctamente. ID: ${data.data.id}`, 'Registro Exitoso');
-        
-        // Cerrar modal
-        cerrarModalAsistente();
-        
-        // Recargar lista si está visible
-        const listaDiv = document.getElementById('listaAsistentesAdmin');
-        if (listaDiv && listaDiv.classList.contains('show')) {
+                
+                // Cerrar modal
+                cerrarModalAsistente();
+                
+                // Recargar lista si está visible
+                const listaDiv = document.getElementById('listaAsistentesAdmin');
+                if (listaDiv && listaDiv.classList.contains('show')) {
             console.log('[Asistentes] Recargando lista de asistentes...');
             const btnCargar = document.getElementById('btnCargarAsistentes');
             if (btnCargar) {
                 btnCargar.click();
             }
-        }
-        
-        // Actualizar estadísticas
+                }
+                
+                // Actualizar estadísticas
         if (typeof cargarEstadisticas === 'function') {
-            cargarEstadisticas();
+                cargarEstadisticas();
         }
-        
-    } catch (error) {
+                
+            } catch (error) {
         console.error('[Asistentes] Excepción al registrar asistente:', error);
         showAlert('error', `Error inesperado: ${error.message || 'Error al registrar el asistente'}`);
-    } finally {
-        // Rehabilitar botón
+            } finally {
+                // Rehabilitar botón
         if (btnGuardar) {
             btnGuardar.disabled = wasDisabled;
-            if (btnText) btnText.style.display = 'inline';
-            if (btnLoader) btnLoader.style.display = 'none';
-        }
+                if (btnText) btnText.style.display = 'inline';
+                if (btnLoader) btnLoader.style.display = 'none';
+            }
     }
 }
 
@@ -1007,20 +1007,20 @@ document.getElementById('formAsignarTarjetaAdmin')?.addEventListener('submit', a
     if (btnLoader) btnLoader.style.display = 'inline-block';
     
     try {
-        const { response, data, error } = await hacerPeticion('/api/tarjetas/asignar', {
-            method: 'POST',
+    const { response, data, error } = await hacerPeticion('/api/tarjetas/asignar', {
+        method: 'POST',
             body: JSON.stringify({ 
                 asistente_id: parseInt(asistente_id),
                 numero_tarjeta: numero_tarjeta
             })
-        });
-        
-        if (error) {
-            showAlert('error', `Error: ${error}`);
-            return;
-        }
-        
-        if (data.success) {
+    });
+    
+    if (error) {
+        showAlert('error', `Error: ${error}`);
+        return;
+    }
+    
+    if (data.success) {
             // Mostrar confirmación visual clara y profesional
             const resultadoDiv = document.getElementById('resultadoAsignarAdmin');
             resultadoDiv.className = 'resultado show success';
@@ -1056,7 +1056,7 @@ document.getElementById('formAsignarTarjetaAdmin')?.addEventListener('submit', a
             
             // Actualizar estadísticas
             cargarEstadisticas();
-        } else {
+    } else {
             showAlert('error', data.error || 'Error al asignar la tarjeta');
         }
     } catch (error) {

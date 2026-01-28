@@ -74,7 +74,7 @@ class Asistente:
         finally:
             cursor.close()
             connection.close()
-    
+
     @staticmethod
     def listar_sin_tarjeta():
         """
@@ -600,6 +600,84 @@ class PuntoVenta:
         finally:
             cursor.close()
             connection.close()
+
+    @staticmethod
+    def crear(nombre, tipo, activo=True):
+        """
+        Crea un nuevo punto de venta
+
+        Args:
+            nombre (str): Nombre del punto de venta
+            tipo (str): Tipo (restaurante, cafeteria, etc.)
+            activo (bool): Estado activo/inactivo
+
+        Returns:
+            dict: Punto de venta creado
+        """
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                INSERT INTO puntos_venta (nombre, tipo, activo)
+                VALUES (%s, %s, %s)
+            """, (nombre, tipo, activo))
+            connection.commit()
+            pv_id = cursor.lastrowid
+            return PuntoVenta.obtener_por_id(pv_id)
+        except Error as e:
+            connection.rollback()
+            raise e
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
+    def actualizar(punto_venta_id, nombre=None, tipo=None, activo=None):
+        """
+        Actualiza un punto de venta existente
+
+        Returns:
+            dict: Punto de venta actualizado o None si no existe
+        """
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+        try:
+            # Verificar existe
+            actual = PuntoVenta.obtener_por_id(punto_venta_id)
+            if not actual:
+                return None
+
+            updates = []
+            values = []
+
+            if nombre is not None:
+                updates.append("nombre = %s")
+                values.append(nombre)
+            if tipo is not None:
+                updates.append("tipo = %s")
+                values.append(tipo)
+            if activo is not None:
+                updates.append("activo = %s")
+                values.append(activo)
+
+            if not updates:
+                return actual
+
+            values.append(punto_venta_id)
+            cursor.execute(f"UPDATE puntos_venta SET {', '.join(updates)} WHERE id = %s", values)
+            connection.commit()
+            return PuntoVenta.obtener_por_id(punto_venta_id)
+        except Error as e:
+            connection.rollback()
+            raise e
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
+    def eliminar(punto_venta_id):
+        """Elimina (desactiva) un punto de venta"""
+        return PuntoVenta.actualizar(punto_venta_id, activo=False)
 
 class Producto:
     """Modelo para manejar productos"""

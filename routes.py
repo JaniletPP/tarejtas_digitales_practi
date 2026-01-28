@@ -544,6 +544,84 @@ def listar_puntos_venta():
             'error': str(e)
         }), 500
 
+def crear_punto_venta():
+    """
+    Crea un nuevo punto de venta (solo admin)
+    Endpoint: POST /api/puntos-venta
+    Body:
+        - nombre (str): obligatorio
+        - tipo (str): obligatorio
+        - activo (bool, optional): default True
+    """
+    from auth.auth_routes import obtener_rol_usuario
+    rol = obtener_rol_usuario()
+    if rol != 'admin':
+        return jsonify({'success': False, 'error': 'Solo los administradores pueden crear puntos de venta'}), 403
+
+    try:
+        data = request.get_json() or {}
+        nombre = data.get('nombre')
+        tipo = data.get('tipo')
+        activo = data.get('activo', True)
+
+        if not nombre or not str(nombre).strip():
+            return jsonify({'success': False, 'error': 'El nombre es obligatorio'}), 400
+        if not tipo or not str(tipo).strip():
+            return jsonify({'success': False, 'error': 'El tipo es obligatorio'}), 400
+
+        pv = PuntoVenta.crear(str(nombre).strip(), str(tipo).strip(), bool(activo))
+        return jsonify({'success': True, 'message': 'Punto de venta creado', 'data': pv}), 201
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+def actualizar_punto_venta(punto_venta_id):
+    """
+    Actualiza un punto de venta (solo admin)
+    Endpoint: PUT /api/puntos-venta/<id>
+    """
+    from auth.auth_routes import obtener_rol_usuario
+    rol = obtener_rol_usuario()
+    if rol != 'admin':
+        return jsonify({'success': False, 'error': 'Solo los administradores pueden actualizar puntos de venta'}), 403
+
+    try:
+        data = request.get_json() or {}
+
+        if 'nombre' in data and (not data.get('nombre') or not str(data.get('nombre')).strip()):
+            return jsonify({'success': False, 'error': 'El nombre no puede estar vacío'}), 400
+        if 'tipo' in data and (not data.get('tipo') or not str(data.get('tipo')).strip()):
+            return jsonify({'success': False, 'error': 'El tipo no puede estar vacío'}), 400
+
+        pv = PuntoVenta.actualizar(
+            punto_venta_id,
+            nombre=str(data.get('nombre')).strip() if 'nombre' in data and data.get('nombre') is not None else None,
+            tipo=str(data.get('tipo')).strip() if 'tipo' in data and data.get('tipo') is not None else None,
+            activo=data.get('activo') if 'activo' in data else None
+        )
+        if not pv:
+            return jsonify({'success': False, 'error': 'Punto de venta no encontrado'}), 404
+        return jsonify({'success': True, 'message': 'Punto de venta actualizado', 'data': pv}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+def eliminar_punto_venta(punto_venta_id):
+    """
+    Elimina (desactiva) un punto de venta (solo admin)
+    Endpoint: DELETE /api/puntos-venta/<id>
+    """
+    from auth.auth_routes import obtener_rol_usuario
+    rol = obtener_rol_usuario()
+    if rol != 'admin':
+        return jsonify({'success': False, 'error': 'Solo los administradores pueden eliminar puntos de venta'}), 403
+
+    try:
+        res = PuntoVenta.eliminar(punto_venta_id)
+        if not res:
+            return jsonify({'success': False, 'error': 'Punto de venta no encontrado'}), 404
+        return jsonify({'success': True, 'message': 'Punto de venta eliminado'}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 def listar_asistentes():
     """
     Lista todos los asistentes registrados
@@ -785,15 +863,25 @@ def crear_producto():
                 'success': False,
                 'error': 'El precio debe ser mayor a 0'
             }), 400
-        
-        if not tipo or not tipo.strip():
+
+        if not tipo or not str(tipo).strip():
             return jsonify({
                 'success': False,
                 'error': 'El tipo del producto es obligatorio'
             }), 400
         
-        # Crear producto
-        producto = Producto.crear(nombre.strip(), precio, tipo.strip(), punto_venta_id, descripcion.strip() if descripcion else None, imagen_url.strip() if imagen_url else None)
+        # Normalizar punto_venta_id
+        if punto_venta_id in ('', None):
+            punto_venta_id = None
+
+        producto = Producto.crear(
+            nombre.strip(),
+            precio,
+            str(tipo).strip(),
+            punto_venta_id,
+            descripcion.strip() if isinstance(descripcion, str) and descripcion.strip() else None,
+            imagen_url.strip() if isinstance(imagen_url, str) and imagen_url.strip() else None,
+        )
         
         # Si activo es False, actualizar
         if not activo:
@@ -878,21 +966,25 @@ def actualizar_producto(producto_id):
                 'success': False,
                 'error': 'El precio debe ser mayor a 0'
             }), 400
-        
-        if 'tipo' in data and (not data.get('tipo') or not data.get('tipo').strip()):
+
+        if 'tipo' in data and (not data.get('tipo') or not str(data.get('tipo')).strip()):
             return jsonify({
                 'success': False,
                 'error': 'El tipo del producto no puede estar vacío'
             }), 400
         
+        punto_venta_id = data.get('punto_venta_id') if 'punto_venta_id' in data else None
+        if 'punto_venta_id' in data and punto_venta_id in ('', None):
+            punto_venta_id = None
+
         producto = Producto.actualizar(
             producto_id,
             nombre=data.get('nombre').strip() if data.get('nombre') else None,
             precio=data.get('precio'),
-            tipo=data.get('tipo').strip() if data.get('tipo') else None,
-            punto_venta_id=data.get('punto_venta_id'),
-            descripcion=data.get('descripcion').strip() if data.get('descripcion') else None,
-            imagen_url=data.get('imagen_url').strip() if data.get('imagen_url') else None,
+            tipo=str(data.get('tipo')).strip() if data.get('tipo') else None,
+            punto_venta_id=punto_venta_id,
+            descripcion=data.get('descripcion').strip() if isinstance(data.get('descripcion'), str) and data.get('descripcion').strip() else None,
+            imagen_url=data.get('imagen_url').strip() if isinstance(data.get('imagen_url'), str) and data.get('imagen_url').strip() else None,
             activo=data.get('activo')
         )
         

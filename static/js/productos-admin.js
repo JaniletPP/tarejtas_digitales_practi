@@ -48,6 +48,36 @@ async function cargarTiposProductosAdminTodos() {
             option.textContent = tipo.charAt(0).toUpperCase() + tipo.slice(1);
             filtroSelect.appendChild(option);
         });
+
+        // También intentar poblar el select de categoría del formulario (si existe)
+        const tipoFormSelect = document.getElementById('productoTipoAdmin');
+        if (tipoFormSelect) {
+            // Guardar opciones hardcodeadas actuales como fallback
+            const fallbackOptions = Array.from(tipoFormSelect.querySelectorAll('option'))
+                .map(o => ({ value: o.value, text: o.textContent }))
+                .filter(o => o.value);
+
+            // Limpiar y reconstruir
+            tipoFormSelect.innerHTML = '<option value="">Seleccione una categoría</option>';
+
+            const tipos = Array.isArray(tiposProductosAdmin) ? tiposProductosAdmin.filter(Boolean) : [];
+            if (tipos.length > 0) {
+                tipos.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t;
+                    opt.textContent = t.charAt(0).toUpperCase() + t.slice(1);
+                    tipoFormSelect.appendChild(opt);
+                });
+            } else {
+                // Fallback: usar las opciones que vienen en el HTML
+                fallbackOptions.forEach(o => {
+                    const opt = document.createElement('option');
+                    opt.value = o.value;
+                    opt.textContent = o.text;
+                    tipoFormSelect.appendChild(opt);
+                });
+            }
+        }
     } catch (error) {
         console.error('Error cargando tipos:', error);
     }
@@ -122,7 +152,7 @@ function mostrarProductosPorTipo() {
                     <td>${producto.tipo || '-'}</td>
                     <td>$${parseFloat(producto.precio).toFixed(2)}</td>
                     <td>${producto.punto_venta_nombre || 'N/A'}</td>
-                    <td>${producto.activo ? 'Activo' : 'Inactivo'}</td>
+                    <td>${producto.activo ? '<span style="color: green;">✓ Activo</span>' : '<span style="color: red;">✗ Inactivo</span>'}</td>
                     <td>${producto.descripcion || '-'}</td>
                     <td class="acciones-cell">
                         <button class="btn btn-small btn-info" onclick="editarProductoAdmin(${producto.id})">✏️ Editar</button>
@@ -159,6 +189,7 @@ function actualizarPreviewImagen(url) {
     }
 }
 
+
 // Validar formulario
 function validarFormularioProducto() {
     let esValido = true;
@@ -181,28 +212,34 @@ function validarFormularioProducto() {
         esValido = false;
     }
     
-    // Validar tipo
-    const tipo = document.getElementById('productoTipoAdmin').value;
-    if (!tipo) {
-        mostrarError('productoTipoAdmin', 'La categoría es obligatoria');
-        esValido = false;
-    }
-    
     // Validar precio
     const precio = parseFloat(document.getElementById('productoPrecioAdmin').value);
     if (isNaN(precio) || precio <= 0) {
         mostrarError('productoPrecioAdmin', 'El precio debe ser mayor a 0');
         esValido = false;
     }
-    
-    // Validar URL de imagen si se proporciona
-    const imagenUrl = document.getElementById('productoImagenUrlAdmin').value.trim();
-    if (imagenUrl) {
-        try {
-            new URL(imagenUrl);
-        } catch (e) {
-            mostrarError('productoImagenUrlAdmin', 'La URL de la imagen no es válida');
+
+    // Validar tipo
+    const tipoEl = document.getElementById('productoTipoAdmin');
+    if (tipoEl) {
+        const tipo = tipoEl.value;
+        if (!tipo) {
+            mostrarError('productoTipoAdmin', 'La categoría es obligatoria');
             esValido = false;
+        }
+    }
+
+    // Validar URL de imagen si se proporciona
+    const imagenUrlEl = document.getElementById('productoImagenUrlAdmin');
+    if (imagenUrlEl) {
+        const imagenUrl = imagenUrlEl.value.trim();
+        if (imagenUrl) {
+            try {
+                new URL(imagenUrl);
+            } catch (e) {
+                mostrarError('productoImagenUrlAdmin', 'La URL de la imagen no es válida');
+                esValido = false;
+            }
         }
     }
     
@@ -237,20 +274,20 @@ async function editarProductoAdmin(productoId) {
         
         const producto = data.data;
         
-        // Llenar formulario
+        // Llenar formulario (todos los campos)
         document.getElementById('productoIdAdmin').value = producto.id;
         document.getElementById('productoNombreAdmin').value = producto.nombre || '';
         document.getElementById('productoPrecioAdmin').value = producto.precio || '';
-        document.getElementById('productoTipoAdmin').value = producto.tipo || '';
-        document.getElementById('productoPuntoVentaAdmin').value = producto.punto_venta_id || '';
-        document.getElementById('productoDescripcionAdmin').value = producto.descripcion || '';
+        const tipoEl = document.getElementById('productoTipoAdmin');
+        if (tipoEl) tipoEl.value = producto.tipo || '';
+        const pvEl = document.getElementById('productoPuntoVentaAdmin');
+        if (pvEl) pvEl.value = producto.punto_venta_id || '';
+        const descEl = document.getElementById('productoDescripcionAdmin');
+        if (descEl) descEl.value = producto.descripcion || '';
         document.getElementById('productoActivoAdmin').checked = producto.activo !== false;
-        document.getElementById('productoImagenUrlAdmin').value = producto.imagen_url || '';
-        
-        // Actualizar preview de imagen
+        const imgEl = document.getElementById('productoImagenUrlAdmin');
+        if (imgEl) imgEl.value = producto.imagen_url || '';
         actualizarPreviewImagen(producto.imagen_url || '');
-        
-        // Actualizar contador de caracteres
         actualizarContadorCaracteres();
         
         // Actualizar label del switch
@@ -317,7 +354,8 @@ function abrirModalNuevoProducto() {
     document.getElementById('formProductoAdmin').reset();
     document.getElementById('productoIdAdmin').value = '';
     document.getElementById('productoActivoAdmin').checked = true;
-    document.getElementById('productoAgregarOtroAdmin').checked = false;
+    const otroEl = document.getElementById('productoAgregarOtroAdmin');
+    if (otroEl) otroEl.checked = false;
     document.getElementById('modalProductoTitulo').textContent = '➕ Agregar Nuevo Producto';
     document.getElementById('btnGuardarProductoAdmin').innerHTML = '<span class="btn-text">Agregar Producto</span><span class="btn-loader" style="display: none;">⏳</span>';
     
@@ -326,10 +364,10 @@ function abrirModalNuevoProducto() {
         group.classList.remove('error');
     });
     
-    // Limpiar preview y estados
+    // Actualizar label del switch
+    actualizarSwitchLabel();
     actualizarPreviewImagen('');
     actualizarContadorCaracteres();
-    actualizarSwitchLabel();
     
     // Abrir modal
     modal.classList.add('show');
@@ -371,10 +409,12 @@ function cerrarModalProducto() {
         group.classList.remove('error');
     });
     
-    // Limpiar preview
+    // Actualizar label del switch
+    actualizarSwitchLabel();
+
+    // Limpiar preview / contador
     actualizarPreviewImagen('');
     actualizarContadorCaracteres();
-    actualizarSwitchLabel();
 }
 
 const cerrarModalProductoAdmin = document.getElementById('cerrarModalProductoAdmin');
@@ -397,14 +437,6 @@ if (modalProductoAdmin) {
     });
 }
 
-// Actualizar contador de caracteres
-function actualizarContadorCaracteres() {
-    const textarea = document.getElementById('productoDescripcionAdmin');
-    const charCount = document.getElementById('charCountAdmin');
-    if (textarea && charCount) {
-        charCount.textContent = textarea.value.length;
-    }
-}
 
 // Actualizar label del switch
 function actualizarSwitchLabel() {
@@ -412,6 +444,15 @@ function actualizarSwitchLabel() {
     const label = document.getElementById('switchLabelAdmin');
     if (checkbox && label) {
         label.textContent = checkbox.checked ? 'Activo' : 'Inactivo';
+    }
+}
+
+// Actualizar contador de caracteres
+function actualizarContadorCaracteres() {
+    const textarea = document.getElementById('productoDescripcionAdmin');
+    const charCount = document.getElementById('charCountAdmin');
+    if (textarea && charCount) {
+        charCount.textContent = textarea.value.length;
     }
 }
 
@@ -430,12 +471,12 @@ if (formProductoAdmin) {
         const productoId = document.getElementById('productoIdAdmin').value;
         const nombre = document.getElementById('productoNombreAdmin').value.trim();
         const precio = parseFloat(document.getElementById('productoPrecioAdmin').value);
-        const tipo = document.getElementById('productoTipoAdmin').value;
-        const punto_venta_id = document.getElementById('productoPuntoVentaAdmin').value || null;
-        const descripcion = document.getElementById('productoDescripcionAdmin').value.trim() || null;
-        const imagen_url = document.getElementById('productoImagenUrlAdmin').value.trim() || null;
+        const tipo = document.getElementById('productoTipoAdmin') ? document.getElementById('productoTipoAdmin').value : null;
+        const punto_venta_id = document.getElementById('productoPuntoVentaAdmin') ? (document.getElementById('productoPuntoVentaAdmin').value || null) : null;
+        const descripcion = document.getElementById('productoDescripcionAdmin') ? (document.getElementById('productoDescripcionAdmin').value.trim() || null) : null;
+        const imagen_url = document.getElementById('productoImagenUrlAdmin') ? (document.getElementById('productoImagenUrlAdmin').value.trim() || null) : null;
         const activo = document.getElementById('productoActivoAdmin').checked;
-        const agregarOtro = document.getElementById('productoAgregarOtroAdmin').checked;
+        const agregarOtro = document.getElementById('productoAgregarOtroAdmin') ? document.getElementById('productoAgregarOtroAdmin').checked : false;
         
         // Deshabilitar botón y mostrar loader
         const btnGuardar = document.getElementById('btnGuardarProductoAdmin');
@@ -491,22 +532,25 @@ if (formProductoAdmin) {
             
             showAlert('success', productoId ? 'Producto actualizado correctamente' : `Producto "${nombre}" creado correctamente`);
             
-            // Si no es "agregar otro", cerrar modal
             if (!agregarOtro) {
+                // Cerrar modal
                 document.getElementById('modalProductoAdmin').classList.remove('show');
                 formProductoAdmin.reset();
+                document.getElementById('productoIdAdmin').value = '';
+                document.getElementById('productoActivoAdmin').checked = true;
+                actualizarSwitchLabel();
                 actualizarPreviewImagen('');
                 actualizarContadorCaracteres();
-                actualizarSwitchLabel();
             } else {
                 // Limpiar formulario pero mantener modal abierto
                 formProductoAdmin.reset();
                 document.getElementById('productoIdAdmin').value = '';
                 document.getElementById('productoActivoAdmin').checked = true;
-                document.getElementById('productoAgregarOtroAdmin').checked = true;
+                const otroEl = document.getElementById('productoAgregarOtroAdmin');
+                if (otroEl) otroEl.checked = true;
+                actualizarSwitchLabel();
                 actualizarPreviewImagen('');
                 actualizarContadorCaracteres();
-                actualizarSwitchLabel();
                 document.getElementById('modalProductoTitulo').textContent = '➕ Agregar Nuevo Producto';
                 document.getElementById('btnGuardarProductoAdmin').innerHTML = '<span class="btn-text">Agregar Producto</span><span class="btn-loader" style="display: none;">⏳</span>';
                 document.getElementById('productoNombreAdmin').focus();
@@ -546,12 +590,18 @@ if (formProductoAdmin) {
         });
     }
     
+    // Switch de activo/inactivo
+    const activoCheckbox = document.getElementById('productoActivoAdmin');
+    if (activoCheckbox) {
+        activoCheckbox.addEventListener('change', actualizarSwitchLabel);
+    }
+
     // Contador de caracteres para descripción
     const descripcionTextarea = document.getElementById('productoDescripcionAdmin');
     if (descripcionTextarea) {
         descripcionTextarea.addEventListener('input', actualizarContadorCaracteres);
     }
-    
+
     // Preview de imagen
     const imagenUrlInput = document.getElementById('productoImagenUrlAdmin');
     const btnPreviewImagen = document.getElementById('btnPreviewImagenAdmin');
@@ -572,7 +622,7 @@ if (formProductoAdmin) {
         });
     }
     
-    if (btnPreviewImagen) {
+    if (btnPreviewImagen && imagenUrlInput) {
         btnPreviewImagen.addEventListener('click', () => {
             const url = imagenUrlInput.value.trim();
             if (url) {
@@ -584,12 +634,6 @@ if (formProductoAdmin) {
                 }
             }
         });
-    }
-    
-    // Switch de activo/inactivo
-    const activoCheckbox = document.getElementById('productoActivoAdmin');
-    if (activoCheckbox) {
-        activoCheckbox.addEventListener('change', actualizarSwitchLabel);
     }
 }
 
@@ -603,14 +647,26 @@ async function cargarPuntosVentaProductosAdmin() {
         }
         
         const select = document.getElementById('productoPuntoVentaAdmin');
+        const emptyMsg = document.getElementById('productoPuntoVentaEmptyMsg');
         if (!select) return;
         
-        // Limpiar opciones excepto "Ninguno"
+        // Limpiar opciones excepto la primera
         while (select.children.length > 1) {
             select.removeChild(select.lastChild);
         }
-        
-        data.data.forEach(pv => {
+
+        const puntos = Array.isArray(data.data) ? data.data : [];
+        if (puntos.length === 0) {
+            // Mostrar mensaje y dejar el select con solo el placeholder
+            if (emptyMsg) emptyMsg.style.display = 'block';
+            select.disabled = true;
+            return;
+        }
+
+        if (emptyMsg) emptyMsg.style.display = 'none';
+        select.disabled = false;
+
+        puntos.forEach(pv => {
             const option = document.createElement('option');
             option.value = pv.id;
             option.textContent = pv.nombre;
@@ -620,6 +676,7 @@ async function cargarPuntosVentaProductosAdmin() {
         console.error('Error cargando puntos de venta:', error);
     }
 }
+
 
 // Inicializar cuando se accede a la sección
 let productosAdminInitialized = false;

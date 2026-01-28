@@ -46,6 +46,10 @@
                             <span class="dropdown-icon">🛍️</span>
                             Productos
                         </a></li>
+                        <li><a href="#puntos-venta" class="dropdown-item" data-section="puntos-venta">
+                            <span class="dropdown-icon">🏪</span>
+                            Puntos de venta
+                        </a></li>
                     </ul>
                 </div>
 
@@ -123,6 +127,9 @@
                     </div>
         </nav>
             </header>
+
+    <!-- Overlay para menú móvil -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
     <div class="admin-wrapper">
 
@@ -328,6 +335,35 @@
                 <!-- Productos organizados por tipo -->
                 <div id="productosPorTipoAdmin" class="productos-por-tipo">
                     <!-- Los productos se cargan dinámicamente organizados por tipo -->
+                </div>
+            </section>
+
+            <!-- Puntos de Venta Section -->
+            <section id="section-puntos-venta" class="admin-section hidden">
+                <div class="section-header">
+                    <h2>🏪 Gestión de Puntos de Venta</h2>
+                    <button class="btn btn-primary" id="btnNuevoPuntoVentaAdmin">➕ Nuevo Punto de Venta</button>
+                </div>
+
+                <div class="content-card">
+                    <p id="puntosVentaEmptyMsg" style="display:none; text-align:center; color:#999; margin:0;">
+                        No existen puntos de venta registrados. Crea uno para poder asignarlo a productos.
+                    </p>
+
+                    <div class="productos-tabla-container" style="margin-top: 10px;">
+                        <table class="productos-tabla">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Estado</th>
+                                    <th class="acciones-cell">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="puntosVentaTablaBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -1109,7 +1145,7 @@
                         >
                         <small class="form-error" id="errorNombreAdmin"></small>
                     </div>
-                    
+
                     <!-- Categoría y Punto de Venta en fila -->
                     <div class="form-row">
                         <div class="form-group form-col">
@@ -1134,6 +1170,9 @@
                             <select id="productoPuntoVentaAdmin">
                                 <option value="">Seleccione un punto de venta</option>
                             </select>
+                            <small class="form-help" id="productoPuntoVentaEmptyMsg" style="display:none; color:#b00020;">
+                                No hay puntos de venta registrados. Ve a Gestión → Puntos de venta y crea uno.
+                            </small>
                         </div>
                     </div>
                     
@@ -1165,7 +1204,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Descripción -->
                     <div class="form-group">
                         <label for="productoDescripcionAdmin">Descripción (opcional)</label>
@@ -1177,7 +1216,7 @@
                         ></textarea>
                         <small class="char-count"><span id="charCountAdmin">0</span>/500 caracteres</small>
                     </div>
-                    
+
                     <!-- Imagen del Producto -->
                     <div class="form-group">
                         <label for="productoImagenUrlAdmin">Imagen del Producto (opcional)</label>
@@ -1200,7 +1239,7 @@
                         </div>
                         <small class="form-help">Ingresa la URL de una imagen. Se recomienda usar imágenes 1:1 o 4:3 para evitar distorsión.</small>
                     </div>
-                    
+
                     <!-- Opción para agregar otro -->
                     <div class="form-group checkbox-group">
                         <label class="checkbox-inline">
@@ -1215,6 +1254,51 @@
                         <button type="submit" class="btn btn-primary" id="btnGuardarProductoAdmin">
                             <span class="btn-text">Agregar Producto</span>
                             <span class="btn-loader" style="display: none;">⏳</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar/Editar Punto de Venta -->
+    <div id="modalPuntoVentaAdmin" class="modal">
+        <div class="modal-content modal-producto">
+            <div class="modal-header">
+                <h2 id="modalPuntoVentaTitulo">➕ Agregar Punto de Venta</h2>
+                <button class="modal-close" id="cerrarModalPuntoVentaAdmin">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formPuntoVentaAdmin" novalidate>
+                    <input type="hidden" id="puntoVentaIdAdmin" value="">
+
+                    <div class="form-group">
+                        <label for="puntoVentaNombreAdmin">Nombre *</label>
+                        <input type="text" id="puntoVentaNombreAdmin" maxlength="100" required placeholder="Ej. Restaurante Principal">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="puntoVentaTipoAdmin">Tipo *</label>
+                        <input type="text" id="puntoVentaTipoAdmin" maxlength="50" required placeholder="Ej. restaurante, cafeteria, bar...">
+                        <small class="form-help">Este campo se usa como “tipo” en la base de datos.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <div class="switch-container">
+                            <label class="switch">
+                                <input type="checkbox" id="puntoVentaActivoAdmin" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-label">Activo</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="btnCancelarPuntoVentaAdmin">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardarPuntoVentaAdmin">
+                            <span class="btn-text">Agregar</span>
+                            <span class="btn-loader" style="display:none;">⏳</span>
                         </button>
                     </div>
                 </form>
@@ -1247,37 +1331,33 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin-base.js') }}"></script>
-    <!-- Script de Dropdowns y Navegación - SOLUCIÓN COMPLETA -->
+    <script src="{{ url_for('static', filename='js/productos-admin.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='js/puntos-venta-admin.js') }}?v=1"></script>
+    <!-- Script de Dropdowns y Navegación - CORREGIDO -->
     <script>
         (function() {
             'use strict';
             
             console.log('[Navbar] Inicializando navbar completo...');
             
-            // Función para cambiar de sección
+            // Usar la función global cambiarSeccion de admin-base.js
             function cambiarSeccion(sectionName) {
                 console.log('[Navbar] Cambiando a sección:', sectionName);
                 
-                // Ocultar todas las secciones
-                document.querySelectorAll('.admin-section').forEach(function(sec) {
-                    sec.classList.remove('active');
-                    sec.classList.add('hidden');
-                });
-                
-                // Mostrar la sección seleccionada
-                const targetSection = document.getElementById('section-' + sectionName);
-                if (targetSection) {
-                    targetSection.classList.remove('hidden');
-                    targetSection.classList.add('active');
-                    console.log('[Navbar] Sección mostrada:', sectionName);
-                    } else {
-                    console.warn('[Navbar] Sección no encontrada:', sectionName);
-                    // Crear placeholder si no existe
-                    const placeholder = document.createElement('section');
-                    placeholder.id = 'section-' + sectionName;
-                    placeholder.className = 'admin-section active';
-                    placeholder.innerHTML = '<div class="section-header"><h2>' + sectionName.charAt(0).toUpperCase() + sectionName.slice(1).replace(/-/g, ' ') + '</h2></div><div class="content-card"><p>Contenido en desarrollo...</p></div>';
-                    document.querySelector('.admin-content').appendChild(placeholder);
+                // Usar la función global si existe
+                if (window.cambiarSeccion) {
+                    window.cambiarSeccion(sectionName);
+                } else {
+                    // Fallback si no existe
+                    const targetSection = document.getElementById('section-' + sectionName);
+                    if (targetSection) {
+                        document.querySelectorAll('.admin-section').forEach(function(sec) {
+                            sec.classList.remove('active');
+                            sec.classList.add('hidden');
+                        });
+                        targetSection.classList.remove('hidden');
+                        targetSection.classList.add('active');
+                    }
                 }
                 
                 // Cerrar todos los dropdowns
@@ -1287,10 +1367,13 @@
                 
                 // Cerrar menú móvil después de navegar
                 const navbarMenu = document.getElementById('navbarMenu');
+                const mobileOverlay = document.getElementById('mobileMenuOverlay');
                 if (navbarMenu && window.innerWidth <= 768) {
                     navbarMenu.classList.remove('mobile-open');
                     const toggle = document.getElementById('navbarToggle');
                     if (toggle) toggle.classList.remove('active');
+                    if (mobileOverlay) mobileOverlay.classList.remove('active');
+                    document.body.classList.remove('menu-open');
                 }
             }
             
@@ -1298,25 +1381,48 @@
             function initMobileMenu() {
                 const toggle = document.getElementById('navbarToggle');
                 const menu = document.getElementById('navbarMenu');
+                const overlay = document.getElementById('mobileMenuOverlay');
                 
                 if (!toggle || !menu) return;
+                
+                // Función para abrir/cerrar menú
+                function toggleMobileMenu() {
+                    const isOpen = menu.classList.contains('mobile-open');
+                    
+                    if (isOpen) {
+                        menu.classList.remove('mobile-open');
+                        toggle.classList.remove('active');
+                        if (overlay) overlay.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                    } else {
+                        menu.classList.add('mobile-open');
+                        toggle.classList.add('active');
+                        if (overlay) overlay.classList.add('active');
+                        document.body.classList.add('menu-open');
+                    }
+                    
+                    console.log('[Navbar] Menú móvil', !isOpen ? 'abierto' : 'cerrado');
+                }
                 
                 toggle.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    
-                    menu.classList.toggle('mobile-open');
-                    toggle.classList.toggle('active');
-                    console.log('[Navbar] Menú móvil', menu.classList.contains('mobile-open') ? 'abierto' : 'cerrado');
+                    toggleMobileMenu();
                 });
                 
-                // Cerrar al hacer click fuera
-                document.addEventListener('click', function(e) {
-                    if (window.innerWidth <= 768) {
-                        if (!e.target.closest('.admin-navbar')) {
-                            menu.classList.remove('mobile-open');
-                            toggle.classList.remove('active');
+                if (overlay) {
+                    overlay.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (menu.classList.contains('mobile-open')) {
+                            toggleMobileMenu();
                         }
+                    });
+                }
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && menu.classList.contains('mobile-open')) {
+                        toggleMobileMenu();
                     }
                 });
             }
@@ -1335,10 +1441,11 @@
                         return;
                     }
                     
-                    // Asegurar que el menú no tenga limitaciones de altura
+                    // Asegurar que el menú no tenga limitaciones de altura ni scroll
                     menu.style.maxHeight = 'none';
                     menu.style.overflow = 'visible';
                     menu.style.overflowY = 'visible';
+                    menu.style.overflowX = 'visible';
                     menu.style.height = 'auto';
                     
                     // Click en el toggle - ACORDEÓN
@@ -1347,7 +1454,7 @@
                         e.stopPropagation();
                         e.stopImmediatePropagation();
                         
-                        console.log('[Navbar] Click en dropdown toggle');
+                        console.log('[Navbar] Click en dropdown toggle:', dropdown);
                         
                         const isShowing = menu.classList.contains('show');
                         
@@ -1357,6 +1464,7 @@
                                 m.classList.remove('show');
                                 m.style.maxHeight = 'none';
                                 m.style.overflow = 'visible';
+                                m.style.overflowY = 'visible';
                             }
                         });
                         
@@ -1366,12 +1474,11 @@
                             console.log('[Navbar] Dropdown cerrado');
                         } else {
                             menu.classList.add('show');
-                            // Asegurar que se muestre completamente
                             menu.style.maxHeight = 'none';
                             menu.style.overflow = 'visible';
                             menu.style.overflowY = 'visible';
                             menu.style.height = 'auto';
-                            console.log('[Navbar] Dropdown abierto - todas las opciones visibles');
+                            console.log('[Navbar] Dropdown abierto');
                         }
                     });
                     
@@ -1400,6 +1507,7 @@
                             menu.classList.remove('show');
                             menu.style.maxHeight = 'none';
                             menu.style.overflow = 'visible';
+                            menu.style.overflowY = 'visible';
                         });
                     }
                 });
@@ -1407,29 +1515,63 @@
             
             // Inicializar navegación
             function initNavigation() {
-                // Enlaces normales
+                // Enlaces normales (sin dropdown) - usar delegación de eventos
                 document.querySelectorAll('.admin-nav-horizontal .nav-link[data-section]').forEach(function(link) {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const section = this.getAttribute('data-section');
-                        if (section) cambiarSeccion(section);
-                    });
+                    // Solo agregar listener si NO es un dropdown-toggle
+                    if (!link.classList.contains('dropdown-toggle')) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const section = this.getAttribute('data-section');
+                            if (section) {
+                                console.log('[Navbar] Navegando a:', section);
+                                cambiarSeccion(section);
+                            }
+                        });
+                    }
                 });
                 
-                // Items de dropdown
-                document.querySelectorAll('.admin-nav-horizontal .dropdown-item[data-section]').forEach(function(item) {
+                // Items de dropdown - usar delegación de eventos más robusta
+                document.querySelectorAll('.admin-nav-horizontal .dropdown-item').forEach(function(item) {
                     item.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        
                         const section = this.getAttribute('data-section');
                         if (section) {
+                            console.log('[Navbar] Navegando desde dropdown a:', section);
                             cambiarSeccion(section);
-                            // Cerrar dropdown
-                            const menu = this.closest('.dropdown-menu');
-                            if (menu) menu.classList.remove('show');
+                            
+                            // Cerrar todos los dropdowns
+                            document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(menu) {
+                                menu.classList.remove('show');
+                            });
+                        } else {
+                            console.warn('[Navbar] Item de dropdown sin data-section:', this);
                         }
                     });
                 });
+                
+                // También usar delegación de eventos en el contenedor para capturar clicks dinámicos
+                const navbarCenter = document.querySelector('.navbar-center');
+                if (navbarCenter) {
+                    navbarCenter.addEventListener('click', function(e) {
+                        const dropdownItem = e.target.closest('.dropdown-item[data-section]');
+                        if (dropdownItem) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const section = dropdownItem.getAttribute('data-section');
+                            if (section) {
+                                console.log('[Navbar] Navegando desde delegación a:', section);
+                                cambiarSeccion(section);
+                                document.querySelectorAll('.admin-nav-horizontal .dropdown-menu').forEach(function(menu) {
+                                    menu.classList.remove('show');
+                                });
+                            }
+                        }
+                    });
+                }
             }
             
             // Ejecutar inicialización
@@ -1447,7 +1589,7 @@
                 init();
             }
             
-            // Ejecutar también después de delays
+            // Ejecutar también después de delays para asegurar que admin-base.js se haya cargado
             setTimeout(init, 100);
             setTimeout(init, 500);
             
@@ -1458,9 +1600,12 @@
                 resizeTimer = setTimeout(function() {
                     const menu = document.getElementById('navbarMenu');
                     const toggle = document.getElementById('navbarToggle');
+                    const overlay = document.getElementById('mobileMenuOverlay');
                     if (window.innerWidth > 768) {
                         if (menu) menu.classList.remove('mobile-open');
                         if (toggle) toggle.classList.remove('active');
+                        if (overlay) overlay.classList.remove('active');
+                        document.body.classList.remove('menu-open');
                     }
                 }, 250);
             });

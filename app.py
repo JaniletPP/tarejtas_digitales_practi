@@ -126,6 +126,24 @@ def api_listar_puntos_venta():
     """Listar todos los puntos de venta"""
     return routes.listar_puntos_venta()
 
+@app.route('/api/puntos-venta', methods=['POST'])
+@solo_admin
+def api_crear_punto_venta():
+    """Crear un nuevo punto de venta (admin)"""
+    return routes.crear_punto_venta()
+
+@app.route('/api/puntos-venta/<int:punto_venta_id>', methods=['PUT'])
+@solo_admin
+def api_actualizar_punto_venta(punto_venta_id):
+    """Actualizar un punto de venta (admin)"""
+    return routes.actualizar_punto_venta(punto_venta_id)
+
+@app.route('/api/puntos-venta/<int:punto_venta_id>', methods=['DELETE'])
+@solo_admin
+def api_eliminar_punto_venta(punto_venta_id):
+    """Eliminar (desactivar) un punto de venta (admin)"""
+    return routes.eliminar_punto_venta(punto_venta_id)
+
 # ============================================
 # RUTAS DE API - PRODUCTOS
 # ============================================
